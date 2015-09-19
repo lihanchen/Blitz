@@ -8,7 +8,6 @@ function listen(){
 			});
 			c.on('data', function(data) {
 				var json=JSON.parse(data.toString());
-				c.write('copy that\r\n');
 				check(json.username,json.password);
 			});
 		});
