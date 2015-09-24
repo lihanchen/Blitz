@@ -9,6 +9,7 @@ function listen(){
 			c.on('data', function(data) {
 				var json=JSON.parse(data.toString());
 				check(json.username,json.password);
+				c.write("asd\n");
 			});
 		});
 		server.listen(port, function() { //'listening' listener
