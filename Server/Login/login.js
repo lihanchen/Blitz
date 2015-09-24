@@ -1,7 +1,7 @@
 function listen(){
 	var port=5000;
-	var net = require('net');
-	var server = net.createServer(function(client) {
+	var net=require('net');
+	var server=net.createServer(function(client) {
 			client.on('data', function(data) {
 				check(data, client);
 			});
@@ -19,10 +19,10 @@ function check(receivedData,socket){
 				ret.msg="Username doesn't exist";
 			}else{
 				if (item.password==json.password){
-				ret.success=true;
+					ret.success=true;
 				}else{
-				ret.success=false;
-				ret.msg="Password doesn't match";
+					ret.success=false;
+					ret.msg="Password doesn't match";
 				}
 			}
 			socket.write(JSON.stringify(ret));
@@ -46,8 +46,12 @@ db.open(function(err, db){
 		console.log(err);
 	}else{
 		db.collection('Account', function(err, collection){
-			table=collection;
-			listen();
+			if(err){
+				console.log(err);
+			}else{
+				table=collection;
+				listen();
+			}
 		});
 	}
 });
