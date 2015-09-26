@@ -11,6 +11,12 @@ function listen(){
 					}else if(json.operation=="Signup"){
 						var signupModule=require("./signup");
 						signupModule.signup(json, socket);
+					}else if(json.operation=="Verify"){
+						var signupModule=require("./signup");
+						signupModule.verify(json, socket);
+					}else if(json.operation=="ForgetPassword"){
+						var forgetModule=require("./forget");
+						forgetModule.forget(json, socket);
 					}else{
 						socket.write(JSON.stringify({error:"Unknown Operation"}));
 						socket.destroy();
