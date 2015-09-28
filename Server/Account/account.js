@@ -17,6 +17,9 @@ function listen(){
 					}else if(json.operation=="ForgetPassword"){
 						var forgetModule=require("./forget");
 						forgetModule.forget(json, socket);
+					}else if(json.operation=="ModifyProfile"){
+						var modifyModule=require("./modify");
+						modifyModule.modify(json, socket);
 					}else{
 						socket.write(JSON.stringify({error:"Unknown Operation"}));
 						socket.destroy();
