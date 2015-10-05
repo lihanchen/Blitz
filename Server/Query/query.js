@@ -28,16 +28,16 @@ function listen() {
 }
 
 function query(filters) {
-    var  mongodb = require('mongodb');
+    var mongodb = require('mongodb');
     
-    var  server  = new mongodb.Server(
+    var server  = new mongodb.Server(
         'localhost', 
         27017, 
         {auto_reconnect:true}
     );
     
-    var  db = new mongodb.Db('490', server);
-    
+    var db = new mongodb.Db('490', server);
+    var res = null;
     db.open(
         function(err, db){
            if(!err){
@@ -46,13 +46,14 @@ function query(filters) {
                     function(err, collection) {
                         if(err) {console.log(err);}
                         else {
-                            collection.find
+                            res = collection.find(filters);
                         }
                     }
                 );
            }     
         }
     );
+    return res;
 }
 
 
