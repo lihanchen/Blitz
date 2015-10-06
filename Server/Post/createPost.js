@@ -3,7 +3,8 @@ exports.createPost=function (receivedObj,socket){
 	var data={};
 	try{
 		//global.collection.insert(example);
-		var pictures = [];		
+		var pictures = [];
+		var response = [];	
 		var i = 0;
 		for(i = 0;i<receivedObj.Photo.length;i++){
 			pictures.push(receivedObj.Photo[i]);
@@ -20,6 +21,9 @@ exports.createPost=function (receivedObj,socket){
 		data.Contact = receivedObj.Contact;
 		data.TransactionCompleted = false;
 		data.PictureId = pictures;
+		data.response = response;
+		data.isRequest = receivedObj.isRequest;
+		data.category = receivedObj.category;
 
 		global.collection.insert(data,
 								function(err,docsInserted){
