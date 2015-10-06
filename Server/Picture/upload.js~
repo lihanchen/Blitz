@@ -1,0 +1,38 @@
+exports.upload=function (receivedObj,socket){
+	ObjectID = require('mongodb').ObjectID;
+	var ret = {};
+	try{
+		if (receivedObj.data == null) {
+			ret.success = false;
+			ret.pictureId = -1;
+			ret.msg = "no data provided"
+			socket.write(JSON.stringify(ret));
+			socket.destroy();
+		}
+
+		global.collection.insert({data:receivedObj.data});
+		global.collection.findOne({data:receivedObj.data},function(err,item){
+			if (item==null){
+				ret.success=false;
+				ret.msg="Error in insert";
+			}else{
+				ret.success=true;
+console.log(item._id);
+				//var objectid = new ObjectID();
+				//objectid = item._id;
+				ret.pictureId=item._id;
+				//ret.somemessage="123";
+			}
+			socket.write(JSON.stringify(ret));
+			socket.destroy();
+		});		
+
+		
+		
+	}catch(e){
+		console.error(e);
+		ret.error=e.toString();
+		socket.write(JSON.stringify(ret));
+		socket.destroy();
+	}
+}
