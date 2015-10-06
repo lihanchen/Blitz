@@ -2,25 +2,24 @@ exports.createPost=function (receivedObj,socket){
 	var ret={};
 	var data={};
 	try{
-		//global.collection.insert(example);
 		var pictures = [];
 		var response = [];	
 		var i = 0;
 		for(i = 0;i<receivedObj.Photo.length;i++){
-			pictures.push(receivedObj.Photo[i]);
+			pictures.push(receivedObj.photo[i]);
 		}
 		
 
-		data.Post_time = receivedObj.Post_time;
-		data.User_id = receivedObj.User_id;
-		data.Location = receivedObj.Location;
-		data.Description = receivedObj.Description;
-		data.Quantity = receivedObj.Quantity;
-		data.Title = receivedObj.Title;
-		data.Bounty = receivedObj.Bounty;
-		data.Contact = receivedObj.Contact;
-		data.TransactionCompleted = false;
-		data.PictureId = pictures;
+		data.postTime = receivedObj.postTime;
+		data.username = receivedObj.username;
+		data.position = receivedObj.position;
+		data.description = receivedObj.description;
+		data.quantity = receivedObj.quantity;
+		data.title = receivedObj.title;
+		data.bounty = receivedObj.bounty;
+		data.contact = receivedObj.contact;
+		data.TranscationCompleted = false;
+		data.photo = pictures;
 		data.response = response;
 		data.isRequest = receivedObj.isRequest;
 		data.category = receivedObj.category;
