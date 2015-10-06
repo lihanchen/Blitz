@@ -29,7 +29,7 @@ exports.createPost=function (receivedObj,socket){
 									}
 									else{
 										ret.success=true;
-										ret.id=docsInserted;
+										ret.id=docsInserted.ops[0]._id;
 									}
 									socket.write(JSON.stringify(ret));
 									socket.destroy();
