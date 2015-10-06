@@ -1,0 +1,2 @@
+run:
+	node query.js
