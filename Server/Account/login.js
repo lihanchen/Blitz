@@ -9,7 +9,7 @@ exports.login=function (receivedObj,socket){
 				if (item.password==receivedObj.password){
 					if (item.hold==null){
 						ret.success=true;
-					}else if (item.hold=="unverified"){
+					}else if (item.hold.reason=="unverified"){
 						ret.success=false;
 						ret.msg="Email address not verified";
 					}else{
