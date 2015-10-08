@@ -6,7 +6,7 @@ exports.signup=function (receivedObj,socket){
 				ret.success=false;
 				ret.msg="Username already exists";
 			}else{
-				var unlockCode=Math.round(Math.random()*1000000);
+				var unlockCode=Math.round(Math.random()*100000000);
 				global.collection.insert({username:receivedObj.username,password:receivedObj.password,email:receivedObj.email,rating:0,ratingCount:0,hold:{reason:"unverified",unlockCode:unlockCode}});
 				//Send verifi email
 				ret.success=true;

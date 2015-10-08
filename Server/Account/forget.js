@@ -5,14 +5,12 @@ exports.forget=function (receivedObj,socket){
 			if (item==null){
 				ret.success=false;
 				ret.msg="Username doesn't exist";
-			}else if (item.email!=receivedObj.email){
-				ret.success=false;
-				ret.msg="Username and Email don't match";
 			}else{
-				var unlockCode=Math.round(Math.random()*1000000);
+				var unlockCode=Math.round(Math.random()*1000000000);
 				global.collection.update({username:receivedObj.username},{$set:{forget:unlockCode}}); 
 				//Send verifi email
 				ret.success=true;
+				ret.email=item.email;
 				ret.unlockCode=unlockCode; //temporary
 			}
 			socket.write(JSON.stringify(ret));
