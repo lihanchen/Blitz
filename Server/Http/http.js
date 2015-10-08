@@ -44,12 +44,12 @@ try{
 								request.connection.destroy();
 								console.log(e1);
 							}
-						}).listen(8000)
+						}).listen(5006)
 					}
 				});
 			}
 	});
-catch(e){
+}catch(e){
 	console.error(e);
 }
 

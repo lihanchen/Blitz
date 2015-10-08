@@ -1,0 +1,2 @@
+run:
+	node post.js
