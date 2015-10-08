@@ -1,4 +1,4 @@
-run all:
+run all:kill
 	cd Account;make &
 	cd Query;make &
 	cd Post;make &
