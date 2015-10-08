@@ -4,13 +4,17 @@ function listen(){
 	var server=net.createServer(function(socket) {
 			socket.on('data', function(data) {
 				try{
-					var json=JSON.parse(data.toString());
-					if (json.operation=="upload"){
+					//console.log(data.length);					
+					//var json=JSON.parse(data.toString());
+					//if (json.operation=="upload"){
+					if(data.length > 30){
 						var uploadModule=require("./upload");
-						uploadModule.upload(json, socket);
-					}else if(json.operation=="get"){
+						//uploadModule.upload(json, socket);
+						uploadModule.upload(data, socket);
+					}else if(data.length <= 30){
 						var getModule=require("./getpic");
-						getModule.getpic(json, socket);
+						//getModule.getpic(json, socket);
+						getModule.getpic(data, socket);
 					}else{
 						socket.write(JSON.stringify({error:"Unknown Operation"}));
 						socket.destroy();
