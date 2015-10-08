@@ -22,7 +22,7 @@ Username:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp
 </p><p align="center">\
 <label>New Password:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="password" name="newPassword" id="newPassword" ></label>\
 </p><p align="center">\
-<input type="submit" name="submit" id="Login" value="Login">&nbsp;&nbsp;\
+<input type="submit" name="submit" id="Change Password">&nbsp;&nbsp;\
 </p></form></body></html>');
 		}
 	});

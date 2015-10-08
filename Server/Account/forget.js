@@ -8,10 +8,23 @@ exports.forget=function (receivedObj,socket){
 			}else{
 				var unlockCode=Math.round(Math.random()*1000000000);
 				global.collection.update({username:receivedObj.username},{$set:{forget:unlockCode}}); 
-				//Send verifi email
+				var emailModule=require("./sendEmail");
+				var link='http://127.0.0.1:5006/reset?username='+receivedObj.username+'&code='+unlockCode;
+				var email = {
+				    from: 'Blitz <lhcmaiche@gmail.com.',
+						to: item.email,
+						subject: 'Reset Your Password',
+						html: '\
+Hello,<br/>\
+You tried to reset your password. Click the following link to continue<br/>\
+<a href="'+link+'">'+link+' </a><br/>\
+<br/>\
+Yours Sincerely,<br/>\
+Blitz'
+				};
+				emailModule.send(email);
 				ret.success=true;
 				ret.email=item.email;
-				ret.unlockCode=unlockCode; //temporary
 			}
 			socket.write(JSON.stringify(ret));
 			socket.destroy();
