@@ -4,40 +4,53 @@ var url = require('url');
 var mongodb=require('mongodb');
 var server=new mongodb.Server('localhost', 27017, {auto_reconnect:true});
 var db=new mongodb.Db('490', server);
-db.open(function(err, db){
-		if(err){
-			console.log(err);
-		}else{
-			db.collection('Account', function(err, collection){
-				if(err){
-					console.log(err);
-				}else{
-					http.createServer(function (request, response) {
-						response.writeHead(200, {'Content-Type': 'text/html'});
-						obj=url.parse(request.url,true);
-						if (obj.pathname=="/verify"){
-							var msg="";
-							var username=obj.query.username;
-							var code=obj.query.code;
-							collection.findOne({username:username},function(err,item){
-								if (item==null){
-									msg="Username doesn't exist";
-								}else if (item.hold==null){
-									msg="Account has already been activated";
-								}else if (item.hold.reason!="unverified"){
-									msg="This account cannot be activated";
-								}else if (item.hold.unlockCode!=code){
-									msg="Invalid activation link";
+try{
+	db.open(function(err, db){
+			if(err){
+				console.log(err);
+			}else{
+				db.collection('Account', function(err, collection){
+					if(err){
+						console.log(err);
+					}else{
+						global.collection=collection;
+						http.createServer(function (request, response) {
+							try{
+								if (request.method=="POST"){
+									var post='';      
+									var qs=require('querystring');
+									request.on('data',function(chunk){  
+										post += chunk;  
+										if (post.length > 500) request.connection.destroy();
+									});   
+									request.on('end',function(){  
+										var handlerModule=require("./resetHandler");
+										handlerModule.handle(qs.parse(post),response);  
+									});
 								}else{
-									collection.update({username:username},{$unset:{"hold":1}})
-									msg="Successfully activate your account";
+									response.writeHead(200, {'Content-Type': 'text/html'});
+									obj=url.parse(request.url,true);
+									if (obj.pathname=="/verify"){
+										var verifyPage=require("./verifyPage");
+										verifyPage.verifyPage(obj,response);
+									}else if (obj.pathname=="/reset"){
+										var resetPage=require("./resetPage");
+										resetPage.resetPage(obj,response);
+									}else{
+										response.end("ERROR");
+									}
 								}
-								response.end("<html><head><title>Activation</title></head><body><h1><font face=arial>"+msg+"</font></h1></body></html>");
-							});
-						}
-					}).listen(8000)
-				}
-			});
-		}
-});
+							}catch(e1){
+								request.connection.destroy();
+								console.log(e1);
+							}
+						}).listen(5006)
+					}
+				});
+			}
+	});
+}catch(e){
+	console.error(e);
+}
+
 

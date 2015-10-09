@@ -6,7 +6,7 @@ import java.io.OutputStreamWriter;
 public class test {
 
 	public static void main(String args[]) throws Exception {
-		int port = 5000;
+		int port = Integer.parseInt(args[0]);
 		String host = "127.0.0.1";
 		final Socket client = new Socket(host, port);
 

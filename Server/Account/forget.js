@@ -5,15 +5,26 @@ exports.forget=function (receivedObj,socket){
 			if (item==null){
 				ret.success=false;
 				ret.msg="Username doesn't exist";
-			}else if (item.email!=receivedObj.email){
-				ret.success=false;
-				ret.msg="Username and Email don't match";
 			}else{
-				var unlockCode=Math.round(Math.random()*1000000);
+				var unlockCode=Math.round(Math.random()*1000000000);
 				global.collection.update({username:receivedObj.username},{$set:{forget:unlockCode}}); 
-				//Send verifi email
+				var emailModule=require("./sendEmail");
+				var link='http://127.0.0.1:5006/reset?username='+receivedObj.username+'&code='+unlockCode;
+				var email = {
+				    from: 'Blitz <lhcmaiche@gmail.com.',
+						to: item.email,
+						subject: 'Reset Your Password',
+						html: '\
+Hello,<br/>\
+You tried to reset your password. Click the following link to continue<br/>\
+<a href="'+link+'">'+link+' </a><br/>\
+<br/>\
+Yours Sincerely,<br/>\
+Blitz'
+				};
+				emailModule.send(email);
 				ret.success=true;
-				ret.unlockCode=unlockCode; //temporary
+				ret.email=item.email;
 			}
 			socket.write(JSON.stringify(ret));
 			socket.destroy();
