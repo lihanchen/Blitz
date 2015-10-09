@@ -6,14 +6,23 @@ exports.getpic=function (receivedObj,socket){
 		id = receivedObj.toString();
 		var objectid = new ObjectID(id);
 		global.collection.findOne({"_id":objectid},function(err,item){
-			if (item==null){
+			/*if (item==null){
 				ret.success=false;
 				ret.msg="Picture doesn't exist";
 			}else{
 				ret.success=true;
 				ret.data=item.data;
-			}
-			socket.write(JSON.stringify(ret));
+			}*/
+console.log(item.data);
+			//socket.write(item.data.buffer);
+
+var fs = require('fs');
+fs.writeFile('testpic.jpg', item.data.buffer, function(err){
+  if (err) throw err;
+  console.log('Sucessfully saved!');
+});
+
+
 			socket.destroy();
 		}); 
 	}catch(e){

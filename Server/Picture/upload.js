@@ -1,6 +1,8 @@
 exports.upload=function (receivedObj,socket){
 	ObjectID = require('mongodb').ObjectID;
+	BSON = require('mongodb').BSONPure;
 	var ret = {};
+console.log("1");
 	try{
 		if (receivedObj == null) {
 			ret.success = false;
@@ -9,9 +11,23 @@ exports.upload=function (receivedObj,socket){
 			socket.write(JSON.stringify(ret));
 			socket.destroy();
 		}
-
-		global.collection.insert({data:receivedObj});
-		global.collection.findOne({data:receivedObj},function(err,item){
+		//var binarydata = new BSON.Binary(receivedObj);
+		global.collection.insert({data:receivedObj},
+									function(err,docsInserted){
+										if(err){
+											ret.success=false;
+											ret.msg="error in insert";
+										}
+										else{
+											ret.success=true;
+											ret.id=docsInserted.ops[0]._id;
+											
+											console.log(docsInserted);
+										}
+										socket.write(JSON.stringify(ret));
+										socket.destroy();
+									});
+/*		global.collection.findOne({data:receivedObj},function(err,item){
 			if (item==null){
 				ret.success=false;
 				ret.msg="Error in insert";
@@ -21,7 +37,7 @@ exports.upload=function (receivedObj,socket){
 			}
 			socket.write(JSON.stringify(ret));
 			socket.destroy();
-		});		
+		});		*/
 
 		
 		
