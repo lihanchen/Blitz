@@ -1,4 +1,4 @@
-package cs490.androidclient;
+package cs490.blitz;
 
 import org.junit.Test;
 
