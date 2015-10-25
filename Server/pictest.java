@@ -25,7 +25,7 @@ public class pictest {
 
 //insert picture to database
 ///*
-		String filename = "./123.jpg";
+		String filename = "./large.jpg";
 		Path path = Paths.get(filename);
 		byte[] bytes = Files.readAllBytes(path);
 		System.out.println(bytes.length);
@@ -47,6 +47,7 @@ final BufferedOutputStream outStream = new BufferedOutputStream(client.getOutput
 			String decoded = new String(bytes, "UTF-8");
 			//osw1.write(bytes,0,bytes.length);
 			//osw1.flush();
+System.out.println(bytes.length);
 outStream.write(bytes,0,bytes.length);
 //outStream.close();
 		} catch (Exception e){
