@@ -44,7 +44,7 @@ public class Login extends AppCompatActivity {
                         loginCredential.put("operation", "Login");
                         loginCredential.put("username", params[0]);
                         loginCredential.put("password", params[1]);
-                        String ret = Tools.query(JSON.toJSONString(loginCredential), 5000);
+                        String ret = Tools.query(JSON.toJSONString(loginCredential), 9066);
                         return JSON.parseObject(ret);
                     }
 
