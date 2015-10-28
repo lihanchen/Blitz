@@ -12,7 +12,7 @@ import java.net.Socket;
  */
 public abstract class Tools {
     public static String query(String queryRequest, int port) {
-        final String host = "192.168.1.155";
+        final String host = "blitzproject.cs.purdue.edu";
         try {
             Socket client = new Socket(host, port);
             OutputStreamWriter osw = new OutputStreamWriter(client.getOutputStream());
