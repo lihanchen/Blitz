@@ -9,4 +9,4 @@ run all:kill
 
 .PHONY:kill
 kill:
-	killall node
+	-killall node
