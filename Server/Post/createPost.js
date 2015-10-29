@@ -5,12 +5,13 @@ exports.createPost=function (receivedObj,socket){
 		var pictures = [];
 		var response = [];	
 		var i = 0;
-		for(i = 0;i<receivedObj.Photo.length;i++){
+		for(i = 0;i<receivedObj.photo.length;i++){
 			pictures.push(receivedObj.photo[i]);
 		}
-		
+		//get server time
+		var now = new Date();
 
-		data.postTime = receivedObj.postTime;
+		data.postTime = now.toISOString();
 		data.username = receivedObj.username;
 		data.position = receivedObj.position;
 		data.description = receivedObj.description;
@@ -37,22 +38,6 @@ exports.createPost=function (receivedObj,socket){
 									socket.write(JSON.stringify(ret));
 									socket.destroy();
 								});
-		//{"operation":"CreatePost","Type_flag":"1","Post_time":"1","User_id":"1","Location":"12","Description":"1","Quantity":"1","Title":"1","Bounty":"1","Contact":"1","Photo":[{"data":"1"},{"data":"2"}]}
-
-/*
-{Type_flag:receivedObj.Type_flag,
-								Post_time:receivedObj.Post_time,
-								User_id:receivedObj.User_id,
-								Location:receivedObj.Location,
-								Description:receivedObj.Description,
-								Quantity:receivedObj.Quantity,
-								Title:receivedObj.Title,
-								Bounty:receivedObj.Bounty,
-								Contact:receivedObj.Contact,
-								TransactionCompleted:false}
-*/
-
-
 	}catch(e){
 		console.error(e);
 		ret.error=e.toString();
@@ -60,3 +45,6 @@ exports.createPost=function (receivedObj,socket){
 		socket.destroy();
 	}
 }
+/*
+{"operation":"CreatePost","username":"qwe","position":{},"description":"test post function","quantity":"1","title":"testtesttest","bounty":"100","contact":"","TransactionCompleted":"false","photo":[],"response":[],"isRequest":"true","category":"car"}
+*/
