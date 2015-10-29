@@ -55,9 +55,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
-            android:text="SIgnup"
+            android:padding="10dp"
+            android:text="Signup"
             android:textAlignment="textStart"
             android:textAppearance="?android:attr/textAppearanceSmall" />
 
@@ -67,14 +67,13 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
             android:layout_weight="0.75"
-            android:text="Forget Password"
-            android:textAlignment="textEnd"
-            android:textAppearance="?android:attr/textAppearanceSmall"
             android:clickable="true"
-            android:onClick="forgetPwOnClick"
-            android:contextClickable="true" />
+            android:contextClickable="true"
+            android:padding="10dp"
+            android:text="Forget Password"
+            android:textAlignment="end"
+            android:textAppearance="?android:attr/textAppearanceSmall" />
     </LinearLayout>
 
 </LinearLayout>

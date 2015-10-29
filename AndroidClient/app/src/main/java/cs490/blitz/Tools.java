@@ -1,15 +1,14 @@
 package cs490.blitz;
 
+import android.content.Context;
 import android.util.Log;
+import android.widget.Toast;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
 
-/**
- * Created by lihan on 2015/10/24.
- */
 public abstract class Tools {
     public static String query(String queryRequest, int port) {
         final String host = "blitzproject.cs.purdue.edu";
@@ -24,5 +23,9 @@ public abstract class Tools {
             Log.e("Error", "In query", e);
             return null;
         }
+    }
+
+    public static void showToast(Context con, String msg) {
+        Toast.makeText(con, msg, Toast.LENGTH_SHORT).show();
     }
 }
