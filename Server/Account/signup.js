@@ -9,7 +9,7 @@ exports.signup=function (receivedObj,socket){
 				var unlockCode=Math.round(Math.random()*100000000);
 				global.collection.insert({username:receivedObj.username,password:receivedObj.password,email:receivedObj.email,rating:0,ratingCount:0,hold:{reason:"unverified",unlockCode:unlockCode}});
 				var emailModule=require("./sendEmail");
-				var link='http://127.0.0.1:5006/verify?username='+receivedObj.username+'&code='+unlockCode;
+				var link='http://blitzproject.cs.purdue.edu/verify?username='+receivedObj.username+'&code='+unlockCode;
 				var email = {
 				    from: 'Blitz <lhcmaiche@gmail.com.',
 						to: receivedObj.email,
