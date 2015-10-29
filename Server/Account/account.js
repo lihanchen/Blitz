@@ -17,6 +17,9 @@ function listen(){
 					}else if(json.operation=="ModifyProfile"){
 						var modifyModule=require("./modify");
 						modifyModule.modify(json, socket);
+					}else if(json.operation=="GetProfile"){
+						var getModule=require("./get");
+						getModule.get(json, socket);
 					}else{
 						socket.write(JSON.stringify({error:"Unknown Operation"}));
 						socket.destroy();
