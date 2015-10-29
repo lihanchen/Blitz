@@ -32,6 +32,16 @@ public class Login extends AppCompatActivity {
             }
         });
 
+        //onclick listener for forgetpassword
+        TextView textForgetPw = (TextView) findViewById(R.id.textForget);
+        textForgetPw.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent forgetIntent = new Intent(Login.this, ForgetPassword.class);
+                startActivity(forgetIntent);
+            }
+        });
+
         Button buttonLogin = (Button) findViewById(R.id.buttonLogin);
         buttonLogin.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -61,4 +71,5 @@ public class Login extends AppCompatActivity {
             }
         });
     }
+
 }

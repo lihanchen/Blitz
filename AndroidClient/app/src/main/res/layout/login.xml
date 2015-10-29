@@ -71,7 +71,10 @@
             android:layout_weight="0.75"
             android:text="Forget Password"
             android:textAlignment="textEnd"
-            android:textAppearance="?android:attr/textAppearanceSmall" />
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:clickable="true"
+            android:onClick="forgetPwOnClick"
+            android:contextClickable="true" />
     </LinearLayout>
 
 </LinearLayout>

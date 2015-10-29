@@ -24,6 +24,11 @@
             android:label="Signup"
             >
         </activity>
+        <activity
+            android:name=".ForgetPassword"
+            android:label="ForgetPassword"
+            >
+        </activity>
     </application>
 
 </manifest>
