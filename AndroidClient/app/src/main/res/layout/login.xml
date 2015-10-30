@@ -72,7 +72,6 @@
             android:contextClickable="true"
             android:padding="10dp"
             android:text="Forget Password"
-            android:textAlignment="end"
             android:textAppearance="?android:attr/textAppearanceSmall" />
     </LinearLayout>
 
