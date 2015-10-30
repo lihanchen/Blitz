@@ -21,8 +21,7 @@
         </activity>
         <activity
             android:name=".ForgetPassword"
-            android:label="ForgetPassword"
-            ></activity>
+            android:label="ForgetPassword" />
         <activity
             android:name=".postsList"
             android:label=""
