@@ -24,7 +24,7 @@
             android:label="ForgetPassword" />
         <activity
             android:name=".postsList"
-            android:label=""
+            android:label="Blitz"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
