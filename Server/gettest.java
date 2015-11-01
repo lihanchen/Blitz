@@ -17,7 +17,7 @@ import java.io.BufferedOutputStream;
 public class gettest {
 
 	public static void main(String args[]) throws Exception {
-		int port = 5002;
+		int port = 9071;
 		String host = "127.0.0.1";
 		final Socket client = new Socket(host, port);
 		

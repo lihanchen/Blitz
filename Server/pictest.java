@@ -1,9 +1,13 @@
+import org.apache.commons.codec.binary.Base64;
+import org.json.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.Socket;
 import java.io.OutputStreamWriter;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -14,10 +18,13 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.BufferedOutputStream;
 
+
+//import org.apache.commons.codec.binary.Base64;
+
 public class pictest {
 
 	public static void main(String args[]) throws Exception {
-		int port = 5005;
+		int port = 9071;
 		String host = "127.0.0.1";
 		final Socket client = new Socket(host, port);
 		
@@ -28,7 +35,6 @@ public class pictest {
 		String filename = "./large.jpg";
 		Path path = Paths.get(filename);
 		byte[] bytes = Files.readAllBytes(path);
-		System.out.println(bytes.length);
 		try{
 			InputStream bytestream = new ByteArrayInputStream(bytes);
             BufferedReader bfReader = new BufferedReader(new InputStreamReader(bytestream));
@@ -36,49 +42,43 @@ public class pictest {
 			String temp;
 
 final BufferedOutputStream outStream = new BufferedOutputStream(client.getOutputStream());
-/*
-			while(true){
-				temp = bfReader.readLine();
-				if (temp == null) break; 
-				osw1.write(temp);
-
-			}
-*/
 			String decoded = new String(bytes, "UTF-8");
+
+
+			byte[] encodeByte = Base64.encodeBase64(bytes);
+			String encodepic = new String(encodeByte);
+
+
+			JSONObject json = new JSONObject();
+			json.put("operation", "upload");
+
+			System.out.println(json.toString());
+
+			osw1.write(json.toString());
+			osw1.flush();
+
+
+
 			//osw1.write(bytes,0,bytes.length);
 			//osw1.flush();
 System.out.println(bytes.length);
-outStream.write(bytes,0,bytes.length);
-//outStream.close();
+
+			BufferedReader responseReader= new BufferedReader(new InputStreamReader(client.getInputStream()));
+			while(true){
+				String response=responseReader.readLine();
+				//if (response==null) System.exit(-1);
+				if(response != null) {
+					System.out.println(response);
+					System.out.flush();
+					break;
+				}
+			}
+			//start writing data:
+			osw1.write(encodepic);
+			osw1.flush();
 		} catch (Exception e){
 			e.printStackTrace();
 		}
-//*/
 
-
-/*
-		new Thread(){
-			public void run(){
-				try {
-					BufferedReader screenReader = new BufferedReader(new InputStreamReader(System.in));
-					OutputStreamWriter osw = new OutputStreamWriter(client.getOutputStream());
-					while(true){
-						osw.write(screenReader.readLine());
-						osw.flush();
-					}
-				}catch(Exception e){
-					e.printStackTrace();
-				}
-			}
-		}.start();
-*/
-
-		BufferedReader responseReader= new BufferedReader(new InputStreamReader(client.getInputStream()));
-		while(true){
-			String response=responseReader.readLine();
-			if (response==null) System.exit(-1);
-			System.out.println(response);
-			System.out.flush();
-		}
 	}
 }

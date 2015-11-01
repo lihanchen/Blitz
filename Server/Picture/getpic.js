@@ -3,24 +3,28 @@ exports.getpic=function (receivedObj,socket){
 	try{
 		ObjectID = require('mongodb').ObjectID;
 		var id = "";
-		id = receivedObj.toString();
+		id = receivedObj.id;
 		var objectid = new ObjectID(id);
 		global.collection.findOne({"_id":objectid},function(err,item){
-			/*if (item==null){
+			if (item==null){
 				ret.success=false;
 				ret.msg="Picture doesn't exist";
 			}else{
 				ret.success=true;
 				ret.data=item.data;
-			}*/
-console.log(item.data);
-			//socket.write(item.data.buffer);
+
+			}
+			socket.write(JSON.stringify(ret));
+
 
 var fs = require('fs');
-fs.writeFile('testpic.jpg', item.data.buffer, function(err){
+var picstr = item.data.substring(9);
+var decodedata = new Buffer(picstr, 'base64');
+fs.writeFile('testpic.jpg', decodedata, function(err){
   if (err) throw err;
   console.log('Sucessfully saved!');
 });
+
 
 
 			socket.destroy();
