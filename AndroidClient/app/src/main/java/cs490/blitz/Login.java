@@ -50,7 +50,7 @@ public class Login extends AppCompatActivity {
                 String password = ((EditText) findViewById(R.id.editPassword)).getText().toString();
                 new AsyncTask<String, Integer, JSONObject>() {
                     protected JSONObject doInBackground(String... params) {
-                        HashMap<String, String> loginCredential = new HashMap();
+                        HashMap<String, String> loginCredential = new HashMap<>();
                         loginCredential.put("operation", "Login");
                         loginCredential.put("username", params[0]);
                         loginCredential.put("password", params[1]);
@@ -63,8 +63,9 @@ public class Login extends AppCompatActivity {
                             Log.e("Err", "Failed login");
                         else if (jsonObject.get("success").equals(true))
                             Log.e("Success", "success");
-                        else
-                            Log.e("Err", (String) jsonObject.get("msg"));
+                        else {
+                            Tools.showToast(getApplicationContext(), (String) jsonObject.get("msg"));
+                        }
                         super.onPostExecute(jsonObject);
                     }
                 }.execute(username, password);
