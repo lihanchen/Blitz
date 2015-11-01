@@ -62,7 +62,7 @@ public class Login extends AppCompatActivity {
                         if (jsonObject == null)
                             Log.e("Err", "Failed login");
                         else if (jsonObject.get("success").equals(true))
-                            Log.e("Success", "success");
+                            finish();
                         else {
                             Tools.showToast(getApplicationContext(), (String) jsonObject.get("msg"));
                         }
@@ -71,6 +71,11 @@ public class Login extends AppCompatActivity {
                 }.execute(username, password);
             }
         });
+    }
+
+    public void onBackPressed() {
+        Tools.exit = true;
+        finish();
     }
 
 }
