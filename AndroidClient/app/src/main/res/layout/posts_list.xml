@@ -6,6 +6,19 @@
     android:orientation="vertical"
     android:rowCount="3">
 
+    <android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/drawerFilter"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="left">
+
+        <Button
+            android:id="@+id/button"
+            android:layout_width="50px"
+            android:layout_height="50px"
+            android:text="New Button" />
+    </android.support.v4.widget.DrawerLayout>
+
     <android.support.v7.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/toolbar"
         android:layout_width="fill_parent"

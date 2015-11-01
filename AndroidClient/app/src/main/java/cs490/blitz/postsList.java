@@ -3,9 +3,11 @@ package cs490.blitz;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
@@ -31,7 +33,7 @@ public class postsList extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //loadData();
+                ((DrawerLayout) findViewById(R.id.drawerFilter)).openDrawer(Gravity.LEFT);
             }
         });
 
@@ -76,9 +78,9 @@ public class postsList extends AppCompatActivity {
                 }
                 super.onPostExecute(jsonArray);
 
-                ArrayList<HashMap<String, Object>> data = new ArrayList<HashMap<String, Object>>(jsonArray.size());
+                ArrayList<HashMap<String, Object>> data = new ArrayList<>(jsonArray.size());
                 for (Object obj : jsonArray) {
-                    HashMap<String, Object> map = new HashMap<String, Object>(3);
+                    HashMap<String, Object> map = new HashMap<>(3);
                     JSONObject jsonObject = (JSONObject) obj;
                     if (jsonObject.get("category").equals("FoodDiscover"))
                         map.put("img", R.drawable.fooddiscover);
