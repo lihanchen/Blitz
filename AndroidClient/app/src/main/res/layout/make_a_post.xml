@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="false">
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:orientation="vertical"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:weightSum="1">
+
+        <EditText
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/etPostTitle"
+            android:hint="Enter your post Title"
+            android:layout_margin="10dp"
+            android:layout_gravity="center_horizontal"
+            android:gravity="center" />
+
+        <Spinner
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/spCategory"
+            android:layout_margin="10dp"
+            android:spinnerMode="dropdown"
+            android:focusableInTouchMode="false" />
+
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/etContact"
+            android:layout_gravity="left"
+            android:layout_margin="10dp"
+            android:hint="Contact (Optional)         " />
+
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:inputType="number"
+            android:ems="10"
+            android:id="@+id/etBounty"
+            android:layout_gravity="left|right"
+            android:layout_margin="10dp"
+            android:hint="Bounty (Optional)" />
+
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:inputType="number"
+            android:ems="10"
+            android:id="@+id/etQuantity"
+            android:layout_margin="10dp"
+            android:layout_gravity="left"
+            android:hint="Quantity (Optional)" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:id="@+id/ivToImageUpload"
+            android:longClickable="false"
+            android:layout_gravity="center_horizontal"
+            android:cropToPadding="false"
+            android:layout_margin="10dp" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Upload Image"
+            android:id="@+id/bUploadImage"
+            android:layout_gravity="right"
+            android:layout_margin="10dp" />
+
+        <EditText
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textMultiLine"
+            android:ems="10"
+            android:id="@+id/etPostBody"
+            android:layout_margin="10dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginBottom="10dp"
+            android:hint="Enter your post body"
+            android:paddingTop="100dp"
+            android:gravity="center" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Post!"
+            android:id="@+id/bMakeAPost"
+            android:layout_gravity="right"
+            android:layout_margin="10dp" />
+
+    </LinearLayout>
+</ScrollView>
