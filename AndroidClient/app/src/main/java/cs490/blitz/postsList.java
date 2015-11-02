@@ -1,6 +1,7 @@
 package cs490.blitz;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
@@ -33,6 +34,8 @@ public class postsList extends AppCompatActivity {
         findViewById(R.id.fab).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                SharedPreferences sp = getSharedPreferences("cs490.blitz.account", MODE_PRIVATE);
+                sp.edit().putString("username", null).apply();
             }
         });
 
@@ -63,10 +66,6 @@ public class postsList extends AppCompatActivity {
             }
         });
 
-        loadData();
-
-        Intent loginIntent = new Intent(postsList.this, Login.class);
-        startActivity(loginIntent);
     }
 
     public void loadData() {
@@ -111,7 +110,17 @@ public class postsList extends AppCompatActivity {
 
     @Override
     protected void onResume() {
-        if (Tools.exit) finish();
         super.onResume();
+        if (Tools.exit) finish();
+        SharedPreferences sp = getSharedPreferences("cs490.blitz.account", MODE_PRIVATE);
+        String username = sp.getString("username", null);
+        if (username == null) {
+            Intent loginIntent = new Intent(postsList.this, Login.class);
+            startActivity(loginIntent);
+        } else {
+            Log.e("Login successful", username);
+            loadData();
+        }
+
     }
 }
