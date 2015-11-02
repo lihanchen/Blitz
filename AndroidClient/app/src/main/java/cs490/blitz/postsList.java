@@ -1,8 +1,9 @@
 package cs490.blitz;
 
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -21,16 +22,24 @@ import java.util.HashMap;
 
 
 public class postsList extends AppCompatActivity {
-    static int mode = 0; //0=request 1=offer
+    static int mode; //0=request 1=offer
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mode = 0;
         setContentView(R.layout.posts_list);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
+        if (getSupportActionBar() != null) getSupportActionBar().setDisplayShowTitleEnabled(false);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.fab).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                SharedPreferences sp = getSharedPreferences("cs490.blitz.account", MODE_PRIVATE);
+                sp.edit().putString("username", null).apply();
+            }
+        });
+
+        findViewById(R.id.textFilers).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 ((DrawerLayout) findViewById(R.id.drawerFilter)).openDrawer(Gravity.LEFT);
@@ -57,7 +66,6 @@ public class postsList extends AppCompatActivity {
             }
         });
 
-        loadData();
     }
 
     public void loadData() {
@@ -98,5 +106,21 @@ public class postsList extends AppCompatActivity {
                 lv.setAdapter(adapter);
             }
         }.execute(mode);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (Tools.exit) finish();
+        SharedPreferences sp = getSharedPreferences("cs490.blitz.account", MODE_PRIVATE);
+        String username = sp.getString("username", null);
+        if (username == null) {
+            Intent loginIntent = new Intent(postsList.this, Login.class);
+            startActivity(loginIntent);
+        } else {
+            Log.e("Login successful", username);
+            loadData();
+        }
+
     }
 }
