@@ -14,6 +14,7 @@ import android.widget.TextView;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Login extends Activity {
@@ -58,7 +59,6 @@ public class Login extends Activity {
                         String ret = Tools.query(JSON.toJSONString(loginCredential), 9066);
                         return JSON.parseObject(ret);
                     }
-
                     protected void onPostExecute(JSONObject jsonObject) {
                         if (jsonObject == null)
                             Log.e("Err", "Failed login");
