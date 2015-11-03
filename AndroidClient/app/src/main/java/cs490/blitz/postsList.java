@@ -35,8 +35,10 @@ public class postsList extends AppCompatActivity {
         findViewById(R.id.fab).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                SharedPreferences sp = getSharedPreferences("cs490.blitz.account", MODE_PRIVATE);
-                sp.edit().putString("username", null).apply();
+//                SharedPreferences sp = getSharedPreferences("cs490.blitz.account", MODE_PRIVATE);
+//                sp.edit().putString("username", null).apply();
+                Intent loginIntent = new Intent(postsList.this, MakeAPost.class);
+                startActivity(loginIntent);
             }
         });
 

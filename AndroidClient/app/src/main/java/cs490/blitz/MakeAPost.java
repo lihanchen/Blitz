@@ -1,15 +1,16 @@
 package cs490.blitz;
 
+import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.support.v7.app.AppCompatActivity;
+import android.support.design.widget.FloatingActionButton;
 import android.util.Base64;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -17,25 +18,25 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
-import android.widget.Toast;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 
 import java.io.ByteArrayOutputStream;
-import java.net.URI;
 import java.util.HashMap;
 
-/**
- * Created by arthurchan35 on 11/1/2015.
- */
-public class MakeAPost extends AppCompatActivity implements View.OnClickListener{
+import static android.util.Base64.*;
+
+
+public class MakeAPost extends Activity implements View.OnClickListener {
     private static final int RESULT_IMAGE = 1;
 
     Spinner categorySpinner;
     String selectedCategory;
     ArrayAdapter<CharSequence> adapter;
     ImageView imageToUpload;
-    Button bUploadImage, makeAPost;
+    Button bUploadImage;
+    FloatingActionButton makeAPost;
     EditText postTitle, contact, bounty, quantity, postBody;
 
 
@@ -45,15 +46,15 @@ public class MakeAPost extends AppCompatActivity implements View.OnClickListener
         setContentView(R.layout.make_a_post);
 
         selectedCategory = null;
-        imageToUpload = (ImageView)findViewById(R.id.ivToImageUpload);
-        bUploadImage = (Button)findViewById(R.id.bUploadImage);
-        makeAPost = (Button)findViewById(R.id.bMakeAPost);
-        postTitle = (EditText)findViewById(R.id.etPostTitle);
-        contact = (EditText)findViewById(R.id.etContact);
-        bounty = (EditText)findViewById(R.id.etBounty);
-        quantity = (EditText)findViewById(R.id.etQuantity);
-        postBody = (EditText)findViewById(R.id.etPostBody);
-        categorySpinner = (Spinner)findViewById(R.id.spCategory);
+        imageToUpload = (ImageView) findViewById(R.id.ivToImageUpload);
+        bUploadImage = (Button) findViewById(R.id.bUploadImage);
+        makeAPost = (FloatingActionButton) findViewById(R.id.fab);
+        postTitle = (EditText) findViewById(R.id.etPostTitle);
+        contact = (EditText) findViewById(R.id.etContact);
+        bounty = (EditText) findViewById(R.id.etBounty);
+        quantity = (EditText) findViewById(R.id.etQuantity);
+        postBody = (EditText) findViewById(R.id.etPostBody);
+        categorySpinner = (Spinner) findViewById(R.id.spCategory);
         adapter = ArrayAdapter.createFromResource(this, R.array.category_list, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         categorySpinner.setAdapter(adapter);
@@ -61,31 +62,32 @@ public class MakeAPost extends AppCompatActivity implements View.OnClickListener
 
         bUploadImage.setOnClickListener(this);
         makeAPost.setOnClickListener(this);
-        categorySpinner.setOnItemSelectedListner(
+        categorySpinner.setOnItemSelectedListener(
                 new AdapterView.OnItemSelectedListener() {
                     @Override
                     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                        selectedCategory = (String)parent.getItemAtPosition(position);
-                        if (selectedCategory.equals("ChooseACategory")) {
+                        selectedCategory = (String) parent.getItemAtPosition(position);
+                        if (selectedCategory.equals("Choose a category")) {
                             selectedCategory = "";
-                            Tools.showToast(getApplicationContext(), "Please select a category");
+                            //Tools.showToast(getApplicationContext(), "Please select a category");
                         }
-                        Tools.showToast(getApplicationContext(), parent.getItemAtPosition(position) + " selected");
+                        //Tools.showToast(getApplicationContext(), parent.getItemAtPosition(position) + " selected");
                     }
 
                     @Override
-                    public void onNothingSelected(AdapterView<?> parent) {}
+                    public void onNothingSelected(AdapterView<?> parent) {
+                    }
                 }
         );
     }
 
     @Override
     public void onClick(View v) {
-        switch(v.getId()) {
+        switch (v.getId()) {
             case R.id.bUploadImage:
                 loadImage();
                 break;
-            case R.id.bMakeAPost:
+            case R.id.fab:
                 publishPost();
                 break;
 
@@ -105,19 +107,22 @@ public class MakeAPost extends AppCompatActivity implements View.OnClickListener
 
         String title = postTitle.getText().toString();
         String body = postBody.getText().toString();
-        if (title == null || title.equals("") || body == null || body.equals("")) {
+        if (title.equals("") || body.equals("")) {
             Tools.showToast(getApplicationContext(), "Please provide complete title and body");
             return;
         }
         String strContact = contact.getText().toString();
-        if (strContact == null) strContact = "";
         String strBounty = bounty.getText().toString();
-        if (strBounty == null) strBounty = "";
         String strQuantity = quantity.getText().toString();
-        if (strQuantity == null) strQuantity = "";
-        String photo = encodeImage();
-        if (photo == null) photo = "";
+        String photo;
+        try {
+            photo = encodeImage();
+        } catch (NullPointerException e) {
+            photo = "";
+        }
 
+        SharedPreferences sp = getSharedPreferences("cs490.blitz.account", MODE_PRIVATE);
+        String username = sp.getString("username", null);
 
         new AsyncTask<String, Integer, JSONObject>() {
             protected JSONObject doInBackground(String... params) {
@@ -140,9 +145,12 @@ public class MakeAPost extends AppCompatActivity implements View.OnClickListener
             }
 
             protected void onPostExecute(JSONObject jsonObject) {
-
+                if (jsonObject.getBoolean("success")) {
+                    Tools.showToast(getApplicationContext(), "Successfully create a post");
+                    finish();
+                }
             }
-        }.execute("username", "position", body, strQuantity, title, strBounty, strContact, "false", photo , "response", "true", selectedCategory);
+        }.execute(username, "position", body, strQuantity, title, strBounty, strContact, "false", photo, "response", "true", selectedCategory);
     }
 
     @Override
@@ -158,11 +166,10 @@ public class MakeAPost extends AppCompatActivity implements View.OnClickListener
 
     }
 
-    private String encodeImage () {
-        Bitmap bitmapImage = ((BitmapDrawable)imageToUpload.getDrawable()).getBitmap();
+    private String encodeImage() {
+        Bitmap bitmapImage = ((BitmapDrawable) imageToUpload.getDrawable()).getBitmap();
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         bitmapImage.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-        String result = Base64.encodeToString(baos.toByteArray(), Base64.DEFAULT);
-        return result;
+        return encodeToString(baos.toByteArray(), DEFAULT);
     }
 }

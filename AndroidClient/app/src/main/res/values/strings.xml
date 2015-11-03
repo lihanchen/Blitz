@@ -3,10 +3,10 @@
     <string name="action_settings">Settings</string>
     <string name="select_category">Select Category</string>
     <string-array name="category_list">
-        <item>ChooseACategory</item>
+        <item>Choose a category</item>
+        <item>Food Discovery</item>
         <item>Carpool</item>
-        <item>FoodDiscovery</item>
-        <item>HouseRental</item>
+        <item>House Rental</item>
         <item>Other</item>
     </string-array>
 </resources>
