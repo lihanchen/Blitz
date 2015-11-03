@@ -10,6 +10,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 
@@ -104,6 +105,12 @@ public class postsList extends AppCompatActivity {
                         R.layout.list_item, new String[]{"img", "title", "time"},
                         new int[]{R.id.imageView, R.id.textTitle, R.id.textTime});
                 lv.setAdapter(adapter);
+                lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                    }
+                });
             }
         }.execute(mode);
     }
