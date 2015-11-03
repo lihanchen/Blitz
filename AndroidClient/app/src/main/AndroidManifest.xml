@@ -24,6 +24,9 @@
             android:name=".ForgetPassword"
             android:label="ForgetPassword" />
         <activity
+            android:name=".Postdetail"
+            android:label="Postdetail" />
+        <activity
             android:name=".postsList"
             android:label="Blitz"
             android:theme="@style/AppTheme.NoActionBar">
