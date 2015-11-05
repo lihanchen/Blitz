@@ -35,10 +35,12 @@
         <activity
             android:name=".Postdetail"
             android:label="Postdetail" />
-
         <activity
             android:name=".MakeAPost"
-            android:label="Create Post"></activity>
+            android:label="Create Post" />
+        <activity
+            android:name=".Profile"
+            android:label="Profile" />
     </application>
 
 </manifest>

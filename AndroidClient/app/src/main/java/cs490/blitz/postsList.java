@@ -30,6 +30,7 @@ public class postsList extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mode = 0;
+        Tools.exit = false;
         setContentView(R.layout.posts_list);
         setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
         if (getSupportActionBar() != null) getSupportActionBar().setDisplayShowTitleEnabled(false);
@@ -74,8 +75,8 @@ public class postsList extends AppCompatActivity {
         findViewById(R.id.imageProfile).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent loginIntent = new Intent(postsList.this, Login.class);
-                startActivity(loginIntent);
+                Intent ProfileIntent = new Intent(postsList.this, Profile.class);
+                startActivity(ProfileIntent);
             }
         });
 
@@ -129,16 +130,19 @@ public class postsList extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        if (Tools.exit) System.exit(0);
-        SharedPreferences sp = getSharedPreferences("cs490.blitz.account", MODE_PRIVATE);
-        String username = sp.getString("username", null);
-        if (username == null) {
-            Intent loginIntent = new Intent(postsList.this, Login.class);
-            startActivity(loginIntent);
-        } else {
-            loadData();
+        Log.e("Resume", "" + Tools.exit);
+        if (Tools.exit)
+            finish();
+        else {
+            SharedPreferences sp = getSharedPreferences("cs490.blitz.account", MODE_PRIVATE);
+            String username = sp.getString("username", null);
+            if (username == null) {
+                Intent loginIntent = new Intent(postsList.this, Login.class);
+                startActivity(loginIntent);
+            } else {
+                loadData();
+            }
         }
-
     }
 
     public void onBackPressed() {
