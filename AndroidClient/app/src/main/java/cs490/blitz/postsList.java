@@ -82,7 +82,8 @@ public class postsList extends AppCompatActivity {
 
         ((ListView) findViewById(R.id.listPostList)).setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Log.e("ID", data.getJSONObject(position).getString("_id"));
+                Intent ProfileIntent = new Intent(postsList.this, Postdetail.class);
+                startActivity(ProfileIntent);
             }
         });
     }
@@ -164,5 +165,4 @@ public class postsList extends AppCompatActivity {
             finish();
         }
     }
-
 }

@@ -18,7 +18,6 @@ import java.util.HashMap;
 
 public class Signup extends Activity implements View.OnClickListener {
     Button bSignUp, bCancel;
-    EditText etUserName, etPassword, etPassword2, etEMail;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
