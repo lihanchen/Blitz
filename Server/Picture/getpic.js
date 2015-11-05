@@ -11,12 +11,13 @@ exports.getpic=function (receivedObj,socket){
 				ret.msg="Picture doesn't exist";
 			}else{
 				ret.success=true;
-				ret.data=item.data;
+				var picstr  = item.data.substring(9);
+				ret.data=picstr;
 
 			}
 			socket.write(JSON.stringify(ret));
 
-
+/*
 var fs = require('fs');
 var picstr = item.data.substring(9);
 var decodedata = new Buffer(picstr, 'base64');
@@ -24,6 +25,7 @@ fs.writeFile('testpic.jpg', decodedata, function(err){
   if (err) throw err;
   console.log('Sucessfully saved!');
 });
+*/
 
 
 
