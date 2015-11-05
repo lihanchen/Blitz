@@ -42,6 +42,9 @@
         <activity
             android:name=".Profile"
             android:label="Profile" />
+        <activity
+            android:name=".ChangePassword"
+            android:label="ChangePassword" />
     </application>
 
 </manifest>
