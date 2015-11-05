@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 public class Profile extends Activity {
@@ -20,7 +19,7 @@ public class Profile extends Activity {
         sp = getSharedPreferences("cs490.blitz.account", MODE_PRIVATE);
         username = sp.getString("username", null);
         ((TextView) findViewById(R.id.textUsername)).setText(username);
-        ((ImageView) findViewById(R.id.imageAvatar)).setOnClickListener(new View.OnClickListener() {
+        (findViewById(R.id.imageAvatar)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 sp.edit().putString("username", null).apply();
