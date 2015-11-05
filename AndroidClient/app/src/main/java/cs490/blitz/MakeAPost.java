@@ -123,8 +123,9 @@ public class MakeAPost extends Activity implements View.OnClickListener {
             return;
         }
         String strContact = contact.getText().toString();
-        String strBounty = bounty.getText().toString();
-        String strQuantity = quantity.getText().toString();
+        int intBounty = Integer.parseInt(bounty.getText().toString());
+        int intQuantity = Integer.parseInt(quantity.getText().toString());
+
         String photo;
         try {
             photo = encodeImage();
@@ -135,22 +136,26 @@ public class MakeAPost extends Activity implements View.OnClickListener {
         SharedPreferences sp = getSharedPreferences("cs490.blitz.account", MODE_PRIVATE);
         String username = sp.getString("username", null);
 
-        new AsyncTask<String, Integer, JSONObject>() {
-            protected JSONObject doInBackground(String... params) {
-                HashMap<String, String> post = new HashMap<>();
-                post.put("operation", "CreatePost");
-                post.put("username", params[0]);
-                post.put("position", params[1]);
-                post.put("description", params[2]);
-                post.put("quantity", params[3]);
-                post.put("title", params[4]);
-                post.put("bounty", params[5]);
-                post.put("contact", params[6]);
-                post.put("TransactionCompleted", params[7]);
-                post.put("photo", params[8]);
-                post.put("response", params[9]);
-                post.put("isRequest", params[10]);
-                post.put("category", params[11]);
+
+        final HashMap<String, Object> post = new HashMap<>();
+        post.put("operation", "CreatePost");
+        post.put("username", username);
+        post.put("position", "position");
+        post.put("description", body);
+        post.put("quantity", intQuantity);
+        post.put("title", title);
+        post.put("bounty", intBounty);
+        post.put("contact", strContact);
+        post.put("TransactionCompleted", false);
+        post.put("photo", photo);
+        post.put("response", new JSONObject[0]);
+        post.put("isRequest", postsList.mode == 0);
+        post.put("category", selectedCategory);
+
+        final AsyncTask<HashMap<String, Object>, Integer, JSONObject> success = new AsyncTask<HashMap<String, Object>, Integer, JSONObject>() {
+            @SafeVarargs
+            protected final JSONObject doInBackground(HashMap<String, Object>... params) {
+
                 String ret = Tools.query(JSON.toJSONString(post), 9068);
                 return JSON.parseObject(ret);
             }
@@ -161,7 +166,7 @@ public class MakeAPost extends Activity implements View.OnClickListener {
                     finish();
                 }
             }
-        }.execute(username, "position", body, strQuantity, title, strBounty, strContact, "false", photo, "response", "true", selectedCategory);
+        }.execute(post);
     }
 
     @Override
