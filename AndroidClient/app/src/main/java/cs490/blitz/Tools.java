@@ -13,6 +13,8 @@ import java.util.Calendar;
 import java.util.TimeZone;
 
 public abstract class Tools {
+    public volatile static boolean exit = false;
+
     public synchronized static String query(String queryRequest, int port) {
         final String host = "blitzproject.cs.purdue.edu";
         try {
@@ -45,4 +47,5 @@ public abstract class Tools {
         SimpleDateFormat format = new SimpleDateFormat("kk:mma MMM dd, yyyy");
         return format.format(cal.getTime());
     }
+
 }

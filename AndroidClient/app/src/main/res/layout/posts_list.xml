@@ -1,94 +1,98 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/drawerFilter"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:columnCount="1"
-    android:orientation="vertical"
-    android:rowCount="3">
+    android:layout_alignParentTop="true"
+    android:focusableInTouchMode="false">
 
-    <android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/drawerFilter"
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_gravity="left">
+        android:columnCount="1"
+        android:orientation="vertical"
+        android:rowCount="3">
 
-        <Button
-            android:id="@+id/button"
-            android:layout_width="50px"
-            android:layout_height="50px"
-            android:text="New Button" />
-    </android.support.v4.widget.DrawerLayout>
+        <android.support.v7.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/toolbar"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/colorPrimary">
 
-    <android.support.v7.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/toolbar"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/colorPrimary">
+            <TextView
+                android:id="@+id/textFilers"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="5dp"
+                android:text="Filters"
+                android:textColor="#ffffff"
+                android:textSize="15sp" />
+
+            <GridLayout
+                android:layout_width="130dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:columnCount="2"
+                android:rowCount="1">
+
+                <TextView
+                    android:id="@+id/textRequest"
+                    android:layout_width="65dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:background="#0003a3"
+                    android:padding="5dp"
+                    android:text="Request"
+                    android:textAlignment="center"
+                    android:textColor="#ffffff" />
+
+                <TextView
+                    android:id="@+id/textOffer"
+                    android:layout_width="65dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:padding="5dp"
+                    android:text="Offer"
+                    android:textAlignment="center"
+                    android:textColor="#ffffff" />
+            </GridLayout>
+
+            <ImageView
+                android:id="@+id/imageProfile"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:layout_gravity="right"
+                android:layout_marginRight="5dp"
+                android:paddingRight="5dp"
+                android:src="@drawable/notification" />
+
+        </android.support.v7.widget.Toolbar>
 
 
-        <TextView
-            android:id="@+id/textFilers"
+        <ListView
+            android:id="@+id/listPostList"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_below="@+id/toolbar" />
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/fab"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="5dp"
-            android:text="Filters"
-            android:textColor="#ffffff"
-            android:textSize="15sp" />
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:layout_margin="@dimen/fab_margin"
+            android:src="@drawable/createpost" />
 
-        <GridLayout
-            android:layout_width="130dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:columnCount="2"
-            android:rowCount="1">
+    </RelativeLayout>
 
-            <TextView
-                android:id="@+id/textRequest"
-                android:layout_width="65dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:background="#0003a3"
-                android:padding="5dp"
-                android:text="Request"
-                android:textAlignment="center"
-                android:textColor="#ffffff" />
+    <LinearLayout
+        android:layout_width="300dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        android:background="#ffffff"
+        android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/textOffer"
-                android:layout_width="65dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:padding="5dp"
-                android:text="Offer"
-                android:textAlignment="center"
-                android:textColor="#ffffff" />
-        </GridLayout>
+    </LinearLayout>
 
-        <ImageView
-            android:id="@+id/imageNotification"
-            android:layout_width="36dp"
-            android:layout_height="36dp"
-            android:layout_gravity="right"
-            android:layout_marginRight="5dp"
-            android:paddingRight="5dp"
-            android:src="@drawable/notification" />
-
-    </android.support.v7.widget.Toolbar>
-
-
-    <ListView
-        android:id="@+id/listPostList"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:layout_below="@+id/toolbar" />
-
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:layout_margin="@dimen/fab_margin"
-        android:src="@drawable/createpost" />
-
-</RelativeLayout>
+</android.support.v4.widget.DrawerLayout>
