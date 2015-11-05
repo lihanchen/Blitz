@@ -55,7 +55,7 @@ public class Postdetail extends AppCompatActivity {
                 }
                 super.onPostExecute(jsonArray);
                 Log.e("return json//", jsonArray.toString());
-                if(jsonArray.get("success") != true) return;
+                if (jsonArray.getBoolean("success") != true) return;
                 JSONObject json = JSON.parseObject(jsonArray.get("object").toString());
 
                 TextView bounty = (TextView)findViewById(R.id.bountyDP);

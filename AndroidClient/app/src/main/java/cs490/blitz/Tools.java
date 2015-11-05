@@ -89,7 +89,7 @@ public abstract class Tools {
                 String response = responseReader.readLine();
                 if(response != null){
                     JSONObject json = JSONObject.parseObject(response);
-                    if(json.get("success") == true){
+                    if (json.getBoolean("success") == true) {
                         //start sending image data
                         picid = json.get("id").toString();
                         break;
