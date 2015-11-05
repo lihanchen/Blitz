@@ -25,7 +25,8 @@ public class pictest {
 
 	public static void main(String args[]) throws Exception {
 		int port = 9071;
-		String host = "127.0.0.1";
+		String host = "blitzproject.cs.purdue.edu";
+		//host = "127.0.0.1";
 		final Socket client = new Socket(host, port);
 		
 

@@ -10,7 +10,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
-import android.util.Base64;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -25,7 +24,8 @@ import com.alibaba.fastjson.JSONObject;
 import java.io.ByteArrayOutputStream;
 import java.util.HashMap;
 
-import static android.util.Base64.*;
+import static android.util.Base64.DEFAULT;
+import static android.util.Base64.encodeToString;
 
 
 public class MakeAPost extends Activity implements View.OnClickListener {
@@ -66,12 +66,23 @@ public class MakeAPost extends Activity implements View.OnClickListener {
                 new AdapterView.OnItemSelectedListener() {
                     @Override
                     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                        selectedCategory = (String) parent.getItemAtPosition(position);
-                        if (selectedCategory.equals("Choose a category")) {
-                            selectedCategory = "";
-                            //Tools.showToast(getApplicationContext(), "Please select a category");
+                        switch (position) {
+                            case 0:
+                                selectedCategory = "";
+                                break;
+                            case 1:
+                                selectedCategory = "FoodDiscover";
+                                break;
+                            case 2:
+                                selectedCategory = "Carpool";
+                                break;
+                            case 3:
+                                selectedCategory = "House Rental";
+                                break;
+                            case 4:
+                                selectedCategory = "Other";
+                                break;
                         }
-                        //Tools.showToast(getApplicationContext(), parent.getItemAtPosition(position) + " selected");
                     }
 
                     @Override

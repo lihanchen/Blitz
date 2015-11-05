@@ -58,7 +58,7 @@
             </GridLayout>
 
             <ImageView
-                android:id="@+id/imageNotification"
+                android:id="@+id/imageProfile"
                 android:layout_width="36dp"
                 android:layout_height="36dp"
                 android:layout_gravity="right"

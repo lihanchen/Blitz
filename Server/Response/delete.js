@@ -1,7 +1,7 @@
 exports.delete=function (receivedObj,socket){
 	var ret={};
 	try{
-		global.collection.findOne({postID:receivedObj.postID},function(err,item){
+		global.collection.findOne({_id:new ObjectID(receivedObj.postID)},function(err,item){
 			if (item==null){
 				ret.success=false;
 				ret.msg="Post doesn't exist";
