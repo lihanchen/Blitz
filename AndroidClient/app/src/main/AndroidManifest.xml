@@ -11,6 +11,15 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme" >
         <activity
+            android:name=".postsList"
+            android:label="Blitz"
+            android:theme="@style/AppTheme.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
             android:name=".Login"
             android:label="Login"
             >
@@ -26,19 +35,10 @@
         <activity
             android:name=".Postdetail"
             android:label="Postdetail" />
-        <activity
-            android:name=".postsList"
-            android:label="Blitz"
-            android:theme="@style/AppTheme.NoActionBar">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+
         <activity
             android:name=".MakeAPost"
-            android:label="create a post"
-            android:theme="@style/AppTheme"></activity>
+            android:label="Create Post"></activity>
     </application>
 
 </manifest>

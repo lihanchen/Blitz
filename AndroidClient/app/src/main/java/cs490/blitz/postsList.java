@@ -69,6 +69,13 @@ public class postsList extends AppCompatActivity {
             }
         });
 
+        findViewById(R.id.imageProfile).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent loginIntent = new Intent(postsList.this, Login.class);
+                startActivity(loginIntent);
+            }
+        });
     }
 
     public void loadData() {
