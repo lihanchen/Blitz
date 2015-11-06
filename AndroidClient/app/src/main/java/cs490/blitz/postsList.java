@@ -38,8 +38,6 @@ public class postsList extends AppCompatActivity {
         findViewById(R.id.fab).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                SharedPreferences sp = getSharedPreferences("cs490.blitz.account", MODE_PRIVATE);
-//                sp.edit().putString("username", null).apply();
                 Intent loginIntent = new Intent(postsList.this, MakeAPost.class);
                 startActivity(loginIntent);
             }
@@ -112,8 +110,12 @@ public class postsList extends AppCompatActivity {
                     JSONObject jsonObject = (JSONObject) obj;
                     if (jsonObject.get("category").equals("FoodDiscover"))
                         map.put("img", R.drawable.fooddiscover);
+                    else if (jsonObject.get("category").equals("Carpool"))
+                        map.put("img", R.drawable.carpool);
+                    else if (jsonObject.get("category").equals("House Rental"))
+                        map.put("img", R.drawable.house_rental);
                     else
-                        map.put("img", null);
+                        map.put("img", R.drawable.other);
                     map.put("title", jsonObject.get("title"));
                     map.put("time", Tools.timeProcess(jsonObject.get("postTime").toString()));
                     data.add(map);
