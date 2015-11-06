@@ -4,12 +4,16 @@ import android.content.Context;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.TimeZone;
 
 public abstract class Tools {
@@ -46,6 +50,62 @@ public abstract class Tools {
         cal.set(year, month, date, hour, minute, second);
         SimpleDateFormat format = new SimpleDateFormat("kk:mma MMM dd, yyyy");
         return format.format(cal.getTime());
+    }
+
+    public synchronized static String getPic(String picid){
+        String picdata;
+        final String host = "blitzproject.cs.purdue.edu";
+        try {
+            Socket client = new Socket(host, 9071);
+            OutputStreamWriter osw = new OutputStreamWriter(client.getOutputStream());
+
+            HashMap<String, Object> queryRequest = new HashMap<>();
+            queryRequest.put("operation", "getpic");
+            queryRequest.put("id", picid);
+
+            osw.write(JSON.toJSONString(queryRequest));
+            osw.flush();
+            BufferedReader responseReader = new BufferedReader(new InputStreamReader(client.getInputStream()));
+            return responseReader.readLine();
+        } catch (Exception e) {
+            Log.e("Error", "In query", e);
+            return null;
+        }
+    }
+
+    public synchronized static String uploadPic (String base64pic){
+        String picid;
+        final String host = "blitzproject.cs.purdue.edu";
+        try {
+            Socket client = new Socket(host, 9071);
+            OutputStreamWriter osw = new OutputStreamWriter(client.getOutputStream());
+
+            HashMap<String, Object> queryRequest = new HashMap<>();
+            queryRequest.put("operation", "upload");
+            osw.write(JSON.toJSONString(queryRequest));
+            osw.flush();
+            BufferedReader responseReader = new BufferedReader(new InputStreamReader(client.getInputStream()));
+            while(true){
+                String response = responseReader.readLine();
+                if(response != null){
+                    JSONObject json = JSONObject.parseObject(response);
+                    if (json.getBoolean("success") == true) {
+                        //start sending image data
+                        picid = json.get("id").toString();
+                        break;
+                    }
+                    else{
+                        return null;
+                    }
+                }
+            }
+            osw.write(base64pic);
+            osw.flush();
+            return picid;
+        } catch (Exception e) {
+            Log.e("Error", "In query", e);
+            return null;
+        }
     }
 
 }
