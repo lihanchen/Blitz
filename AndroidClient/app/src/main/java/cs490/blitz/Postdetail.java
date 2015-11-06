@@ -4,11 +4,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ImageView;
@@ -20,12 +17,9 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 
-import org.w3c.dom.Text;
-
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.TimeZone;
@@ -58,12 +52,12 @@ public class Postdetail extends AppCompatActivity {
                 if (jsonArray.getBoolean("success") != true) return;
                 JSONObject json = JSON.parseObject(jsonArray.get("object").toString());
 
-                TextView bounty = (TextView)findViewById(R.id.bountyDP);
-                TextView quantity = (TextView)findViewById(R.id.remainseatDP);
-                TextView description = (TextView)findViewById(R.id.desDetailPD);
-                TextView topic = (TextView)findViewById(R.id.topicPD);
-                TextView username = (TextView)findViewById(R.id.usernamePD);
-                TextView posttime = (TextView)findViewById(R.id.posttimePD);
+                TextView bounty = (TextView) findViewById(R.id.bountyDP);
+                TextView quantity = (TextView) findViewById(R.id.remainseatDP);
+                TextView description = (TextView) findViewById(R.id.desDetailPD);
+                TextView topic = (TextView) findViewById(R.id.topicPD);
+                TextView username = (TextView) findViewById(R.id.usernamePD);
+                TextView posttime = (TextView) findViewById(R.id.posttimePD);
 
                 bounty.append(": " + json.get("bounty").toString());
                 quantity.append(": " + json.get("quantity").toString());
@@ -81,8 +75,8 @@ public class Postdetail extends AppCompatActivity {
                 try {
                     Date d = df.parse(serverTime);
                     posttime.setText(currentTZ.format(d));
-                } catch (Exception e){
-                    Log.e("Err",e.toString());
+                } catch (Exception e) {
+                    Log.e("Err", e.toString());
                 }
 
 
@@ -103,19 +97,19 @@ public class Postdetail extends AppCompatActivity {
                 SharedPreferences sp = getSharedPreferences("cs490.blitz.account", MODE_PRIVATE);
                 String un = sp.getString("username", null);
                 if (un == null) {
-                    Log.e("username = null","");
+                    Log.e("username = null", "");
                     Intent loginIntent = new Intent(Postdetail.this, Login.class);
                     startActivity(loginIntent);
                 } else {
                     Log.e("Login successful", un);
-                    if(un.equals(postname)){
-                        Log.e("same user","");
+                    if (un.equals(postname)) {
+                        Log.e("same user", "");
                     }
                 }
 
                 ListView lv = (ListView) findViewById(R.id.listofferPD);
                 SimpleAdapter adapter = new SimpleAdapter(getApplicationContext(), data,
-                        R.layout.response_item, new String[]{"img", "username", "bounty","content"},
+                        R.layout.response_item, new String[]{"img", "username", "bounty", "content"},
                         new int[]{R.id.avatarRI, R.id.usernameRI, R.id.bountyRI, R.id.detailRI});
                 lv.setAdapter(adapter);
                 lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -126,7 +120,7 @@ public class Postdetail extends AppCompatActivity {
                 });
 
 
-                ImageView avatar = (ImageView)findViewById(R.id.avatarPD);
+                ImageView avatar = (ImageView) findViewById(R.id.avatarPD);
 
 
             }

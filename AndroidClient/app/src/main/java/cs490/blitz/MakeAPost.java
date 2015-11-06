@@ -123,8 +123,18 @@ public class MakeAPost extends Activity implements View.OnClickListener {
             return;
         }
         String strContact = contact.getText().toString();
-        int intBounty = Integer.parseInt(bounty.getText().toString());
-        int intQuantity = Integer.parseInt(quantity.getText().toString());
+        int intBounty, intQuantity;
+        try {
+            intBounty = Integer.parseInt(bounty.getText().toString());
+        } catch (Exception e) {
+            intBounty = 0;
+        }
+        try {
+            intQuantity = Integer.parseInt(quantity.getText().toString());
+        } catch (Exception e) {
+            intQuantity = 0;
+        }
+        ;
 
         String photo;
         try {
@@ -149,7 +159,7 @@ public class MakeAPost extends Activity implements View.OnClickListener {
         post.put("TransactionCompleted", false);
         post.put("photo", photo);
         post.put("response", new JSONObject[0]);
-        post.put("isRequest", postsList.mode == 0);
+        post.put("isRequest", postsList.mode == 1);
         post.put("category", selectedCategory);
 
         final AsyncTask<HashMap<String, Object>, Integer, JSONObject> success = new AsyncTask<HashMap<String, Object>, Integer, JSONObject>() {

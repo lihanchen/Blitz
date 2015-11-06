@@ -2,20 +2,12 @@ package cs490.blitz;
 
 
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
@@ -29,16 +21,6 @@ public class ForgetPassword extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.forgetpassword);
 //        setupUI(findViewById(R.id.forgetPWparent));
-
-        //onclick listener for go back to main page
-        TextView textResetGoBack = (TextView) findViewById(R.id.textResetGoBack);
-        textResetGoBack.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent loginIntent = new Intent(ForgetPassword.this, Login.class);
-                startActivity(loginIntent);
-            }
-        });
 
         //set onclick listener for reset
         Button buttonReset = (Button) findViewById(R.id.buttonReset);

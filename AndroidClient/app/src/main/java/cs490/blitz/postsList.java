@@ -113,7 +113,7 @@ public class postsList extends AppCompatActivity {
                     else if (jsonObject.get("category").equals("Carpool"))
                         map.put("img", R.drawable.carpool);
                     else if (jsonObject.get("category").equals("House Rental"))
-                        map.put("img", R.drawable.house_rental);
+                        map.put("img", R.drawable.house);
                     else
                         map.put("img", R.drawable.other);
                     map.put("title", jsonObject.get("title"));
