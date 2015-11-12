@@ -12,6 +12,7 @@ import android.view.Gravity;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
@@ -113,20 +114,22 @@ public class Postdetail extends AppCompatActivity {
                     }
                 }
 
-                ListView lv = (ListView) findViewById(R.id.listofferPD);
                 SimpleAdapter adapter = new SimpleAdapter(getApplicationContext(), data,
                         R.layout.response_item, new String[]{"img", "username", "bounty","content"},
                         new int[]{R.id.avatarRI, R.id.usernameRI, R.id.bountyRI, R.id.detailRI});
-                lv.setAdapter(adapter);
-                lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                        Log.d("############", "id " + id + "position" + position);
-                    }
-                });
-
-
-                ImageView avatar = (ImageView)findViewById(R.id.avatarPD);
+                LinearLayout layout = (LinearLayout)findViewById(R.id.listofferPD);
+                final int adapterCount = adapter.getCount();
+                for (int i = 0; i < adapterCount; i++) {
+                    View item = adapter.getView(i, null, null);
+                    item.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v)
+                        {
+                            Log.e("item clicked:",v.toString());
+                        }
+                    });
+                    layout.addView(item);
+                }
 
 
             }
