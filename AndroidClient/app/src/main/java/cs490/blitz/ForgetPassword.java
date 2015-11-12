@@ -41,11 +41,9 @@ public class ForgetPassword extends Activity {
                         if (jsonObject == null) {
                             Log.e("Err", "C");
                             Tools.showToast(getApplicationContext(), "Error");
-                        }
-                        else if (jsonObject.get("success").equals(true)) {
+                        } else if (jsonObject.get("success").equals(true)) {
                             Tools.showToast(getApplicationContext(), "Please click on the link in " + jsonObject.getString("email") + " to reset your password.");
-                        }
-                        else {
+                        } else {
                             Log.e("Err", (String) jsonObject.get("msg"));
                             Tools.showToast(getApplicationContext(), (String) jsonObject.get("msg"));
                         }
@@ -55,29 +53,4 @@ public class ForgetPassword extends Activity {
             }
         });
     }
-
-//    //setup ui inorder to hide keyboard when user click on margin
-//    public void setupUI(View view) {
-//        //Set up touch listener for non-text box views to hide keyboard.
-//        if(!(view instanceof EditText)) {
-//            view.setOnTouchListener(new View.OnTouchListener() {
-//                public boolean onTouch(View v, MotionEvent event) {
-//                    hideSoftKeyboard(ForgetPassword.this);
-//                    return false;
-//                }
-//            });
-//        }
-//        //If a layout container, iterate over children and seed recursion.
-//        if (view instanceof ViewGroup) {
-//            for (int i = 0; i < ((ViewGroup) view).getChildCount(); i++) {
-//                View innerView = ((ViewGroup) view).getChildAt(i);
-//                setupUI(innerView);
-//            }
-//        }
-//    }
-//
-//    public static void hideSoftKeyboard(Activity activity) {
-//        InputMethodManager inputMethodManager = (InputMethodManager)  activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
-//        inputMethodManager.hideSoftInputFromWindow(activity.getCurrentFocus().getWindowToken(), 0);
-//    }
 }

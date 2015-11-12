@@ -35,13 +35,23 @@ public class Profile extends Activity {
         ((ListView) findViewById(R.id.listView)).setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent listIntent;
                 switch (position) {
                     case 0:
-                        break;//notification
+                        listIntent = new Intent(Profile.this, CustomizeList.class);
+                        listIntent.putExtra("source","Notifications");
+                        startActivity(listIntent);
+                        break;
                     case 1:
-                        break;//Posts
+                        listIntent = new Intent(Profile.this, CustomizeList.class);
+                        listIntent.putExtra("source","Posts");
+                        startActivity(listIntent);
+                        break;
                     case 2:
-                        break;//Responses
+                        listIntent = new Intent(Profile.this, CustomizeList.class);
+                        listIntent.putExtra("source","Responses");
+                        startActivity(listIntent);
+                        break;
                     case 3:
                         Intent loginIntent = new Intent(Profile.this, ChangePassword.class);
                         startActivity(loginIntent);

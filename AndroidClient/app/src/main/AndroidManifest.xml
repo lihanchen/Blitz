@@ -45,6 +45,9 @@
         <activity
             android:name=".ChangePassword"
             android:label="ChangePassword" />
+        <activity
+            android:name=".CustomizeList"
+            android:label="CustomizeList" />
     </application>
 
 </manifest>
