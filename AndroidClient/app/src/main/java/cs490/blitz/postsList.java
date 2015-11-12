@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -24,12 +26,25 @@ import java.util.HashMap;
 
 public class postsList extends AppCompatActivity {
     static int mode; //0=request 1=offer
+    static postsList instance;
     volatile boolean exitOnNextBack = false;
     JSONArray data;
     String username;
+    Handler myHandler = new Handler() {
+        public void handleMessage(Message msg) {
+            int id = 0;
+            switch (msg.what) {
+                case 0://New Notification
+                    Log.e("Received Notification", "Received Notification");
+                    break;
+            }
+            super.handleMessage(msg);
+        }
+    };
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        instance = this;
         mode = 0;
         Tools.exit = false;
         setContentView(R.layout.posts_list);
@@ -86,6 +101,9 @@ public class postsList extends AppCompatActivity {
                 startActivity(ProfileIntent);
             }
         });
+
+        Intent serviceIntent = new Intent(postsList.this, NotificationChecker.class);
+        startService(serviceIntent);
     }
 
     public void loadData() {
@@ -135,7 +153,6 @@ public class postsList extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        Log.e("Resume", "" + Tools.exit);
         if (Tools.exit)
             finish();
         else {

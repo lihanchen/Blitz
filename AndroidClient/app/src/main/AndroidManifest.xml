@@ -51,6 +51,10 @@
         <activity
             android:name=".NotificationList"
             android:label="NotificationList" />
+
+        <service
+            android:name=".NotificationChecker"
+            android:exported="true" />
     </application>
 
 </manifest>
