@@ -26,6 +26,7 @@ public class postsList extends AppCompatActivity {
     static int mode; //0=request 1=offer
     volatile boolean exitOnNextBack = false;
     JSONArray data;
+    String username;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -74,6 +75,7 @@ public class postsList extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent ProfileIntent = new Intent(postsList.this, Profile.class);
+                ProfileIntent.putExtra("username", username);
                 startActivity(ProfileIntent);
             }
         });
@@ -138,7 +140,7 @@ public class postsList extends AppCompatActivity {
             finish();
         else {
             SharedPreferences sp = getSharedPreferences("cs490.blitz.account", MODE_PRIVATE);
-            String username = sp.getString("username", null);
+            username = sp.getString("username", null);
             if (username == null) {
                 Intent loginIntent = new Intent(postsList.this, Login.class);
                 startActivity(loginIntent);

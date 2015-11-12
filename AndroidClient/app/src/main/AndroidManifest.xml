@@ -48,6 +48,9 @@
         <activity
             android:name=".CustomizeList"
             android:label="CustomizeList" />
+        <activity
+            android:name=".NotificationList"
+            android:label="NotificationList" />
     </application>
 
 </manifest>

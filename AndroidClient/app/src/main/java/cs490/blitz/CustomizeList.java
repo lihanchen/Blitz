@@ -1,16 +1,10 @@
 package cs490.blitz;
 
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.Gravity;
-import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 
@@ -29,19 +23,18 @@ public class CustomizeList extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.customize_list);
         String source=getIntent().getStringExtra("source");
+        String username = getIntent().getStringExtra("username");
         setTitle(source+" List");
-        loadData(source);
+        loadData(source, username);
     }
 
-    public void loadData(String source) {
+    public void loadData(String source, String username) {
         new AsyncTask<String, Integer, JSONArray>() {
             protected JSONArray doInBackground(String... params) {
                 HashMap<String, Object> queryRequest = new HashMap<>();
                 queryRequest.put("operation", "Query");
                 if (params[0].equals("Posts")) {
-                    SharedPreferences sp = getSharedPreferences("cs490.blitz.account", MODE_PRIVATE);
-                    String username = sp.getString("username", null);
-                    queryRequest.put("username", username);
+                    queryRequest.put("username", params[1]);
                 }else if (params[0].equals("Responses")) {
                     SharedPreferences sp = getSharedPreferences("cs490.blitz.account", MODE_PRIVATE);
                     String username = sp.getString("username", null);
@@ -84,7 +77,7 @@ public class CustomizeList extends AppCompatActivity {
                         new int[]{R.id.imageView, R.id.textTitle, R.id.textTime});
                 lv.setAdapter(adapter);
             }
-        }.execute(source);
+        }.execute(source, username);
     }
 
 }
