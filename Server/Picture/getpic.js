@@ -18,12 +18,10 @@ exports.getpic=function (receivedObj,socket){
 			var picjsonstring = JSON.stringify(ret);
 			if(picjsonstring.length > 20000){
 				var i = 0;
-				global.j = 0;
 				var maxi = Math.floor(picjsonstring.length/200);
 				for(i = 0;i<picjsonstring.length/200;i++){
 					if (i == maxi){
-						global.j = 1;
-						var succ = socket.write(picjsonstring.substring(i*200));
+						var succ = socket.write(picjsonstring.substring(i*200,picjsonstring.length));
 						//console.log(succ+i)
 						if(succ){
 							continue;
@@ -36,8 +34,7 @@ exports.getpic=function (receivedObj,socket){
 
 					}
 					else{
-						global.j = 1;
-						var succ = socket.write(picjsonstring.substring(i*200,i*200+199));
+						var succ = socket.write(picjsonstring.substring(i*200,i*200+200));
 						//console.log(succ+i);
 						if(succ){
 							continue;
@@ -50,6 +47,7 @@ exports.getpic=function (receivedObj,socket){
 
 					}
 				}
+
 			}else{
 				var succ = socket.write(JSON.stringify(ret),function(){
 					//console.log("finally finished");
