@@ -9,4 +9,10 @@
         <item>House Rental</item>
         <item>Other</item>
     </string-array>
+
+    <string-array name="Request_Offer">
+        <item>Search in Both</item>
+        <item>Search Only in Offer</item>
+        <item>Search Only in Request</item>
+    </string-array>
 </resources>
