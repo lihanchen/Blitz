@@ -90,7 +90,7 @@ public class postsList extends AppCompatActivity {
                 mode = 0;
                 findViewById(R.id.textRequest).setBackgroundColor(0xff0003a3);
                 findViewById(R.id.textOffer).setBackgroundColor(0x00000000);
-                loadData(mode, null, -1, -1, null, null);
+                loadData(mode, null, null, null, null, null);
             }
         });
 
@@ -100,7 +100,7 @@ public class postsList extends AppCompatActivity {
                 mode = 1;
                 findViewById(R.id.textRequest).setBackgroundColor(0x00000000);
                 findViewById(R.id.textOffer).setBackgroundColor(0xff0003a3);
-                loadData(mode, null, -1, -1, null, null);
+                loadData(mode, null, null, null, null, null);
             }
         });
 
@@ -132,7 +132,7 @@ public class postsList extends AppCompatActivity {
                 new AdapterView.OnItemSelectedListener() {
                     @Override
                     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                        if (positon > 1) mode = 1;
+                        if (position > 1) mode = 1;
                     }
 
                     @Override
@@ -211,15 +211,19 @@ public class postsList extends AppCompatActivity {
         queryRequest.put("operation", "Query");
         queryRequest.put("isRequest",  ReqorOffer == 0);
         queryRequest.put("TransactionCompleted", false);
-        queryRequest.put("bounty", hpBountyL);
-        queryRequest.put("bounty", hpBountyU);
-        if (category != null || !category.equals(""))
+
+        if (hpBountyL != null)
+            queryRequest.put("bounty", hpBountyL);
+        if (hpBountyU != null)
+            queryRequest.put("bounty", hpBountyU);
+
+        if (category != null && !category.equals(""))
             queryRequest.put("category", category);
 
-        if (searchUser != null || !searchUser.equals(""))
+        if (searchUser != null && !searchUser.equals(""))
             queryRequest.put("username", searchUser);
 
-        if (searchTitle != null || !searchTitle.equals(""))
+        if (searchTitle != null && !searchTitle.equals(""))
             queryRequest.put("title", searchTitle);
 
         new AsyncTask<HashMap<String, Object>, Integer, JSONArray>() {
@@ -273,7 +277,7 @@ public class postsList extends AppCompatActivity {
                 Intent loginIntent = new Intent(postsList.this, Login.class);
                 startActivity(loginIntent);
             } else {
-                loadData(mode, null, -1, -1, null, null);
+                loadData(mode, null, null, null, null, null);
             }
         }
     }
