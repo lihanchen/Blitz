@@ -72,7 +72,7 @@ public class postsList extends AppCompatActivity {
                 mode = 0;
                 findViewById(R.id.textRequest).setBackgroundColor(0xff0003a3);
                 findViewById(R.id.textOffer).setBackgroundColor(0x00000000);
-                loadData();
+                loadData(mode, null, -1, -1, null, null);
             }
         });
 
@@ -82,7 +82,7 @@ public class postsList extends AppCompatActivity {
                 mode = 1;
                 findViewById(R.id.textRequest).setBackgroundColor(0x00000000);
                 findViewById(R.id.textOffer).setBackgroundColor(0xff0003a3);
-                loadData();
+                loadData(mode, null, -1, -1, null, null);
             }
         });
 
@@ -106,13 +106,24 @@ public class postsList extends AppCompatActivity {
         startService(serviceIntent);
     }
 
-    public void loadData() {
-        new AsyncTask<Integer, Integer, JSONArray>() {
-            protected JSONArray doInBackground(Integer... params) {
-                HashMap<String, Object> queryRequest = new HashMap<>();
-                queryRequest.put("operation", "Query");
-                queryRequest.put("isRequest", params[0] == 0);
-                queryRequest.put("TranscationCompleted", false);
+    public void loadData(int ReqorOffer, String category, int bountyL, int bountyU, String searchUser, String searchTitle ) {
+
+        final HashMap<String, Object> queryRequest = new HashMap<>();
+        queryRequest.put("operation", "Query");
+        queryRequest.put("isRequest",  ReqorOffer == 0);
+        queryRequest.put("TranscationCompleted", false);
+
+        if (category != null || !category.equals(""))
+            queryRequest.put("category", category);
+
+        if (searchUser != null || !searchUser.equals(""))
+            queryRequest.put("username", searchUser);
+
+        if (searchTitle != null || !searchTitle.equals(""))
+            queryRequest.put("title", searchTitle);
+
+        new AsyncTask<HashMap<String, Object>, Integer, JSONArray>() {
+            protected JSONArray doInBackground(HashMap<String, Object>... params) {
                 String ret = Tools.query(JSON.toJSONString(queryRequest), 9067);
                 return JSON.parseArray(ret);
             }
