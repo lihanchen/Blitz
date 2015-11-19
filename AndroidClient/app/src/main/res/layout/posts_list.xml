@@ -86,13 +86,127 @@
 
     </RelativeLayout>
 
-    <LinearLayout
-        android:layout_width="300dp"
+    <GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_gravity="start"
-        android:background="#ffffff"
-        android:orientation="vertical">
+        android:columnCount="3"
+        android:orientation="horizontal"
+        android:rowCount="6">
 
-    </LinearLayout>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Request Or Offer"
+            android:id="@+id/tvRorO"
+            android:layout_row="0"
+            android:layout_column="0"
+            android:layout_margin="10dp" />
+
+        <Spinner
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/spReqOrOfferInFilter"
+            android:layout_row="0"
+            android:layout_column="1"
+            android:layout_columnSpan="2"
+            android:layout_margin="10dp" />
+
+        <Spinner
+            android:id="@+id/spCategoryInFilter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:focusableInTouchMode="false"
+            android:spinnerMode="dropdown"
+            android:layout_row="1"
+            android:layout_column="1"
+            android:layout_columnSpan="2" />
+
+        <TextView
+            android:id="@+id/bountyView"
+            android:layout_width="50pt"
+            android:layout_height="wrap_content"
+            android:layout_column="0"
+            android:layout_margin="10dp"
+            android:layout_row="2"
+            android:text="Bounty Boundary" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Choose a Category"
+            android:id="@+id/tvCateg"
+            android:layout_row="1"
+            android:layout_column="0"
+            android:layout_margin="10dp" />
+
+        <EditText
+            android:id="@+id/etBountyLower"
+            android:layout_width="50pt"
+            android:layout_height="wrap_content"
+            android:layout_column="1"
+            android:layout_margin="10dp"
+            android:layout_row="2"
+            android:inputType="number"
+            android:hint="From" />
+
+        <EditText
+            android:id="@+id/etBountyUpper"
+            android:layout_width="50pt"
+            android:layout_height="wrap_content"
+            android:layout_column="2"
+            android:layout_margin="10dp"
+            android:layout_row="2"
+            android:ems="10"
+            android:inputType="number"
+            android:hint="To" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Search User (Optional)"
+            android:id="@+id/tvSearchUser"
+            android:layout_row="3"
+            android:layout_column="0"
+            android:layout_margin="10dp" />
+
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/etSearchUser"
+            android:layout_row="3"
+            android:layout_column="1"
+            android:layout_margin="10dp"
+            android:layout_columnSpan="2"
+            android:hint="Enter user you are looking for" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Search Title"
+            android:id="@+id/tvSearchTtitle"
+            android:layout_row="4"
+            android:layout_column="0"
+            android:layout_margin="10dp" />
+
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/etSearchTitle"
+            android:layout_row="4"
+            android:layout_column="1"
+            android:layout_margin="10dp"
+            android:layout_columnSpan="2"
+            android:hint="Enter title you are looking for" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Apply"
+            android:id="@+id/bApplyFilter"
+            android:layout_row="5"
+            android:layout_column="2"
+            android:layout_margin="10dp" />
+    </GridLayout>
 
 </android.support.v4.widget.DrawerLayout>
