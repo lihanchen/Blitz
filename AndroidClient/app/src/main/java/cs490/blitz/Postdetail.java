@@ -24,14 +24,12 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.TimeZone;
 
-/**
- * Created by Dingzhe on 11/3/2015.
- */
 public class Postdetail extends AppCompatActivity {
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.postdetail);
+        String postID = getIntent().getStringExtra("postID");
 
         new AsyncTask<String, Integer, JSONObject>() {
             protected JSONObject doInBackground(String... params) {
@@ -124,7 +122,7 @@ public class Postdetail extends AppCompatActivity {
 
 
             }
-        }.execute("56355c27519882c405964950");
+        }.execute(postID);
 
     }
 

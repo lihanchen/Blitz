@@ -116,6 +116,7 @@ public class postsList extends AppCompatActivity {
         ((ListView) findViewById(R.id.listPostList)).setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent ProfileIntent = new Intent(postsList.this, Postdetail.class);
+                ProfileIntent.putExtra("postID", ((JSONObject) data.get(position)).getString("_id"));
                 startActivity(ProfileIntent);
             }
         });
@@ -123,19 +124,13 @@ public class postsList extends AppCompatActivity {
         Intent serviceIntent = new Intent(postsList.this, NotificationChecker.class);
         startService(serviceIntent);
 
-
-
-
         ReqOrOffer = (Spinner) findViewById(R.id.spReqOrOfferInFilter);
         adapterOfRoO = ArrayAdapter.createFromResource(this, R.array.Request_Offer, android.R.layout.simple_spinner_item);
         ReqOrOffer.setOnItemSelectedListener(
                 new AdapterView.OnItemSelectedListener() {
-                    @Override
                     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                         if (position > 1) mode = 1;
                     }
-
-                    @Override
                     public void onNothingSelected(AdapterView<?> parent) {}
                 }
         );

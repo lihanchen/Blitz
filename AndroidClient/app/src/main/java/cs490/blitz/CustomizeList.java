@@ -22,10 +22,11 @@ public class CustomizeList extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.customize_list);
-        String source=getIntent().getStringExtra("source");
+        String source = getIntent().getStringExtra("source");
         String username = getIntent().getStringExtra("username");
-        setTitle(source+" List");
+        setTitle(source + " List");
         loadData(source, username);
+
     }
 
     public void loadData(String source, String username) {
@@ -35,11 +36,11 @@ public class CustomizeList extends AppCompatActivity {
                 queryRequest.put("operation", "Query");
                 if (params[0].equals("Posts")) {
                     queryRequest.put("username", params[1]);
-                }else if (params[0].equals("Responses")) {
+                } else if (params[0].equals("Responses")) {
                     SharedPreferences sp = getSharedPreferences("cs490.blitz.account", MODE_PRIVATE);
                     String username = sp.getString("username", null);
                     queryRequest.put("response.username", username);
-                }else {
+                } else {
                     Log.e("Error", "Can't parse list request");
                     finish();
                 }
