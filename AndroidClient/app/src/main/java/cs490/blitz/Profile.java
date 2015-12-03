@@ -20,8 +20,7 @@ public class Profile extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.profile);
 
-        sp = getSharedPreferences("cs490.blitz.account", MODE_PRIVATE);
-        username = sp.getString("username", null);
+        username = getIntent().getStringExtra("username");
         ((TextView) findViewById(R.id.textUsername)).setText(username);
 
         String item[] = new String[5];
@@ -35,13 +34,25 @@ public class Profile extends Activity {
         ((ListView) findViewById(R.id.listView)).setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent listIntent;
                 switch (position) {
                     case 0:
-                        break;//notification
+                        listIntent = new Intent(Profile.this, NotificationList.class);
+                        listIntent.putExtra("username", username);
+                        startActivity(listIntent);
+                        break;
                     case 1:
-                        break;//Posts
+                        listIntent = new Intent(Profile.this, CustomizeList.class);
+                        listIntent.putExtra("source","Posts");
+                        listIntent.putExtra("username", username);
+                        startActivity(listIntent);
+                        break;
                     case 2:
-                        break;//Responses
+                        listIntent = new Intent(Profile.this, CustomizeList.class);
+                        listIntent.putExtra("source","Responses");
+                        listIntent.putExtra("username", username);
+                        startActivity(listIntent);
+                        break;
                     case 3:
                         Intent loginIntent = new Intent(Profile.this, ChangePassword.class);
                         startActivity(loginIntent);

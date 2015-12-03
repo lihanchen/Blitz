@@ -45,6 +45,16 @@
         <activity
             android:name=".ChangePassword"
             android:label="ChangePassword" />
+        <activity
+            android:name=".CustomizeList"
+            android:label="CustomizeList" />
+        <activity
+            android:name=".NotificationList"
+            android:label="NotificationList" />
+
+        <service
+            android:name=".NotificationChecker"
+            android:exported="true" />
     </application>
 
 </manifest>

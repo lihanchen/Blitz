@@ -52,7 +52,7 @@ public abstract class Tools {
         return format.format(cal.getTime());
     }
 
-    public synchronized static String getPic(String picid){
+    public synchronized static String getPic(String picid) {
         String picdata;
         final String host = "blitzproject.cs.purdue.edu";
         try {
@@ -73,7 +73,7 @@ public abstract class Tools {
         }
     }
 
-    public synchronized static String uploadPic (String base64pic){
+    public synchronized static String uploadPic(String base64pic) {
         String picid;
         final String host = "blitzproject.cs.purdue.edu";
         try {
@@ -85,16 +85,15 @@ public abstract class Tools {
             osw.write(JSON.toJSONString(queryRequest));
             osw.flush();
             BufferedReader responseReader = new BufferedReader(new InputStreamReader(client.getInputStream()));
-            while(true){
+            while (true) {
                 String response = responseReader.readLine();
-                if(response != null){
+                if (response != null) {
                     JSONObject json = JSONObject.parseObject(response);
                     if (json.getBoolean("success") == true) {
                         //start sending image data
                         picid = json.get("id").toString();
                         break;
-                    }
-                    else{
+                    } else {
                         return null;
                     }
                 }

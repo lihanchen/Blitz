@@ -3,7 +3,7 @@ run all:kill
 	cd Query;make &
 	cd Post;make &
 	cd Response;make &
-#chatting
+	cd Notification;make &
 	cd Picture;make &
 	cd Http;make &
 

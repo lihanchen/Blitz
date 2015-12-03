@@ -12,8 +12,6 @@ import android.widget.EditText;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 
-import org.json.JSONArray;
-
 import java.util.HashMap;
 
 public class ChangePassword extends Activity implements View.OnClickListener {
