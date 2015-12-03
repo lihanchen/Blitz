@@ -118,7 +118,8 @@ public class postsList extends AppCompatActivity {
         ((ListView) findViewById(R.id.listPostList)).setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent ProfileIntent = new Intent(postsList.this, Postdetail.class);
-                ProfileIntent.putExtra("postID", ((JSONObject) data.get(position)).getString("_id"));
+                ProfileIntent.putExtra("postid", ((JSONObject) data.get(position)).getString("_id"));
+                ProfileIntent.putExtra("username",username);
                 startActivity(ProfileIntent);
             }
         });
