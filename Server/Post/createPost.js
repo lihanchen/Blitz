@@ -4,7 +4,8 @@ exports.createPost=function (receivedObj,socket){
 		delete receivedObj['operation'];
 		var now = new Date();
 		receivedObj.postTime = now.toISOString();
-		receivedObj.TranscationCompleted = false;
+		receivedObj.TransactionCompleted = false;
+		receivedObj.rated = false;
 		global.collection.insert(receivedObj,function(err,docsInserted){
 			if(err){
 				ret.success=false;

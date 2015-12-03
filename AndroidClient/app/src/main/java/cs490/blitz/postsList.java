@@ -13,8 +13,12 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
+import android.widget.Spinner;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
@@ -41,6 +45,20 @@ public class postsList extends AppCompatActivity {
             super.handleMessage(msg);
         }
     };
+
+
+    Spinner ReqOrOffer;
+    String ReqOrOfferStr;
+    ArrayAdapter<CharSequence> adapterOfRoO;
+
+    Spinner categorySpinner;
+    String selectedCategory;
+    ArrayAdapter<CharSequence> adapterOfCateg;
+
+    EditText bountyU, bountyL, searchUser, searchTitle;
+    int intBountyU, intBountyL;
+    String strSearchUser, strSearchTitle;
+    Button apply;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -72,7 +90,7 @@ public class postsList extends AppCompatActivity {
                 mode = 0;
                 findViewById(R.id.textRequest).setBackgroundColor(0xff0003a3);
                 findViewById(R.id.textOffer).setBackgroundColor(0x00000000);
-                loadData();
+                loadData(mode, null, null, null, null, null);
             }
         });
 
@@ -82,7 +100,7 @@ public class postsList extends AppCompatActivity {
                 mode = 1;
                 findViewById(R.id.textRequest).setBackgroundColor(0x00000000);
                 findViewById(R.id.textOffer).setBackgroundColor(0xff0003a3);
-                loadData();
+                loadData(mode, null, null, null, null, null);
             }
         });
 
@@ -98,21 +116,113 @@ public class postsList extends AppCompatActivity {
         ((ListView) findViewById(R.id.listPostList)).setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent ProfileIntent = new Intent(postsList.this, Postdetail.class);
+                ProfileIntent.putExtra("postID", ((JSONObject) data.get(position)).getString("_id"));
                 startActivity(ProfileIntent);
             }
         });
 
         Intent serviceIntent = new Intent(postsList.this, NotificationChecker.class);
         startService(serviceIntent);
+
+        ReqOrOffer = (Spinner) findViewById(R.id.spReqOrOfferInFilter);
+        adapterOfRoO = ArrayAdapter.createFromResource(this, R.array.Request_Offer, android.R.layout.simple_spinner_item);
+        ReqOrOffer.setOnItemSelectedListener(
+                new AdapterView.OnItemSelectedListener() {
+                    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                        if (position > 1) mode = 1;
+                    }
+                    public void onNothingSelected(AdapterView<?> parent) {}
+                }
+        );
+
+
+        categorySpinner = (Spinner) findViewById(R.id.spCategoryInFilter);
+        adapterOfCateg = ArrayAdapter.createFromResource(this, R.array.category_list, android.R.layout.simple_spinner_item);
+        categorySpinner.setOnItemSelectedListener(
+                new AdapterView.OnItemSelectedListener() {
+                    @Override
+                    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                        switch (position) {
+                            case 0:
+                                selectedCategory = null;
+                                break;
+                            case 1:
+                                selectedCategory = "FoodDiscover";
+                                break;
+                            case 2:
+                                selectedCategory = "Carpool";
+                                break;
+                            case 3:
+                                selectedCategory = "House Rental";
+                                break;
+                            case 4:
+                                selectedCategory = "Other";
+                                break;
+                        }
+                    }
+
+                    @Override
+                    public void onNothingSelected(AdapterView<?> parent) {
+                        selectedCategory = null;
+                    }
+                }
+        );
+
+
+        bountyU = (EditText) findViewById(R.id.etBountyUpper);
+        intBountyU = Integer.MAX_VALUE;
+        final HashMap<String, Object> hpBountyU = new HashMap<>();
+        bountyL = (EditText) findViewById(R.id.etBountyLower);
+        intBountyL = Integer.MIN_VALUE;
+        final HashMap<String, Object> hpBountyL = new HashMap<>();
+        searchUser = (EditText) findViewById(R.id.etSearchUser);
+        strSearchUser  = null;
+        searchTitle = (EditText) findViewById(R.id.etSearchTitle);
+        strSearchTitle = null;
+        apply = (Button) findViewById(R.id.bApplyFilter);
+        apply.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                try {
+                    intBountyU = Integer.parseInt(bountyU.getText().toString());
+
+                } catch (Exception e) {}
+                hpBountyU.put("$gt", intBountyU);
+                try {
+                    intBountyL = Integer.parseInt(bountyL.getText().toString());
+                } catch (Exception e) {}
+                hpBountyL.put("$lt", intBountyL);
+                strSearchUser = searchUser.getText().toString();
+                strSearchTitle = searchTitle.getText().toString();
+
+                loadData(mode, selectedCategory, hpBountyL, hpBountyU, strSearchUser, strSearchTitle);
+            }
+        });
     }
 
-    public void loadData() {
-        new AsyncTask<Integer, Integer, JSONArray>() {
-            protected JSONArray doInBackground(Integer... params) {
-                HashMap<String, Object> queryRequest = new HashMap<>();
-                queryRequest.put("operation", "Query");
-                queryRequest.put("isRequest", params[0] == 0);
-                queryRequest.put("TranscationCompleted", false);
+    public void loadData(int ReqorOffer, String category, HashMap<String, Object> hpBountyL, HashMap<String, Object> hpBountyU, String searchUser, String searchTitle ) {
+
+        final HashMap<String, Object> queryRequest = new HashMap<>();
+        queryRequest.put("operation", "Query");
+        queryRequest.put("isRequest",  ReqorOffer == 0);
+        queryRequest.put("TransactionCompleted", false);
+
+        if (hpBountyL != null)
+            queryRequest.put("bounty", hpBountyL);
+        if (hpBountyU != null)
+            queryRequest.put("bounty", hpBountyU);
+
+        if (category != null && !category.equals(""))
+            queryRequest.put("category", category);
+
+        if (searchUser != null && !searchUser.equals(""))
+            queryRequest.put("username", searchUser);
+
+        if (searchTitle != null && !searchTitle.equals(""))
+            queryRequest.put("title", searchTitle);
+
+        new AsyncTask<HashMap<String, Object>, Integer, JSONArray>() {
+            protected JSONArray doInBackground(HashMap<String, Object>... params) {
                 String ret = Tools.query(JSON.toJSONString(queryRequest), 9067);
                 return JSON.parseArray(ret);
             }
@@ -147,7 +257,7 @@ public class postsList extends AppCompatActivity {
                         new int[]{R.id.imageView, R.id.textTitle, R.id.textTime});
                 lv.setAdapter(adapter);
             }
-        }.execute(mode);
+        }.execute(queryRequest);
     }
 
     @Override
@@ -162,7 +272,7 @@ public class postsList extends AppCompatActivity {
                 Intent loginIntent = new Intent(postsList.this, Login.class);
                 startActivity(loginIntent);
             } else {
-                loadData();
+                loadData(mode, null, null, null, null, null);
             }
         }
     }

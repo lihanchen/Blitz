@@ -15,7 +15,46 @@ exports.getpic=function (receivedObj,socket){
 				ret.data=picstr;
 
 			}
-			socket.write(JSON.stringify(ret));
+			var picjsonstring = JSON.stringify(ret);
+			if(picjsonstring.length > 20000){
+				var i = 0;
+				var maxi = Math.floor(picjsonstring.length/200);
+				for(i = 0;i<picjsonstring.length/200;i++){
+					if (i == maxi){
+						var succ = socket.write(picjsonstring.substring(i*200,picjsonstring.length));
+						//console.log(succ+i)
+						if(succ){
+							continue;
+						}
+						else{
+							console.log(succ);
+							console.log(i);
+							break;
+						}
+
+					}
+					else{
+						var succ = socket.write(picjsonstring.substring(i*200,i*200+200));
+						//console.log(succ+i);
+						if(succ){
+							continue;
+						}
+						else{
+							console.log(succ);
+							console.log(i);
+							break;
+						}
+
+					}
+				}
+
+			}else{
+				var succ = socket.write(JSON.stringify(ret),function(){
+					//console.log("finally finished");
+				});
+				//console.log(succ);
+			}
+			console.log(picjsonstring.length);
 
 /*
 var fs = require('fs');
@@ -28,7 +67,7 @@ fs.writeFile('testpic.jpg', decodedata, function(err){
 */
 
 
-
+			socket.end();
 			socket.destroy();
 		}); 
 	}catch(e){

@@ -41,7 +41,10 @@ public class NotificationChecker extends Service {
                             JSONObject jsonObj = (JSONObject) obj;
                             if (!read.contains(jsonObj.getString("_id"))) {
                                 read.add(jsonObj.getString("_id"));
-                                postsList.instance.myHandler.obtainMessage(0).sendToTarget();
+                                try {
+                                    postsList.instance.myHandler.obtainMessage(0).sendToTarget();
+                                } catch (Exception e) {
+                                }
                                 NotificationCompat.Builder nBuilder = new NotificationCompat.Builder(NotificationChecker.this);
                                 nBuilder.setContentTitle("Blitz");
                                 nBuilder.setSmallIcon(R.drawable.unread);

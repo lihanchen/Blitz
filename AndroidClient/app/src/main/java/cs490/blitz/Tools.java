@@ -1,6 +1,7 @@
 package cs490.blitz;
 
 import android.content.Context;
+import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -18,6 +19,27 @@ import java.util.TimeZone;
 
 public abstract class Tools {
     public volatile static boolean exit = false;
+
+
+    public synchronized static void postNotification(String postID, String userName, String msg) {
+        final HashMap<String, Object> notification = new HashMap<>();
+        notification.put("operation", "PostNotifications");
+        notification.put("postID", postID);
+        notification.put("username", userName);
+        notification.put("msg", msg);
+
+        final AsyncTask<HashMap<String, Object>, Integer, JSONObject> success = new AsyncTask<HashMap<String, Object>, Integer, JSONObject>() {
+            @SafeVarargs
+            protected final JSONObject doInBackground(HashMap<String, Object>... params) {
+
+                String ret = Tools.query(JSON.toJSONString(notification), 9068);
+                return JSON.parseObject(ret);
+            }
+
+            protected void onPostExecute(JSONObject jsonObject) {
+            }
+        }.execute(notification);
+    }
 
     public synchronized static String query(String queryRequest, int port) {
         final String host = "blitzproject.cs.purdue.edu";
@@ -89,7 +111,7 @@ public abstract class Tools {
                 String response = responseReader.readLine();
                 if (response != null) {
                     JSONObject json = JSONObject.parseObject(response);
-                    if (json.getBoolean("success") == true) {
+                    if (json.getBoolean("success")) {
                         //start sending image data
                         picid = json.get("id").toString();
                         break;
