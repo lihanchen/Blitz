@@ -1,165 +1,232 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
-
-
-    <TextView
-        android:id="@+id/topicPD"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:text="Post Topic"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
-
-
-
+    android:id="@+id/containerPD">
 
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:orientation="horizontal">
+        android:orientation="vertical" android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
-        <ImageView
-            android:id="@+id/avatarPD"
-            android:layout_width="45dp"
-            android:layout_height="45dp"
-            android:layout_gravity="left"
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="Post Topic"
+            android:id="@+id/topicPD"
+            android:layout_gravity="center_horizontal" />
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp">
+
+            <ImageView
+                android:layout_width="45dp"
+                android:layout_height="45dp"
+                android:layout_gravity="left"
+                android:layout_marginRight="5dp"
+                android:paddingRight="5dp"
+                android:src="@drawable/defaultavatar"
+                android:layout_marginLeft="10dp"
+                android:id="@+id/avatarPD" />
+
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:text="loading..."
+                    android:id="@+id/usernamePD" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:text="loading..."
+                    android:id="@+id/posttimePD" />
+
+            </LinearLayout>
+
+
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="Description"
+            android:id="@+id/descriptionPD"
             android:layout_marginLeft="10dp"
-            android:layout_marginRight="5dp"
-            android:paddingRight="5dp"
-            android:src="@drawable/defaultavatar" />
+            android:layout_marginTop="10dp"
+            android:textColor="#000000"/>
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/roundedge"
+            android:layout_marginBottom="10dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="loading..."
+                android:id="@+id/desDetailPD"
+                android:layout_marginLeft="10dp"
+                android:layout_marginBottom="5dp"
+                android:layout_marginTop="5dp"/>
+
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="Position/Location"
+            android:id="@+id/positionDP"
+            android:layout_marginLeft="10dp"
+            android:layout_marginBottom="10dp"
+            android:textColor="#000000"/>
+
+
+        <fragment xmlns:android="http://schemas.android.com/apk/res/android"
+            android:name="com.google.android.gms.maps.MapFragment"
+            android:id="@+id/mapPD"
+            android:layout_width="match_parent"
+            android:layout_height="130pt"
+            android:layout_margin="10dp"
+            class="cs490.blitz.WorkaroundMapFragment"/>
+
+
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="Photo"
+            android:id="@+id/photoDP"
+            android:layout_marginLeft="10dp"
+            android:layout_marginBottom="8dp"
+            android:textColor="#000000"/>
+
+        <HorizontalScrollView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/scrollViewPD"
+            android:layout_marginBottom="10dp"
+            android:layout_marginLeft="10dp">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="200dp"
+                    android:layout_height="200dp"
+                    android:layout_gravity="left"
+                    android:src="@drawable/imagena"
+                    android:id="@+id/defaultimagePD" />
+
+                <ImageView
+                    android:layout_width="200dp"
+                    android:layout_height="200dp"
+                    android:layout_gravity="left"
+                    android:src="@drawable/imagena"
+                    android:id="@+id/defaultimag1ePD" />
+
+                <ImageView
+                    android:layout_width="200dp"
+                    android:layout_height="200dp"
+                    android:layout_gravity="left"
+                    android:src="@drawable/imagena"
+                    android:id="@+id/defaultima1gePD" />
+
+            </LinearLayout>
+        </HorizontalScrollView>
 
 
         <LinearLayout
+            android:id="@+id/responseLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:orientation="vertical">
+            android:orientation="horizontal">
 
             <TextView
-                android:id="@+id/usernamePD"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="username"
-                android:textAppearance="?android:attr/textAppearanceSmall" />
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="Response"
+                android:id="@+id/responseDP"
+                android:layout_marginLeft="10dp"
+                android:layout_marginBottom="5dp"
+                android:layout_weight="0.9"
+                android:textColor="#000000"/>
 
-            <TextView
-                android:id="@+id/posttimePD"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="11/3/2015"
-                android:textAppearance="?android:attr/textAppearanceSmall" />
+            <ImageView
+                android:layout_width="23dp"
+                android:layout_height="23dp"
+                android:layout_weight="0.1"
+                android:id="@+id/plusPD"
+                android:layout_gravity="right" />
 
         </LinearLayout>
 
 
-    </LinearLayout>
 
-    <TextView
-        android:id="@+id/descriptionPD"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="10dp"
-        android:layout_marginTop="10dp"
-        android:text="Description"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:textColor="#000000" />
 
-    <LinearLayout
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="10dp"
-        android:background="@drawable/roundedge"
-        android:orientation="vertical">
-
-        <TextView
-            android:id="@+id/desDetailPD"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:id="@+id/listofferPD"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="5dp"
+            android:orientation="vertical">
+
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
-            android:layout_marginTop="5dp"
-            android:text="Here we go the detail"
-            android:textAppearance="?android:attr/textAppearanceSmall" />
+            android:layout_marginBottom="10dp" >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="Remaining seat"
+                android:id="@+id/remainseatDP" />
+
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_marginRight="5dp"
+                android:src="@drawable/coin"
+                android:id="@+id/coinPD"
+                android:layout_marginLeft="30pt" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="Bounty"
+                android:id="@+id/bountyDP" />
+
+        </LinearLayout>
+
+
+
 
     </LinearLayout>
-
-    <TextView
-        android:id="@+id/positionDP"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="10dp"
-        android:layout_marginLeft="10dp"
-        android:text="Position/Location"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:textColor="#000000" />
-
-    <!--
-    <fragment xmlns:android="http://schemas.android.com/apk/res/android"
-        android:name="com.google.android.gms.maps.MapFragment"
-        android:id="@+id/mapPD"
-        android:layout_width="match_parent"
-        android:layout_height="50pt"/>
-        -->
-
-    <TextView
-        android:id="@+id/photoDP"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="10dp"
-        android:layout_marginLeft="10dp"
-        android:text="Photo"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:textColor="#000000" />
-
-    <TextView
-        android:id="@+id/responseDP"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="5dp"
-        android:layout_marginLeft="10dp"
-        android:text="Response"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:textColor="#000000" />
-
-    <ListView
-        android:id="@+id/listofferPD"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="10dp"
-        android:layout_marginLeft="10dp"
-        android:orientation="horizontal">
-
-        <TextView
-            android:id="@+id/remainseatDP"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Remaining seat"
-            android:textAppearance="?android:attr/textAppearanceSmall" />
-
-        <ImageView
-            android:id="@+id/coinPD"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:layout_marginLeft="30pt"
-            android:layout_marginRight="5dp"
-            android:src="@drawable/coin" />
-
-        <TextView
-            android:id="@+id/bountyDP"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Bounty"
-            android:textAppearance="?android:attr/textAppearanceSmall" />
-
-    </LinearLayout>
-
-
-</LinearLayout>
+</ScrollView>
