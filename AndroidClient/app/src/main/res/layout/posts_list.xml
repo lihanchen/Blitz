@@ -91,18 +91,9 @@
         android:layout_height="match_parent"
         android:layout_gravity="start"
         android:background="#ffffff"
-        android:columnCount="3"
+        android:columnCount="4"
         android:orientation="horizontal"
         android:rowCount="6">
-
-        <TextView
-            android:id="@+id/tvRorO"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_column="0"
-            android:layout_margin="10dp"
-            android:layout_row="0"
-            android:text="Request Or Offer" />
 
         <Spinner
             android:id="@+id/spReqOrOfferInFilter"
