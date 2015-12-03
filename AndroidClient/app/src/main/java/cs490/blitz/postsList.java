@@ -178,8 +178,6 @@ public class postsList extends AppCompatActivity {
         final HashMap<String, Object> hpBountyL = new HashMap<>();
         searchUser = (EditText) findViewById(R.id.etSearchUser);
         strSearchUser  = null;
-        searchTitle = (EditText) findViewById(R.id.etSearchTitle);
-        strSearchTitle = null;
         apply = (Button) findViewById(R.id.bApplyFilter);
         apply.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -268,7 +266,7 @@ public class postsList extends AppCompatActivity {
             finish();
         else {
             SharedPreferences sp = getSharedPreferences("cs490.blitz.account", MODE_PRIVATE);
-            username = sp.getString("username", null);
+            username = sp.getString("username", "lhc1");   //TO DO debug
             if (username == null) {
                 Intent loginIntent = new Intent(postsList.this, Login.class);
                 startActivity(loginIntent);
