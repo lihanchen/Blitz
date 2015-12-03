@@ -9,6 +9,8 @@ import android.os.Message;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
@@ -116,7 +118,8 @@ public class postsList extends AppCompatActivity {
         ((ListView) findViewById(R.id.listPostList)).setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent ProfileIntent = new Intent(postsList.this, Postdetail.class);
-                ProfileIntent.putExtra("postID", ((JSONObject) data.get(position)).getString("_id"));
+                ProfileIntent.putExtra("postid", ((JSONObject) data.get(position)).getString("_id"));
+                ProfileIntent.putExtra("username",username);
                 startActivity(ProfileIntent);
             }
         });
@@ -177,8 +180,6 @@ public class postsList extends AppCompatActivity {
         final HashMap<String, Object> hpBountyL = new HashMap<>();
         searchUser = (EditText) findViewById(R.id.etSearchUser);
         strSearchUser  = null;
-        searchTitle = (EditText) findViewById(R.id.etSearchTitle);
-        strSearchTitle = null;
         apply = (Button) findViewById(R.id.bApplyFilter);
         apply.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -196,6 +197,18 @@ public class postsList extends AppCompatActivity {
                 strSearchTitle = searchTitle.getText().toString();
 
                 loadData(mode, selectedCategory, hpBountyL, hpBountyU, strSearchUser, strSearchTitle);
+            }
+        });
+
+        ((EditText) findViewById(R.id.editTextNameFilter)).addTextChangedListener(new TextWatcher() {
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+
+            public void afterTextChanged(Editable s) {
+                displayList(((EditText) findViewById(R.id.editTextNameFilter)).getText().toString());
             }
         });
     }
@@ -234,30 +247,36 @@ public class postsList extends AppCompatActivity {
                     return;
                 }
                 data = jsonArray;
-                ArrayList<HashMap<String, Object>> data = new ArrayList<>(jsonArray.size());
-                for (Object obj : jsonArray) {
-                    HashMap<String, Object> map = new HashMap<>(3);
-                    JSONObject jsonObject = (JSONObject) obj;
-                    if (jsonObject.get("category").equals("FoodDiscover"))
-                        map.put("img", R.drawable.fooddiscover);
-                    else if (jsonObject.get("category").equals("Carpool"))
-                        map.put("img", R.drawable.carpool);
-                    else if (jsonObject.get("category").equals("House Rental"))
-                        map.put("img", R.drawable.house);
-                    else
-                        map.put("img", R.drawable.other);
-                    map.put("title", jsonObject.get("title"));
-                    map.put("time", Tools.timeProcess(jsonObject.get("postTime").toString()));
-                    data.add(map);
-                }
-
-                ListView lv = (ListView) findViewById(R.id.listPostList);
-                SimpleAdapter adapter = new SimpleAdapter(getApplicationContext(), data,
-                        R.layout.list_item, new String[]{"img", "title", "time"},
-                        new int[]{R.id.imageView, R.id.textTitle, R.id.textTime});
-                lv.setAdapter(adapter);
+                displayList(null);
             }
         }.execute(queryRequest);
+    }
+
+    void displayList(String nameFilter) {
+        ArrayList<HashMap<String, Object>> adapterData = new ArrayList<>(this.data.size());
+        for (Object obj : this.data) {
+            JSONObject jsonObject = (JSONObject) obj;
+            if ((nameFilter == null) || (jsonObject.getString("title").indexOf(nameFilter) != -1)) {
+                HashMap<String, Object> map = new HashMap<>(3);
+                if (jsonObject.get("category").equals("FoodDiscover"))
+                    map.put("img", R.drawable.fooddiscover);
+                else if (jsonObject.get("category").equals("Carpool"))
+                    map.put("img", R.drawable.carpool);
+                else if (jsonObject.get("category").equals("House Rental"))
+                    map.put("img", R.drawable.house);
+                else
+                    map.put("img", R.drawable.other);
+                map.put("title", jsonObject.get("title"));
+                map.put("time", Tools.timeProcess(jsonObject.get("postTime").toString()));
+                adapterData.add(map);
+            }
+        }
+
+        ListView lv = (ListView) findViewById(R.id.listPostList);
+        SimpleAdapter adapter = new SimpleAdapter(getApplicationContext(), adapterData,
+                R.layout.list_item, new String[]{"img", "title", "time"},
+                new int[]{R.id.imageView, R.id.textTitle, R.id.textTime});
+        lv.setAdapter(adapter);
     }
 
     @Override
@@ -267,7 +286,7 @@ public class postsList extends AppCompatActivity {
             finish();
         else {
             SharedPreferences sp = getSharedPreferences("cs490.blitz.account", MODE_PRIVATE);
-            username = sp.getString("username", null);
+            username = sp.getString("username", "lhc1");   //TO DO debug
             if (username == null) {
                 Intent loginIntent = new Intent(postsList.this, Login.class);
                 startActivity(loginIntent);
