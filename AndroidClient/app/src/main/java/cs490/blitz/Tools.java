@@ -37,8 +37,6 @@ public abstract class Tools {
             }
 
             protected void onPostExecute(JSONObject jsonObject) {
-                if (jsonObject.getBoolean("success")) {
-                }
             }
         }.execute(notification);
     }
@@ -113,7 +111,7 @@ public abstract class Tools {
                 String response = responseReader.readLine();
                 if (response != null) {
                     JSONObject json = JSONObject.parseObject(response);
-                    if (json.getBoolean("success") == true) {
+                    if (json.getBoolean("success")) {
                         //start sending image data
                         picid = json.get("id").toString();
                         break;
