@@ -9,6 +9,8 @@ import android.os.Message;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
@@ -200,6 +202,18 @@ public class postsList extends AppCompatActivity {
                 ((DrawerLayout) findViewById(R.id.drawerFilter)).closeDrawer(Gravity.LEFT);
             }
         });
+
+        ((EditText) findViewById(R.id.editTextNameFilter)).addTextChangedListener(new TextWatcher() {
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+
+            public void afterTextChanged(Editable s) {
+                displayList(((EditText) findViewById(R.id.editTextNameFilter)).getText().toString());
+            }
+        });
     }
 
     public void loadData(int ReqorOffer, String category, HashMap<String, Object> hpBountyL, HashMap<String, Object> hpBountyU, String searchUser) {
@@ -234,30 +248,36 @@ public class postsList extends AppCompatActivity {
                     return;
                 }
                 data = jsonArray;
-                ArrayList<HashMap<String, Object>> data = new ArrayList<>(jsonArray.size());
-                for (Object obj : jsonArray) {
-                    HashMap<String, Object> map = new HashMap<>(3);
-                    JSONObject jsonObject = (JSONObject) obj;
-                    if (jsonObject.get("category").equals("FoodDiscover"))
-                        map.put("img", R.drawable.fooddiscover);
-                    else if (jsonObject.get("category").equals("Carpool"))
-                        map.put("img", R.drawable.carpool);
-                    else if (jsonObject.get("category").equals("House Rental"))
-                        map.put("img", R.drawable.house);
-                    else
-                        map.put("img", R.drawable.other);
-                    map.put("title", jsonObject.get("title"));
-                    map.put("time", Tools.timeProcess(jsonObject.get("postTime").toString()));
-                    data.add(map);
-                }
-
-                ListView lv = (ListView) findViewById(R.id.listPostList);
-                SimpleAdapter adapter = new SimpleAdapter(getApplicationContext(), data,
-                        R.layout.list_item, new String[]{"img", "title", "time"},
-                        new int[]{R.id.imageView, R.id.textTitle, R.id.textTime});
-                lv.setAdapter(adapter);
+                displayList(null);
             }
         }.execute(queryRequest);
+    }
+
+    void displayList(String nameFilter) {
+        ArrayList<HashMap<String, Object>> adapterData = new ArrayList<>(this.data.size());
+        for (Object obj : this.data) {
+            JSONObject jsonObject = (JSONObject) obj;
+            if ((nameFilter == null) || (jsonObject.getString("title").indexOf(nameFilter) != -1)) {
+                HashMap<String, Object> map = new HashMap<>(3);
+                if (jsonObject.get("category").equals("FoodDiscover"))
+                    map.put("img", R.drawable.fooddiscover);
+                else if (jsonObject.get("category").equals("Carpool"))
+                    map.put("img", R.drawable.carpool);
+                else if (jsonObject.get("category").equals("House Rental"))
+                    map.put("img", R.drawable.house);
+                else
+                    map.put("img", R.drawable.other);
+                map.put("title", jsonObject.get("title"));
+                map.put("time", Tools.timeProcess(jsonObject.get("postTime").toString()));
+                adapterData.add(map);
+            }
+        }
+
+        ListView lv = (ListView) findViewById(R.id.listPostList);
+        SimpleAdapter adapter = new SimpleAdapter(getApplicationContext(), adapterData,
+                R.layout.list_item, new String[]{"img", "title", "time"},
+                new int[]{R.id.imageView, R.id.textTitle, R.id.textTime});
+        lv.setAdapter(adapter);
     }
 
     @Override

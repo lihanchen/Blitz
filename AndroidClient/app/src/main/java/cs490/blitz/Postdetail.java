@@ -5,18 +5,17 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.text.Editable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -27,11 +26,9 @@ import android.widget.TextView;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -41,32 +38,12 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.TimeZone;
-
-import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
-
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
 
 /**
  * Created by Dingzhe on 11/3/2015.
  */
-public class Postdetail extends AppCompatActivity implements OnMapReadyCallback{
-    ScrollView sv;
-    double latitude;
-    double longitude;
-    private GoogleMap googleMap;
-    String currentusername;
-    String postusername;
-    ArrayList<HashMap<String, Object>> offerdata;
-    String postid;
-
+public class Postdetail extends AppCompatActivity implements OnMapReadyCallback {
     private final LocationListener mLocationListener = new LocationListener() {
         @Override
         public void onLocationChanged(final Location location) {
@@ -88,6 +65,14 @@ public class Postdetail extends AppCompatActivity implements OnMapReadyCallback{
 
         }
     };
+    ScrollView sv;
+    double latitude;
+    double longitude;
+    String currentusername;
+    String postusername;
+    ArrayList<HashMap<String, Object>> offerdata;
+    String postid;
+    private GoogleMap googleMap;
 
     @Override
     public void onMapReady(GoogleMap map) {
@@ -110,7 +95,7 @@ public class Postdetail extends AppCompatActivity implements OnMapReadyCallback{
             latitude = location.getLatitude();
             longitude = location.getLongitude();
             System.out.println(latitude + "+" + longitude);
-        } catch (SecurityException e){
+        } catch (SecurityException e) {
             e.printStackTrace();
         }
         try {
@@ -118,7 +103,7 @@ public class Postdetail extends AppCompatActivity implements OnMapReadyCallback{
                 googleMap = ((WorkaroundMapFragment) getSupportFragmentManager().
                         findFragmentById(R.id.mapPD)).getMap();
             }
-            sv = (ScrollView)findViewById(R.id.containerPD);
+            sv = (ScrollView) findViewById(R.id.containerPD);
             //disable sv when touching map
             ((WorkaroundMapFragment) getSupportFragmentManager().findFragmentById(R.id.mapPD)).setListener(new WorkaroundMapFragment.OnTouchListener() {
                 @Override
@@ -159,12 +144,12 @@ public class Postdetail extends AppCompatActivity implements OnMapReadyCallback{
                 if (jsonArray.getBoolean("success") != true) return;
                 JSONObject json = JSON.parseObject(jsonArray.get("object").toString());
 
-                TextView bounty = (TextView)findViewById(R.id.bountyDP);
-                TextView quantity = (TextView)findViewById(R.id.remainseatDP);
-                TextView description = (TextView)findViewById(R.id.desDetailPD);
-                TextView topic = (TextView)findViewById(R.id.topicPD);
-                TextView username = (TextView)findViewById(R.id.usernamePD);
-                TextView posttime = (TextView)findViewById(R.id.posttimePD);
+                TextView bounty = (TextView) findViewById(R.id.bountyDP);
+                TextView quantity = (TextView) findViewById(R.id.remainseatDP);
+                TextView description = (TextView) findViewById(R.id.desDetailPD);
+                TextView topic = (TextView) findViewById(R.id.topicPD);
+                TextView username = (TextView) findViewById(R.id.usernamePD);
+                TextView posttime = (TextView) findViewById(R.id.posttimePD);
 
                 bounty.append(": " + json.get("bounty").toString());
                 quantity.append(": " + json.get("quantity").toString());
@@ -183,8 +168,8 @@ public class Postdetail extends AppCompatActivity implements OnMapReadyCallback{
                 try {
                     Date d = df.parse(serverTime);
                     posttime.setText(currentTZ.format(d));
-                } catch (Exception e){
-                    Log.e("Err",e.toString());
+                } catch (Exception e) {
+                    Log.e("Err", e.toString());
                 }
 
 
@@ -206,13 +191,13 @@ public class Postdetail extends AppCompatActivity implements OnMapReadyCallback{
                 SharedPreferences sp = getSharedPreferences("cs490.blitz.account", MODE_PRIVATE);
                 String un = sp.getString("username", null);
                 if (un == null) {
-                    Log.e("username = null","");
+                    Log.e("username = null", "");
                     Intent loginIntent = new Intent(Postdetail.this, Login.class);
                     startActivity(loginIntent);
                 } else {
                     Log.e("Login successful", un);
-                    if(un.equals(postname)){
-                        Log.e("same user","");
+                    if (un.equals(postname)) {
+                        Log.e("same user", "");
                     }
                 }
 
@@ -220,26 +205,25 @@ public class Postdetail extends AppCompatActivity implements OnMapReadyCallback{
                 //if this post is created by user then setup accept offer onclicklistener
                 //if not, then setup make offer button
                 int placeholderId = R.id.listofferPD; // placeholderId==12
-                ViewGroup placeholder = (ViewGroup)findViewById(placeholderId);
+                ViewGroup placeholder = (ViewGroup) findViewById(placeholderId);
                 SimpleAdapter adapter = new SimpleAdapter(getApplicationContext(), data,
-                        R.layout.response_item, new String[]{"img", "username", "bounty","content"},
+                        R.layout.response_item, new String[]{"img", "username", "bounty", "content"},
                         new int[]{R.id.avatarRI, R.id.usernameRI, R.id.bountyRI, R.id.detailRI});
-                LinearLayout layout = (LinearLayout)findViewById(R.id.listofferPD);
+                LinearLayout layout = (LinearLayout) findViewById(R.id.listofferPD);
                 final int adapterCount = adapter.getCount();
                 for (int i = 0; i < adapterCount; i++) {
                     View item = adapter.getView(i, null, null);
                     item.setId(i);
                     item.setOnClickListener(new View.OnClickListener() {
                         @Override
-                        public void onClick(View v)
-                        {
-                            final int position=v.getId();
+                        public void onClick(View v) {
+                            final int position = v.getId();
                             System.out.println(position);
-                            if(postusername.equals(currentusername)){
+                            if (postusername.equals(currentusername)) {
                                 System.out.println("this is the same user");
                                 AlertDialog.Builder builder = new AlertDialog.Builder(Postdetail.this);
-                                builder.setMessage("Do you want to accept offer from "+offerdata.get(position).get("username")
-                                        +" with bounty "+offerdata.get(position).get("bounty"))
+                                builder.setMessage("Do you want to accept offer from " + offerdata.get(position).get("username")
+                                        + " with bounty " + offerdata.get(position).get("bounty"))
                                         .setTitle("Accept Offer");
                                 builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int id) {
@@ -254,9 +238,10 @@ public class Postdetail extends AppCompatActivity implements OnMapReadyCallback{
                                                 String ret = Tools.query(JSON.toJSONString(queryRequest), 9069);
                                                 return JSON.parseObject(ret);
                                             }
+
                                             @Override
                                             protected void onPostExecute(JSONObject jsonArray) {
-                                                if(jsonArray != null)
+                                                if (jsonArray != null)
                                                     System.out.println(jsonArray.toString());
                                             }
                                         }.execute();
@@ -278,10 +263,10 @@ public class Postdetail extends AppCompatActivity implements OnMapReadyCallback{
                     placeholder.addView(item);
                 }
 
-                ImageView plussign = (ImageView)findViewById(R.id.plusPD);
-                System.out.println("postuser: "+postusername);
-                System.out.println("currentuser: "+currentusername);
-                if(!postusername.equals(currentusername)){
+                ImageView plussign = (ImageView) findViewById(R.id.plusPD);
+                System.out.println("postuser: " + postusername);
+                System.out.println("currentuser: " + currentusername);
+                if (!postusername.equals(currentusername)) {
                     plussign.setImageResource(R.drawable.plussign);
                     //setup onclick listener to enable user to make an offer:
                     plussign.setOnClickListener(new View.OnClickListener() {
@@ -337,6 +322,44 @@ public class Postdetail extends AppCompatActivity implements OnMapReadyCallback{
                         }
                     });
 
+                }
+
+                //set up delete post button:
+                if(postusername.equals(currentusername)){
+                    Button closebutton = (Button)findViewById(R.id.deletePD);
+                    closebutton.setVisibility(View.VISIBLE);
+                    closebutton.setOnClickListener(new View.OnClickListener(){
+                        @Override
+                        public void onClick(View v) {
+                            new AsyncTask<String, Integer, JSONObject>() {
+                                @Override
+                                protected JSONObject doInBackground(String... params) {
+                                    HashMap<String, Object> queryRequest = new HashMap<>();
+                                    queryRequest.put("operation", "DeletePost");
+                                    queryRequest.put("postID", postid);
+                                    System.out.println(JSON.toJSONString(queryRequest));
+                                    String ret = Tools.query(JSON.toJSONString(queryRequest), 9068);
+                                    return JSON.parseObject(ret);
+                                }
+
+                                @Override
+                                protected void onPostExecute(JSONObject jsonArray) {
+                                    if (jsonArray.get("success") == true){
+                                        System.out.println("Delete success");
+                                        Tools.showToast(getApplicationContext(),"Delete Successed!");
+                                        finish();
+                                    }
+                                    else{
+                                        System.out.println("Delete failed");
+                                        Tools.showToast(getApplicationContext(),"Delete Failed!");
+                                    }
+                                }
+                            }.execute();
+                        }
+                    });
+                } else {
+                    Button closebutton = (Button)findViewById(R.id.deletePD);
+                    closebutton.setVisibility(View.GONE);
                 }
 
 

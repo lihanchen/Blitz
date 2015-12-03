@@ -8,9 +8,7 @@ import android.widget.Toast;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 
-import java.io.BufferedInputStream;
 import java.io.BufferedReader;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.OutputStreamWriter;
@@ -19,7 +17,6 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.TimeZone;
-import org.apache.http.util.ByteArrayBuffer;
 
 public abstract class Tools {
     public volatile static boolean exit = false;
@@ -79,7 +76,7 @@ public abstract class Tools {
     }
 
     public synchronized static String getPic(String picid) {
-        Log.d("enter getpic","");
+        Log.d("enter getpic", "");
         String picdata;
         final String host = "blitzproject.cs.purdue.edu";
         try {
@@ -132,14 +129,14 @@ public abstract class Tools {
             ret = new String(imagedata, "UTF-8");
             */
             ObjectInputStream ois = new ObjectInputStream(client.getInputStream());
-            String g = (String)ois.readObject();
+            String g = (String) ois.readObject();
             System.out.println(g.length());
 
             JSONObject json = JSON.parseObject(ret);
             System.out.print(ret);
             ret = json.getString("data");
-            Log.d("picdata",ret);
-            Log.d("picdata.length",""+ret.length());
+            Log.d("picdata", ret);
+            Log.d("picdata.length", "" + ret.length());
             System.out.print(ret);
             return ret;
         } catch (Exception e) {
