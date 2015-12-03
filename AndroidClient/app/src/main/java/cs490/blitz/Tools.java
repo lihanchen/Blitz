@@ -8,14 +8,18 @@ import android.widget.Toast;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.TimeZone;
+import org.apache.http.util.ByteArrayBuffer;
 
 public abstract class Tools {
     public volatile static boolean exit = false;
@@ -75,6 +79,7 @@ public abstract class Tools {
     }
 
     public synchronized static String getPic(String picid) {
+        Log.d("enter getpic","");
         String picdata;
         final String host = "blitzproject.cs.purdue.edu";
         try {
@@ -87,8 +92,56 @@ public abstract class Tools {
 
             osw.write(JSON.toJSONString(queryRequest));
             osw.flush();
-            BufferedReader responseReader = new BufferedReader(new InputStreamReader(client.getInputStream()));
-            return responseReader.readLine();
+            //BufferedReader responseReader = new BufferedReader(new InputStreamReader(client.getInputStream()));
+            String ret = "";
+
+
+/*
+            BufferedInputStream inBuf = new BufferedInputStream(client.getInputStream());
+            byte buf[] = new byte[1024 * 2];
+            int len;
+            int total = 0;
+            while ((len = inBuf.read(buf)) > 0) {
+                System.out.println(len);
+                total += len;
+            }
+            System.out.println(total);
+*/
+            /*
+            while(true){
+                String v = responseReader.readLine();
+
+                if (v == null){
+                    //Log.d("read pic", "finished");
+                    break;
+                }
+                System.out.println(v);
+                System.out.println(v.length());
+                ret += v;
+            }*/
+            /*
+            InputStream is = client.getInputStream();
+            BufferedInputStream bis = new BufferedInputStream(is, 8190);
+            ByteArrayBuffer baf = new ByteArrayBuffer(50);
+            int current = 0;
+            while(bis.read() != -1){
+                baf.append((byte)current);
+            }
+            byte[] imagedata = baf.toByteArray();
+            System.out.println(imagedata.length);
+            ret = new String(imagedata, "UTF-8");
+            */
+            ObjectInputStream ois = new ObjectInputStream(client.getInputStream());
+            String g = (String)ois.readObject();
+            System.out.println(g.length());
+
+            JSONObject json = JSON.parseObject(ret);
+            System.out.print(ret);
+            ret = json.getString("data");
+            Log.d("picdata",ret);
+            Log.d("picdata.length",""+ret.length());
+            System.out.print(ret);
+            return ret;
         } catch (Exception e) {
             Log.e("Error", "In query", e);
             return null;
