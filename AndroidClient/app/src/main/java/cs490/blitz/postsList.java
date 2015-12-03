@@ -256,7 +256,7 @@ public class postsList extends AppCompatActivity {
         ArrayList<HashMap<String, Object>> adapterData = new ArrayList<>(this.data.size());
         for (Object obj : this.data) {
             JSONObject jsonObject = (JSONObject) obj;
-            if ((nameFilter == null) || (jsonObject.getString("title").indexOf(nameFilter) != -1)) {
+            if ((nameFilter == null) || (jsonObject.getString("title").contains(nameFilter))) {
                 HashMap<String, Object> map = new HashMap<>(3);
                 if (jsonObject.get("category").equals("FoodDiscover"))
                     map.put("img", R.drawable.fooddiscover);
@@ -286,10 +286,11 @@ public class postsList extends AppCompatActivity {
             finish();
         else {
             SharedPreferences sp = getSharedPreferences("cs490.blitz.account", MODE_PRIVATE);
-            username = sp.getString("username", "lhc1");   //TO DO debug
+            username = sp.getString("username", null);
             if (username == null) {
-                Intent loginIntent = new Intent(postsList.this, Login.class);
-                startActivity(loginIntent);
+                sp.edit().putString("username", "lhc1").apply();   //TO DO debug
+                //Intent loginIntent = new Intent(postsList.this, Login.class);
+                //startActivity(loginIntent);
             } else {
                 loadData(mode, null, null, null, null, null);
             }
