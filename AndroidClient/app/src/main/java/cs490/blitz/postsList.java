@@ -57,9 +57,9 @@ public class postsList extends AppCompatActivity {
     String selectedCategory;
     ArrayAdapter<CharSequence> adapterOfCateg;
 
-    EditText bountyU, bountyL, searchUser, searchTitle;
+    EditText bountyU, bountyL, searchUser;
     int intBountyU, intBountyL;
-    String strSearchUser, strSearchTitle;
+    String strSearchUser;
     Button apply;
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,7 +92,7 @@ public class postsList extends AppCompatActivity {
                 mode = 0;
                 findViewById(R.id.textRequest).setBackgroundColor(0xff0003a3);
                 findViewById(R.id.textOffer).setBackgroundColor(0x00000000);
-                loadData(mode, null, null, null, null, null);
+                loadData(mode, null, null, null, null);
             }
         });
 
@@ -102,7 +102,7 @@ public class postsList extends AppCompatActivity {
                 mode = 1;
                 findViewById(R.id.textRequest).setBackgroundColor(0x00000000);
                 findViewById(R.id.textOffer).setBackgroundColor(0xff0003a3);
-                loadData(mode, null, null, null, null, null);
+                loadData(mode, null, null, null, null);
             }
         });
 
@@ -129,6 +129,7 @@ public class postsList extends AppCompatActivity {
 
         ReqOrOffer = (Spinner) findViewById(R.id.spReqOrOfferInFilter);
         adapterOfRoO = ArrayAdapter.createFromResource(this, R.array.Request_Offer, android.R.layout.simple_spinner_item);
+        ReqOrOffer.setAdapter(adapterOfRoO);
         ReqOrOffer.setOnItemSelectedListener(
                 new AdapterView.OnItemSelectedListener() {
                     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -141,6 +142,7 @@ public class postsList extends AppCompatActivity {
 
         categorySpinner = (Spinner) findViewById(R.id.spCategoryInFilter);
         adapterOfCateg = ArrayAdapter.createFromResource(this, R.array.category_list, android.R.layout.simple_spinner_item);
+        categorySpinner.setAdapter(adapterOfCateg);
         categorySpinner.setOnItemSelectedListener(
                 new AdapterView.OnItemSelectedListener() {
                     @Override
@@ -179,6 +181,7 @@ public class postsList extends AppCompatActivity {
         intBountyL = Integer.MIN_VALUE;
         final HashMap<String, Object> hpBountyL = new HashMap<>();
         searchUser = (EditText) findViewById(R.id.etSearchUser);
+
         strSearchUser  = null;
         apply = (Button) findViewById(R.id.bApplyFilter);
         apply.setOnClickListener(new View.OnClickListener() {
@@ -188,15 +191,15 @@ public class postsList extends AppCompatActivity {
                     intBountyU = Integer.parseInt(bountyU.getText().toString());
 
                 } catch (Exception e) {}
-                hpBountyU.put("$gt", intBountyU);
+                hpBountyU.put("$lt", intBountyU);
                 try {
                     intBountyL = Integer.parseInt(bountyL.getText().toString());
                 } catch (Exception e) {}
-                hpBountyL.put("$lt", intBountyL);
+                hpBountyL.put("$gt", intBountyL);
                 strSearchUser = searchUser.getText().toString();
-                strSearchTitle = searchTitle.getText().toString();
 
-                loadData(mode, selectedCategory, hpBountyL, hpBountyU, strSearchUser, strSearchTitle);
+                loadData(mode, selectedCategory, hpBountyL, hpBountyU, strSearchUser);
+                ((DrawerLayout) findViewById(R.id.drawerFilter)).closeDrawer(Gravity.LEFT);
             }
         });
 
@@ -213,7 +216,7 @@ public class postsList extends AppCompatActivity {
         });
     }
 
-    public void loadData(int ReqorOffer, String category, HashMap<String, Object> hpBountyL, HashMap<String, Object> hpBountyU, String searchUser, String searchTitle ) {
+    public void loadData(int ReqorOffer, String category, HashMap<String, Object> hpBountyL, HashMap<String, Object> hpBountyU, String searchUser) {
 
         final HashMap<String, Object> queryRequest = new HashMap<>();
         queryRequest.put("operation", "Query");
@@ -231,8 +234,6 @@ public class postsList extends AppCompatActivity {
         if (searchUser != null && !searchUser.equals(""))
             queryRequest.put("username", searchUser);
 
-        if (searchTitle != null && !searchTitle.equals(""))
-            queryRequest.put("title", searchTitle);
 
         new AsyncTask<HashMap<String, Object>, Integer, JSONArray>() {
             protected JSONArray doInBackground(HashMap<String, Object>... params) {
@@ -292,7 +293,7 @@ public class postsList extends AppCompatActivity {
                 //Intent loginIntent = new Intent(postsList.this, Login.class);
                 //startActivity(loginIntent);
             } else {
-                loadData(mode, null, null, null, null, null);
+                loadData(mode, null, null, null, null);
             }
         }
     }
