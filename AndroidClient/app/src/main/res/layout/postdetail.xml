@@ -225,8 +225,15 @@
 
         </LinearLayout>
 
-
-
+        <Button
+            android:id="@+id/deletePD"
+            android:layout_width="fill_parent"
+            android:layout_height="20dp"
+            android:text="Close This Post"
+            android:layout_margin="10dp"
+            android:layout_marginTop="25dp"
+            android:background="@android:color/holo_red_light"
+            android:visibility="invisible"/>
 
     </LinearLayout>
 </ScrollView>

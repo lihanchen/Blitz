@@ -17,6 +17,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -337,6 +338,44 @@ public class Postdetail extends AppCompatActivity implements OnMapReadyCallback{
                         }
                     });
 
+                }
+
+                //set up delete post button:
+                if(postusername.equals(currentusername)){
+                    Button closebutton = (Button)findViewById(R.id.deletePD);
+                    closebutton.setVisibility(View.VISIBLE);
+                    closebutton.setOnClickListener(new View.OnClickListener(){
+                        @Override
+                        public void onClick(View v) {
+                            new AsyncTask<String, Integer, JSONObject>() {
+                                @Override
+                                protected JSONObject doInBackground(String... params) {
+                                    HashMap<String, Object> queryRequest = new HashMap<>();
+                                    queryRequest.put("operation", "DeletePost");
+                                    queryRequest.put("postID", postid);
+                                    System.out.println(JSON.toJSONString(queryRequest));
+                                    String ret = Tools.query(JSON.toJSONString(queryRequest), 9068);
+                                    return JSON.parseObject(ret);
+                                }
+
+                                @Override
+                                protected void onPostExecute(JSONObject jsonArray) {
+                                    if (jsonArray.get("success") == true){
+                                        System.out.println("Delete success");
+                                        Tools.showToast(getApplicationContext(),"Delete Successed!");
+                                        finish();
+                                    }
+                                    else{
+                                        System.out.println("Delete failed");
+                                        Tools.showToast(getApplicationContext(),"Delete Failed!");
+                                    }
+                                }
+                            }.execute();
+                        }
+                    });
+                } else {
+                    Button closebutton = (Button)findViewById(R.id.deletePD);
+                    closebutton.setVisibility(View.GONE);
                 }
 
 
