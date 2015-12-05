@@ -50,7 +50,6 @@ public class postsList extends AppCompatActivity {
 
 
     Spinner ReqOrOffer;
-    String ReqOrOfferStr;
     ArrayAdapter<CharSequence> adapterOfRoO;
 
     Spinner categorySpinner;
@@ -257,7 +256,7 @@ public class postsList extends AppCompatActivity {
         ArrayList<HashMap<String, Object>> adapterData = new ArrayList<>(this.data.size());
         for (Object obj : this.data) {
             JSONObject jsonObject = (JSONObject) obj;
-            if ((nameFilter == null) || (jsonObject.getString("title").contains(nameFilter))) {
+            if ((nameFilter == null) || (jsonObject.getString("title").toLowerCase().contains(nameFilter.toLowerCase()))) {
                 HashMap<String, Object> map = new HashMap<>(3);
                 if (jsonObject.get("category").equals("FoodDiscover"))
                     map.put("img", R.drawable.fooddiscover);

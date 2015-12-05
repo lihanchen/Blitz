@@ -227,7 +227,6 @@ public class Postdetail extends AppCompatActivity implements OnMapReadyCallback 
                                             @Override
                                             protected JSONObject doInBackground(String... params) {
                                                 Tools.postNotification(postid, (String) offerdata.get(position).get("username"), "Great! Your offer/request has been accepted!");
-                                                Tools.postNotification(postid, (String) offerdata.get(x).get("username"), "Great! Your offer/request has been accepted!");
                                                 HashMap<String, Object> queryRequest = new HashMap<>();
                                                 queryRequest.put("operation", "AcceptOffer");
                                                 queryRequest.put("postID", postid);

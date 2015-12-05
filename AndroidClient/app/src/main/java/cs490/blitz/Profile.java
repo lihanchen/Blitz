@@ -3,12 +3,18 @@ package cs490.blitz;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.RatingBar;
 import android.widget.TextView;
+
+import com.alibaba.fastjson.JSON;
+
+import java.util.HashMap;
 
 public class Profile extends Activity {
 
@@ -43,13 +49,13 @@ public class Profile extends Activity {
                         break;
                     case 1:
                         listIntent = new Intent(Profile.this, CustomizeList.class);
-                        listIntent.putExtra("source","Posts");
+                        listIntent.putExtra("source", "Posts");
                         listIntent.putExtra("username", username);
                         startActivity(listIntent);
                         break;
                     case 2:
                         listIntent = new Intent(Profile.this, CustomizeList.class);
-                        listIntent.putExtra("source","Responses");
+                        listIntent.putExtra("source", "Responses");
                         listIntent.putExtra("username", username);
                         startActivity(listIntent);
                         break;
@@ -64,6 +70,21 @@ public class Profile extends Activity {
                 }
             }
         });
+
+        new AsyncTask<String, Integer, Float>() {
+            protected Float doInBackground(String[] params) {
+                HashMap<String, Object> getProfileRequest = new HashMap<>();
+                getProfileRequest.put("operation", "GetProfile");
+                getProfileRequest.put("username", params[0]);
+                String ret = Tools.query(JSON.toJSONString(getProfileRequest), 9066);
+                return JSON.parseObject(ret).getFloat("rating");
+            }
+
+            protected void onPostExecute(Float o) {
+                ((RatingBar) findViewById(R.id.ratingBar)).setRating(o);
+            }
+        }.execute(username);
+
     }
 
 }
