@@ -81,7 +81,11 @@ public class postsList extends AppCompatActivity {
         findViewById(R.id.textFilers).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ((DrawerLayout) findViewById(R.id.drawerFilter)).openDrawer(Gravity.LEFT);
+                DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawerFilter);
+                if (drawer.isDrawerOpen(Gravity.LEFT))
+                    drawer.closeDrawer(Gravity.LEFT);
+                else
+                    drawer.openDrawer(Gravity.LEFT);
             }
         });
 
@@ -126,17 +130,25 @@ public class postsList extends AppCompatActivity {
         Intent serviceIntent = new Intent(postsList.this, NotificationChecker.class);
         startService(serviceIntent);
 
-        ReqOrOffer = (Spinner) findViewById(R.id.spReqOrOfferInFilter);
-        adapterOfRoO = ArrayAdapter.createFromResource(this, R.array.Request_Offer, android.R.layout.simple_spinner_item);
-        ReqOrOffer.setAdapter(adapterOfRoO);
-        ReqOrOffer.setOnItemSelectedListener(
-                new AdapterView.OnItemSelectedListener() {
-                    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                        if (position > 1) mode = 1;
-                    }
-                    public void onNothingSelected(AdapterView<?> parent) {}
-                }
-        );
+//        ReqOrOffer = (Spinner) findViewById(R.id.spReqOrOfferInFilter);
+//        adapterOfRoO = ArrayAdapter.createFromResource(this, R.array.Request_Offer, android.R.layout.simple_spinner_item);
+//        ReqOrOffer.setAdapter(adapterOfRoO);
+//        ReqOrOffer.setOnItemSelectedListener(
+//                new AdapterView.OnItemSelectedListener() {
+//                    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+//                        if (position > 1) {
+//                            mode = 0;
+//                            findViewById(R.id.textOffer).setBackgroundColor(0x00000000);
+//                            findViewById(R.id.textRequest).setBackgroundColor(0xff0003a3);
+//                        }else{
+//                            mode = 1;
+//                            findViewById(R.id.textRequest).setBackgroundColor(0x00000000);
+//                            findViewById(R.id.textOffer).setBackgroundColor(0xff0003a3);
+//                        }
+//                    }
+//                    public void onNothingSelected(AdapterView<?> parent) {}
+//                }
+//        );
 
 
         categorySpinner = (Spinner) findViewById(R.id.spCategoryInFilter);
@@ -199,6 +211,8 @@ public class postsList extends AppCompatActivity {
 
                 loadData(mode, selectedCategory, hpBountyL, hpBountyU, strSearchUser);
                 ((DrawerLayout) findViewById(R.id.drawerFilter)).closeDrawer(Gravity.LEFT);
+
+
             }
         });
 
