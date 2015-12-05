@@ -23,17 +23,16 @@ public abstract class Tools {
 
 
     public synchronized static void postNotification(String postID, String userName, String msg) {
-        final HashMap<String, Object> notification = new HashMap<>();
+        HashMap<String, Object> notification = new HashMap<>();
         notification.put("operation", "PostNotifications");
         notification.put("postID", postID);
         notification.put("username", userName);
         notification.put("msg", msg);
 
-        final AsyncTask<HashMap<String, Object>, Integer, JSONObject> success = new AsyncTask<HashMap<String, Object>, Integer, JSONObject>() {
-            @SafeVarargs
+        new AsyncTask<HashMap<String, Object>, Integer, JSONObject>() {
             protected final JSONObject doInBackground(HashMap<String, Object>... params) {
 
-                String ret = Tools.query(JSON.toJSONString(notification), 9068);
+                String ret = Tools.query(JSON.toJSONString(params[0]), 9072);
                 return JSON.parseObject(ret);
             }
 

@@ -120,11 +120,6 @@ public class Postdetail extends AppCompatActivity implements OnMapReadyCallback 
             e.printStackTrace();
         }
 
-
-
-
-
-
         new AsyncTask<String, Integer, JSONObject>() {
             protected JSONObject doInBackground(String... params) {
                 HashMap<String, Object> queryRequest = new HashMap<>();
@@ -183,7 +178,7 @@ public class Postdetail extends AppCompatActivity implements OnMapReadyCallback 
                     String bounty1 = "Offering: ";
                     bounty1 += jsonObject.get("bounty").toString();
                     map.put("bounty", bounty1);
-                    map.put("content", jsonObject.get("content"));
+                    map.put("comment", jsonObject.get("comment"));
                     data.add(map);
                 }
                 offerdata = data;
@@ -207,7 +202,7 @@ public class Postdetail extends AppCompatActivity implements OnMapReadyCallback 
                 int placeholderId = R.id.listofferPD; // placeholderId==12
                 ViewGroup placeholder = (ViewGroup) findViewById(placeholderId);
                 SimpleAdapter adapter = new SimpleAdapter(getApplicationContext(), data,
-                        R.layout.response_item, new String[]{"img", "username", "bounty", "content"},
+                        R.layout.response_item, new String[]{"img", "username", "bounty", "comment"},
                         new int[]{R.id.avatarRI, R.id.usernameRI, R.id.bountyRI, R.id.detailRI});
                 LinearLayout layout = (LinearLayout) findViewById(R.id.listofferPD);
                 final int adapterCount = adapter.getCount();
@@ -231,6 +226,8 @@ public class Postdetail extends AppCompatActivity implements OnMapReadyCallback 
                                         new AsyncTask<String, Integer, JSONObject>() {
                                             @Override
                                             protected JSONObject doInBackground(String... params) {
+                                                Tools.postNotification(postid, (String) offerdata.get(position).get("username"), "Great! Your offer/request has been accepted!");
+                                                Tools.postNotification(postid, (String) offerdata.get(x).get("username"), "Great! Your offer/request has been accepted!");
                                                 HashMap<String, Object> queryRequest = new HashMap<>();
                                                 queryRequest.put("operation", "AcceptOffer");
                                                 queryRequest.put("postID", postid);
@@ -241,7 +238,6 @@ public class Postdetail extends AppCompatActivity implements OnMapReadyCallback 
 
                                             @Override
                                             protected void onPostExecute(JSONObject jsonArray) {
-                                                Tools.postNotification(postid,(String)offerdata.get(position).get("username"), "Great! Your offer/request has been accepted!");
                                                 if (jsonArray != null)
                                                     System.out.println(jsonArray.toString());
                                             }
@@ -293,7 +289,7 @@ public class Postdetail extends AppCompatActivity implements OnMapReadyCallback 
                                             new AsyncTask<String, Integer, JSONObject>() {
                                                 @Override
                                                 protected JSONObject doInBackground(String... params) {
-
+                                                    Tools.postNotification(postid, postusername, "Great! Someone responded to your post!");
                                                     HashMap<String, Object> queryRequest = new HashMap<>();
                                                     queryRequest.put("operation", "OfferPrice");
                                                     queryRequest.put("postID", postid);
@@ -307,7 +303,6 @@ public class Postdetail extends AppCompatActivity implements OnMapReadyCallback 
 
                                                 @Override
                                                 protected void onPostExecute(JSONObject jsonArray) {
-                                                    Tools.postNotification(postid, postusername, "Great! There is someone left message in your post!");
                                                     if (jsonArray != null)
                                                         System.out.println(jsonArray.toString());
                                                 }
