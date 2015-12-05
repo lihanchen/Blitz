@@ -241,6 +241,7 @@ public class Postdetail extends AppCompatActivity implements OnMapReadyCallback 
 
                                             @Override
                                             protected void onPostExecute(JSONObject jsonArray) {
+                                                Tools.postNotification(postid,(String)offerdata.get(position).get("username"), "Great! Your offer/request has been accepted!");
                                                 if (jsonArray != null)
                                                     System.out.println(jsonArray.toString());
                                             }
@@ -306,6 +307,7 @@ public class Postdetail extends AppCompatActivity implements OnMapReadyCallback 
 
                                                 @Override
                                                 protected void onPostExecute(JSONObject jsonArray) {
+                                                    Tools.postNotification(postid, postusername, "Great! There is someone left message in your post!");
                                                     if (jsonArray != null)
                                                         System.out.println(jsonArray.toString());
                                                 }
@@ -344,7 +346,7 @@ public class Postdetail extends AppCompatActivity implements OnMapReadyCallback 
 
                                 @Override
                                 protected void onPostExecute(JSONObject jsonArray) {
-                                    if (jsonArray.get("success") == true){
+                                    if (jsonArray.getBoolean("success") == true){
                                         System.out.println("Delete success");
                                         Tools.showToast(getApplicationContext(),"Delete Successed!");
                                         finish();
