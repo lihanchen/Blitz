@@ -33,7 +33,7 @@
             android:value="AIzaSyALe02HJAtl1xFZdoFffmw16VFjOXvhxp4" />
 
         <activity
-            android:name=".postsList"
+            android:name=".PostsList"
             android:label="Blitz"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
@@ -55,7 +55,7 @@
             android:name=".ForgetPassword"
             android:label="ForgetPassword" />
         <activity
-            android:name=".Postdetail"
+            android:name=".PostDetail"
             android:label="Postdetail" />
         <activity
             android:name=".MakeAPost"

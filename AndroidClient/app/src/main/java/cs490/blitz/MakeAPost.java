@@ -169,7 +169,7 @@ public class MakeAPost extends Activity implements View.OnClickListener {
         post.put("TransactionCompleted", false);
         post.put("photo", photo);
         post.put("response", new JSONObject[0]);
-        post.put("isRequest", postsList.mode == 1);
+        post.put("isRequest", PostsList.mode == 1);
         post.put("category", selectedCategory);
 
         final AsyncTask<HashMap<String, Object>, Integer, JSONObject> success = new AsyncTask<HashMap<String, Object>, Integer, JSONObject>() {
@@ -204,9 +204,6 @@ public class MakeAPost extends Activity implements View.OnClickListener {
                 break;
             case RESULT_MATCHING:
                 if (resultCode == RESULT_OK) {
-                    Intent openMatchingPostIntent = new Intent(MakeAPost.this, Postdetail.class);
-                    openMatchingPostIntent.putExtra("postid", "56355c82519882c405964951");
-                    startActivity(openMatchingPostIntent);
                     finish();
                 }
                 break;

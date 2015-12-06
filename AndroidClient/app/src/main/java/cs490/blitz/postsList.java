@@ -30,9 +30,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 
-public class postsList extends AppCompatActivity {
+public class PostsList extends AppCompatActivity {
     static int mode; //0=request 1=offer
-    static postsList instance;
+    static PostsList instance;
     volatile boolean exitOnNextBack = false;
     JSONArray data;
     String username;
@@ -73,7 +73,7 @@ public class postsList extends AppCompatActivity {
         findViewById(R.id.fab).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent loginIntent = new Intent(postsList.this, MakeAPost.class);
+                Intent loginIntent = new Intent(PostsList.this, MakeAPost.class);
                 startActivity(loginIntent);
             }
         });
@@ -112,7 +112,7 @@ public class postsList extends AppCompatActivity {
         findViewById(R.id.imageProfile).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent ProfileIntent = new Intent(postsList.this, Profile.class);
+                Intent ProfileIntent = new Intent(PostsList.this, Profile.class);
                 ProfileIntent.putExtra("username", username);
                 startActivity(ProfileIntent);
             }
@@ -120,36 +120,14 @@ public class postsList extends AppCompatActivity {
 
         ((ListView) findViewById(R.id.listPostList)).setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent ProfileIntent = new Intent(postsList.this, Postdetail.class);
+                Intent ProfileIntent = new Intent(PostsList.this, PostDetail.class);
                 ProfileIntent.putExtra("postid", ((JSONObject) data.get(position)).getString("_id"));
-                ProfileIntent.putExtra("username",username);
                 startActivity(ProfileIntent);
             }
         });
 
-        Intent serviceIntent = new Intent(postsList.this, NotificationChecker.class);
+        Intent serviceIntent = new Intent(PostsList.this, NotificationChecker.class);
         startService(serviceIntent);
-
-//        ReqOrOffer = (Spinner) findViewById(R.id.spReqOrOfferInFilter);
-//        adapterOfRoO = ArrayAdapter.createFromResource(this, R.array.Request_Offer, android.R.layout.simple_spinner_item);
-//        ReqOrOffer.setAdapter(adapterOfRoO);
-//        ReqOrOffer.setOnItemSelectedListener(
-//                new AdapterView.OnItemSelectedListener() {
-//                    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-//                        if (position > 1) {
-//                            mode = 0;
-//                            findViewById(R.id.textOffer).setBackgroundColor(0x00000000);
-//                            findViewById(R.id.textRequest).setBackgroundColor(0xff0003a3);
-//                        }else{
-//                            mode = 1;
-//                            findViewById(R.id.textRequest).setBackgroundColor(0x00000000);
-//                            findViewById(R.id.textOffer).setBackgroundColor(0xff0003a3);
-//                        }
-//                    }
-//                    public void onNothingSelected(AdapterView<?> parent) {}
-//                }
-//        );
-
 
         categorySpinner = (Spinner) findViewById(R.id.spCategoryInFilter);
         adapterOfCateg = ArrayAdapter.createFromResource(this, R.array.category_list, android.R.layout.simple_spinner_item);
@@ -303,7 +281,7 @@ public class postsList extends AppCompatActivity {
             username = sp.getString("username", null);
             if (username == null) {
                 sp.edit().putString("username", "lhc1").apply();   //TODO reset debug login
-                //Intent loginIntent = new Intent(postsList.this, Login.class);
+                //Intent loginIntent = new Intent(PostsList.this, Login.class);
                 //startActivity(loginIntent);
             } else {
                 loadData(mode, null, null, null, null);

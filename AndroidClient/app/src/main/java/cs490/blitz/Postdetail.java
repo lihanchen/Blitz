@@ -47,7 +47,7 @@ import java.util.TimeZone;
 //TODO accept multiple
 //TODO profile of other user
 
-public class Postdetail extends AppCompatActivity implements OnMapReadyCallback {
+public class PostDetail extends AppCompatActivity implements OnMapReadyCallback {
     private final LocationListener mLocationListener = new LocationListener() {
         @Override
         public void onLocationChanged(final Location location) {
@@ -89,7 +89,8 @@ public class Postdetail extends AppCompatActivity implements OnMapReadyCallback 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.postdetail);
         postid = getIntent().getStringExtra("postid");
-        currentusername = getIntent().getStringExtra("username");
+        SharedPreferences sp = getSharedPreferences("cs490.blitz.account", MODE_PRIVATE);
+        currentusername = sp.getString("username", null);
 
         //map related
         try {
@@ -191,7 +192,7 @@ public class Postdetail extends AppCompatActivity implements OnMapReadyCallback 
                 String un = sp.getString("username", null);
                 if (un == null) {
                     Log.e("username = null", "");
-                    Intent loginIntent = new Intent(Postdetail.this, Login.class);
+                    Intent loginIntent = new Intent(PostDetail.this, Login.class);
                     startActivity(loginIntent);
                 } else {
                     Log.e("Login successful", un);
@@ -220,7 +221,7 @@ public class Postdetail extends AppCompatActivity implements OnMapReadyCallback 
                             System.out.println(position);
                             if (postusername.equals(currentusername)) {
                                 System.out.println("this is the same user");
-                                AlertDialog.Builder builder = new AlertDialog.Builder(Postdetail.this);
+                                AlertDialog.Builder builder = new AlertDialog.Builder(PostDetail.this);
                                 builder.setMessage("Do you want to accept offer from " + offerdata.get(position).get("username")
                                         + " with bounty " + offerdata.get(position).get("bounty"))
                                         .setTitle("Accept Offer");
@@ -271,9 +272,9 @@ public class Postdetail extends AppCompatActivity implements OnMapReadyCallback 
                     //setup onclick listener to enable user to make an offer:
                     plussign.setOnClickListener(new View.OnClickListener() {
                         public void onClick(View v) {
-                            AlertDialog.Builder builder = new AlertDialog.Builder(Postdetail.this);
+                            AlertDialog.Builder builder = new AlertDialog.Builder(PostDetail.this);
                             // Get the layout inflater
-                            LayoutInflater inflater = Postdetail.this.getLayoutInflater();
+                            LayoutInflater inflater = PostDetail.this.getLayoutInflater();
 
                             // Inflate and set the layout for the dialog
                             // Pass null as the parent view because its going in the dialog layout

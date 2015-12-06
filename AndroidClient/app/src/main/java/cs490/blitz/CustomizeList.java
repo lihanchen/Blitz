@@ -1,10 +1,13 @@
 package cs490.blitz;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 
@@ -79,6 +82,13 @@ public class CustomizeList extends AppCompatActivity {
                 lv.setAdapter(adapter);
             }
         }.execute(source, username);
-    }
 
+        ((ListView) findViewById(R.id.listPostList)).setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent ProfileIntent = new Intent(CustomizeList.this, PostDetail.class);
+                ProfileIntent.putExtra("postid", ((JSONObject) data.get(position)).getString("_id"));
+                startActivity(ProfileIntent);
+            }
+        });
+    }
 }

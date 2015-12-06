@@ -1,9 +1,12 @@
 package cs490.blitz;
 
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 
@@ -65,6 +68,11 @@ public class MatchingList extends AppCompatActivity {
                     }
                 }
 
+                HashMap<String, Object> map = new HashMap<>(1);
+                returnIndex = data.size();
+                map.put("title", "I still want to send a new Post");
+                data.add(map);
+
                 ListView lv = (ListView) findViewById(R.id.listPostList);
                 SimpleAdapter adapter = new SimpleAdapter(getApplicationContext(), data,
                         R.layout.list_item, new String[]{"img", "title", "time"},
@@ -72,6 +80,17 @@ public class MatchingList extends AppCompatActivity {
                 lv.setAdapter(adapter);
             }
         }.execute(category);
-    }
 
+        ((ListView) findViewById(R.id.listPostList)).setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                if (position == returnIndex) {
+                    setResult(RESULT_CANCELED);
+                    finish();
+                }
+                Intent ProfileIntent = new Intent(MatchingList.this, PostDetail.class);
+                ProfileIntent.putExtra("postid", ((JSONObject) data.get(position)).getString("_id"));
+                startActivity(ProfileIntent);
+            }
+        });
+    }
 }
