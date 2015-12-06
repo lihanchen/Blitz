@@ -10,7 +10,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -129,9 +128,11 @@ public class MakeAPost extends Activity implements View.OnClickListener {
         matchingIntent.putExtra("title", title);
         matchingIntent.putExtra("category", selectedCategory);
         startActivityForResult(matchingIntent, RESULT_MATCHING);
+    }
 
-        Log.e("next", "next instruction");
-
+    void create() {
+        String title = postTitle.getText().toString();
+        String body = postBody.getText().toString();
         String strContact = contact.getText().toString();
         int intBounty, intQuantity;
         try {
@@ -205,7 +206,8 @@ public class MakeAPost extends Activity implements View.OnClickListener {
             case RESULT_MATCHING:
                 if (resultCode == RESULT_OK) {
                     finish();
-                }
+                } else
+                    create();
                 break;
         }
     }

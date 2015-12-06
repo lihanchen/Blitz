@@ -19,8 +19,7 @@ import java.util.HashMap;
 
 //TODO Matching
 public class MatchingList extends AppCompatActivity {
-    JSONArray data;
-    int returnIndex = -1;
+    HashMap<Integer, String> IDs;
     String title;
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,7 +27,7 @@ public class MatchingList extends AppCompatActivity {
         setContentView(R.layout.matching_list);
         title = getIntent().getStringExtra("title");
         String category = getIntent().getStringExtra("category");
-        setTitle("Potential Existing Post");
+        setTitle("Potential Existing Posts");
         loadData(category);
     }
 
@@ -38,6 +37,7 @@ public class MatchingList extends AppCompatActivity {
                 HashMap<String, Object> queryRequest = new HashMap<>();
                 queryRequest.put("operation", "Query");
                 queryRequest.put("category", params[0]);
+                queryRequest.put("isRequest", PostsList.mode == 0);
                 String ret = Tools.query(JSON.toJSONString(queryRequest), 9067);
                 return JSON.parseArray(ret);
             }
@@ -48,8 +48,8 @@ public class MatchingList extends AppCompatActivity {
                     Log.e("Err", "Failed login");
                     return;
                 }
-                data = jsonArray;
                 ArrayList<HashMap<String, Object>> data = new ArrayList<>(jsonArray.size());
+                IDs = new HashMap<Integer, String>();
                 for (Object obj : jsonArray) {
                     JSONObject jsonObject = (JSONObject) obj;
                     if (jsonObject.getString("title").toLowerCase().contains(title.toLowerCase())) {
@@ -64,14 +64,15 @@ public class MatchingList extends AppCompatActivity {
                             map.put("img", R.drawable.other);
                         map.put("title", jsonObject.get("title"));
                         map.put("time", Tools.timeProcess(jsonObject.get("postTime").toString()));
+                        IDs.put(data.size(), jsonObject.getString("_id"));
                         data.add(map);
                     }
                 }
 
-                HashMap<String, Object> map = new HashMap<>(1);
-                returnIndex = data.size();
-                map.put("title", "I still want to send a new Post");
-                data.add(map);
+                if (data.size() == 0) {
+                    setResult(RESULT_CANCELED);
+                    finish();
+                }
 
                 ListView lv = (ListView) findViewById(R.id.listPostList);
                 SimpleAdapter adapter = new SimpleAdapter(getApplicationContext(), data,
@@ -83,13 +84,19 @@ public class MatchingList extends AppCompatActivity {
 
         ((ListView) findViewById(R.id.listPostList)).setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if (position == returnIndex) {
-                    setResult(RESULT_CANCELED);
-                    finish();
-                }
                 Intent ProfileIntent = new Intent(MatchingList.this, PostDetail.class);
-                ProfileIntent.putExtra("postid", ((JSONObject) data.get(position)).getString("_id"));
+                ProfileIntent.putExtra("postid", IDs.get(position));
                 startActivity(ProfileIntent);
+                setResult(RESULT_OK);
+                finish();
+            }
+        });
+
+        findViewById(R.id.buttonSkipMatching).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setResult(RESULT_CANCELED);
+                finish();
             }
         });
     }
