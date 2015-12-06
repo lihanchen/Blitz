@@ -1,16 +1,17 @@
 exports.offer=function (receivedObj,socket){
 	var ret={};
 	try{
-		global.collection.findOne({postID:receivedObj.postID},function(err,item){
+		var id=require("mongodb").ObjectID(receivedObj.postID);
+		global.collection.findOne({"_id":id},function(err,item){
 			if (item==null){
 				ret.success=false;
 				ret.msg="Post doesn't exist";
-			}else if(item.TranscationCompleted==true){
+			}else if(item.TransactionCompleted==true){
 				ret.success=false;
-				ret.msg="Transcation is already completed";
+				ret.msg="Transaction is already completed";
 			}else{
-				global.collection.update({postID:receivedObj.postID},{$pull:{response:{username:receivedObj.username}}},function(err,item){
-					global.collection.update({postID:receivedObj.postID},{$push:{response:{username:receivedObj.username,comment:receivedObj.comment,bounty:receivedObj.offeredPrice}}});
+				global.collection.update({"_id":id},{$pull:{response:{username:receivedObj.username}}},function(err,item){
+					global.collection.update({"_id":id},{$push:{response:{username:receivedObj.username,comment:receivedObj.comment,bounty:receivedObj.offeredPrice}}});
 				});
 				ret.success=true;
 			}

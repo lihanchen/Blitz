@@ -9,7 +9,7 @@ exports.forget=function (receivedObj,socket){
 				var unlockCode=Math.round(Math.random()*1000000000);
 				global.collection.update({username:receivedObj.username},{$set:{forget:unlockCode}}); 
 				var emailModule=require("./sendEmail");
-				var link='http://127.0.0.1:5006/reset?username='+receivedObj.username+'&code='+unlockCode;
+				var link='http://blitzproject.cs.purdue.edu/reset?username='+receivedObj.username+'&code='+unlockCode;
 				var email = {
 				    from: 'Blitz <lhcmaiche@gmail.com.',
 						to: item.email,

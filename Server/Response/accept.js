@@ -1,16 +1,17 @@
 exports.accept=function (receivedObj,socket){
 	var ret={};
 	try{
-		global.collection.findOne({postID:receivedObj.postID},function(err,item){
+		var id=require("mongodb").ObjectID(receivedObj.postID);
+		global.collection.findOne({"_id":id},function(err,item){
 			if (item==null){
 				ret.success=false;
 				ret.msg="Post doesn't exist";
-			}else if(item.TranscationCompleted==true){
+			}else if(item.TransactionCompleted==true){
 				ret.success=false;
-				ret.msg="Transcation is already completed";
+				ret.msg="Transaction is already completed";
 			}else{
-				global.collection.update({postID:receivedObj.postID},{$pull:{response:{username:{$ne:receivedObj.username}}}});
-				global.collection.update({postID:receivedObj.postID},{$set:{TranscationCompleted:true}});
+				global.collection.update({"_id":id},{$pull:{response:{username:{$ne:receivedObj.username}}}});
+				global.collection.update({"_id":id},{$set:{TransactionCompleted:true}});
 				ret.success=true;
 			}
 			socket.write(JSON.stringify(ret));

@@ -1,5 +1,5 @@
 function listen(){
-	var port=5001;
+	var port=9067;
 	var net=require('net');
 	var server=net.createServer(function(socket) {
 			socket.on('data', function(data) {
@@ -23,7 +23,7 @@ function listen(){
 
 function query(filters, socket) {
 	delete filters['operation'];
-	global.collection.find(filters,{_id:0,postID:1,title:1,isRequest:1,postTime:1,TranscationCompleted:1}).toArray(function(err,doc){
+	global.collection.find(filters,{_id:1,title:1,isRequest:1,postTime:1,TransactionCompleted:1,category:1}).toArray(function(err,doc){
 		socket.write(JSON.stringify(doc));
 		socket.destroy();
 	});

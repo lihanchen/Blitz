@@ -1,7 +1,8 @@
 exports.get=function (receivedObj,socket){
 	var ret={};
 	try{
-		global.collection.findOne({postID:receivedObj.postID},{_id:0},function(err,item){
+		var id=require("mongodb").ObjectID(receivedObj.postID);
+		global.collection.findOne({"_id":id},function(err,item){
 			if (item==null){
 				ret.success=false;
 				ret.msg="Post doesn't exist";

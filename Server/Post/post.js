@@ -1,5 +1,5 @@
 function listen(){
-	var port=5002;
+	var port=9068;
 	var net=require('net');
 	var server=net.createServer(function(socket) {
 			socket.on('data', function(data) {
@@ -8,7 +8,12 @@ function listen(){
 					if (json.operation=="CreatePost"){
 						var postModule=require("./createPost");
 						postModule.createPost(json, socket);
-					}else{
+					}
+					else if (json.operation=="DeletePost"){
+						var deleteModule = require("./deletePost");
+						deleteModule.deletePost(json,socket);
+					}
+					else{
 						socket.write(JSON.stringify({error:"Unknown Operation"}));
 						socket.destroy();
 					}

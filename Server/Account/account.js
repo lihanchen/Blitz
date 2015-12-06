@@ -1,5 +1,5 @@
 function listen(){
-	var port=5000;
+	var port=9066;
 	var net=require('net');
 	var server=net.createServer(function(socket) {
 			socket.on('data', function(data) {
@@ -17,6 +17,12 @@ function listen(){
 					}else if(json.operation=="ModifyProfile"){
 						var modifyModule=require("./modify");
 						modifyModule.modify(json, socket);
+					}else if(json.operation=="GetProfile"){
+						var getModule=require("./get");
+						getModule.get(json, socket);
+					}else if(json.operation=="Rate"){
+						var rateModule=require("./rate");
+						rateModule.rate(json, socket);
 					}else{
 						socket.write(JSON.stringify({error:"Unknown Operation"}));
 						socket.destroy();

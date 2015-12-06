@@ -1,0 +1,18 @@
+<resources>
+    <string name="app_name">Blitz</string>
+    <string name="action_settings">Settings</string>
+    <string name="select_category">Select Category</string>
+    <string-array name="category_list">
+        <item>Category</item>
+        <item>Food Discovery</item>
+        <item>Carpool</item>
+        <item>House Rental</item>
+        <item>Other</item>
+    </string-array>
+
+    <string-array name="Request_Offer">
+        <item>Offer or Request</item>
+        <item>Offers</item>
+        <item>Requests</item>
+    </string-array>
+</resources>
