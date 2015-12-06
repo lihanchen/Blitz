@@ -302,7 +302,7 @@ public class postsList extends AppCompatActivity {
             SharedPreferences sp = getSharedPreferences("cs490.blitz.account", MODE_PRIVATE);
             username = sp.getString("username", null);
             if (username == null) {
-                sp.edit().putString("username", "lhc1").apply();   //TO DO debug
+                sp.edit().putString("username", "lhc1").apply();   //TODO reset debug login
                 //Intent loginIntent = new Intent(postsList.this, Login.class);
                 //startActivity(loginIntent);
             } else {

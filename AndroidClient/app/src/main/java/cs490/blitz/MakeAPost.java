@@ -10,6 +10,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -30,6 +31,7 @@ import static android.util.Base64.encodeToString;
 
 public class MakeAPost extends Activity implements View.OnClickListener {
     private static final int RESULT_IMAGE = 1;
+    private static final int RESULT_MATCHING = 2;
 
     Spinner categorySpinner;
     String selectedCategory;
@@ -122,6 +124,14 @@ public class MakeAPost extends Activity implements View.OnClickListener {
             Tools.showToast(getApplicationContext(), "Please provide complete title and body");
             return;
         }
+
+        Intent matchingIntent = new Intent(MakeAPost.this, MatchingList.class);
+        matchingIntent.putExtra("title", title);
+        matchingIntent.putExtra("category", selectedCategory);
+        startActivityForResult(matchingIntent, RESULT_MATCHING);
+
+        Log.e("next", "next instruction");
+
         String strContact = contact.getText().toString();
         int intBounty, intQuantity;
         try {
@@ -183,13 +193,24 @@ public class MakeAPost extends Activity implements View.OnClickListener {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode != RESULT_IMAGE || resultCode != RESULT_OK || data == null) {
-            Tools.showToast(getApplicationContext(), "Error loading image");
-            return;
+        switch (requestCode) {
+            case RESULT_IMAGE:
+                if (resultCode != RESULT_OK || data == null) {
+                    Tools.showToast(getApplicationContext(), "Error loading image");
+                    return;
+                }
+                Uri selectedImage = data.getData();
+                imageToUpload.setImageURI(selectedImage);
+                break;
+            case RESULT_MATCHING:
+                if (resultCode == RESULT_OK) {
+                    Intent openMatchingPostIntent = new Intent(MakeAPost.this, Postdetail.class);
+                    openMatchingPostIntent.putExtra("postid", "56355c82519882c405964951");
+                    startActivity(openMatchingPostIntent);
+                    finish();
+                }
+                break;
         }
-        Uri selectedImage = data.getData();
-        imageToUpload.setImageURI(selectedImage);
-
     }
 
     private String encodeImage() {

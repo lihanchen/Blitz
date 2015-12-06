@@ -27,49 +27,81 @@ public class Profile extends Activity {
         setContentView(R.layout.profile);
 
         username = getIntent().getStringExtra("username");
+        sp = getSharedPreferences("cs490.blitz.account", MODE_PRIVATE);
+        String myUsername = sp.getString("username", null);
+
         ((TextView) findViewById(R.id.textUsername)).setText(username);
 
-        String item[] = new String[5];
-        int i = 0;
-        item[i++] = "Notifications";
-        item[i++] = "My Posts";
-        item[i++] = "My Responses";
-        item[i++] = "Change Password";
-        item[i++] = "Log out";
-        ((ListView) findViewById(R.id.listView)).setAdapter(new ArrayAdapter<>(this, R.layout.profile_item, R.id.textItem, item));
-        ((ListView) findViewById(R.id.listView)).setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent listIntent;
-                switch (position) {
-                    case 0:
-                        listIntent = new Intent(Profile.this, NotificationList.class);
-                        listIntent.putExtra("username", username);
-                        startActivity(listIntent);
-                        break;
-                    case 1:
-                        listIntent = new Intent(Profile.this, CustomizeList.class);
-                        listIntent.putExtra("source", "Posts");
-                        listIntent.putExtra("username", username);
-                        startActivity(listIntent);
-                        break;
-                    case 2:
-                        listIntent = new Intent(Profile.this, CustomizeList.class);
-                        listIntent.putExtra("source", "Responses");
-                        listIntent.putExtra("username", username);
-                        startActivity(listIntent);
-                        break;
-                    case 3:
-                        Intent loginIntent = new Intent(Profile.this, ChangePassword.class);
-                        startActivity(loginIntent);
-                        break;
-                    case 4:
-                        sp.edit().putString("username", null).apply();
-                        finish();
-                        break;
+        if (myUsername.equals(username)) {
+            String item[] = new String[5];
+            int i = 0;
+            item[i++] = "Posts";
+            item[i++] = "Responses";
+            item[i++] = "Notifications";
+            item[i++] = "Change Password";
+            item[i++] = "Log out";
+            ((ListView) findViewById(R.id.listView)).setAdapter(new ArrayAdapter<>(this, R.layout.profile_item, R.id.textItem, item));
+            ((ListView) findViewById(R.id.listView)).setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    Intent listIntent;
+                    switch (position) {
+                        case 2:
+                            listIntent = new Intent(Profile.this, NotificationList.class);
+                            listIntent.putExtra("username", username);
+                            startActivity(listIntent);
+                            break;
+                        case 0:
+                            listIntent = new Intent(Profile.this, CustomizeList.class);
+                            listIntent.putExtra("source", "Posts");
+                            listIntent.putExtra("username", username);
+                            startActivity(listIntent);
+                            break;
+                        case 1:
+                            listIntent = new Intent(Profile.this, CustomizeList.class);
+                            listIntent.putExtra("source", "Responses");
+                            listIntent.putExtra("username", username);
+                            startActivity(listIntent);
+                            break;
+                        case 3:
+                            Intent loginIntent = new Intent(Profile.this, ChangePassword.class);
+                            startActivity(loginIntent);
+                            break;
+                        case 4:
+                            sp.edit().putString("username", null).apply();
+                            finish();
+                            break;
+                    }
                 }
-            }
-        });
+            });
+        } else {
+            String item[] = new String[2];
+            int i = 0;
+            item[i++] = "Posts";
+            item[i++] = "Responses";
+            ((ListView) findViewById(R.id.listView)).setAdapter(new ArrayAdapter<>(this, R.layout.profile_item, R.id.textItem, item));
+            ((ListView) findViewById(R.id.listView)).setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    Intent listIntent;
+                    switch (position) {
+                        case 0:
+                            listIntent = new Intent(Profile.this, CustomizeList.class);
+                            listIntent.putExtra("source", "Posts");
+                            listIntent.putExtra("username", username);
+                            startActivity(listIntent);
+                            break;
+                        case 1:
+                            listIntent = new Intent(Profile.this, CustomizeList.class);
+                            listIntent.putExtra("source", "Responses");
+                            listIntent.putExtra("username", username);
+                            startActivity(listIntent);
+                            break;
+                    }
+                }
+            });
+        }
+
 
         new AsyncTask<String, Integer, Float>() {
             protected Float doInBackground(String[] params) {

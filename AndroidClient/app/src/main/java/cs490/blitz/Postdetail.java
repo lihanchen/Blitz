@@ -43,6 +43,10 @@ import java.util.TimeZone;
 /**
  * Created by Dingzhe on 11/3/2015.
  */
+
+//TODO accept multiple
+//TODO profile of other user
+
 public class Postdetail extends AppCompatActivity implements OnMapReadyCallback {
     private final LocationListener mLocationListener = new LocationListener() {
         @Override

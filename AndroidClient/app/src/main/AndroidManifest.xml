@@ -72,6 +72,9 @@
         <activity
             android:name=".NotificationList"
             android:label="NotificationList" />
+        <activity
+            android:name=".MatchingList"
+            android:label="MatchingList" />
 
         <service
             android:name=".NotificationChecker"
