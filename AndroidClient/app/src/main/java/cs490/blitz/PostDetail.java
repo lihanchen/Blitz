@@ -5,12 +5,16 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.media.Image;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -74,6 +78,7 @@ public class PostDetail extends AppCompatActivity implements OnMapReadyCallback 
     ArrayList<HashMap<String, Object>> offerdata;
     String postid;
     private GoogleMap googleMap;
+    private Marker marker;
 
     @Override
     public void onMapReady(GoogleMap map) {
@@ -125,8 +130,9 @@ public class PostDetail extends AppCompatActivity implements OnMapReadyCallback 
             googleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
             googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
                     new LatLng(latitude, longitude), 14));
-            Marker TP = googleMap.addMarker(new MarkerOptions().
+            marker = googleMap.addMarker(new MarkerOptions().
                     position(new LatLng(latitude, longitude)).title("Current Location"));
+            googleMap.setMyLocationEnabled(true);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -157,11 +163,11 @@ public class PostDetail extends AppCompatActivity implements OnMapReadyCallback 
                 TextView username = (TextView) findViewById(R.id.usernamePD);
                 TextView posttime = (TextView) findViewById(R.id.posttimePD);
 
-                bounty.append(": " + Tools.safeToString(json.get("bounty")));
-                quantity.append(": " + Tools.safeToString(json.get("quantity")));
-                description.setText(Tools.safeToString(json.get("description")));
-                topic.setText(Tools.safeToString(json.get("title")));
-                String postname = Tools.safeToString(json.get("username"));
+                bounty.append(": " + json.get("bounty").toString());
+                quantity.append(": " + json.get("quantity").toString());
+                description.setText(json.get("description").toString());
+                topic.setText(json.get("title").toString());
+                String postname = json.get("username").toString();
                 postusername = postname;
                 username.setText(Tools.safeToString(json.get("username")));
                 String serverTime = Tools.safeToString(json.get("postTime"));
@@ -356,7 +362,7 @@ public class PostDetail extends AppCompatActivity implements OnMapReadyCallback 
 
                                 @Override
                                 protected void onPostExecute(JSONObject jsonArray) {
-                                    if (jsonArray.getBoolean("success") == true){
+                                    if (jsonArray.getBoolean("success")){
                                         System.out.println("Delete success");
                                         Tools.showToast(getApplicationContext(),"Delete Successed!");
                                         finish();
@@ -381,24 +387,20 @@ public class PostDetail extends AppCompatActivity implements OnMapReadyCallback 
             }
         }.execute(postid);
 
-        /*
+
+/*
         new AsyncTask<String, Integer, String>() {
             protected String doInBackground(String... params) {
-                String picdata = Tools.getPic(params[0]);
-                return picdata;
+                ImageView i = (ImageView)findViewById(R.id.defaultimagePD);
+                Tools.getPic(params[0],i);
+                return "";
             }
 
             protected void onPostExecute(String pic) {
-                Log.d("finished getpic",pic);
-
-                byte[] firstpic = Base64.decode(pic, Base64.DEFAULT);
-                //String text = new String(data, "UTF-8");
-                Bitmap bitmap = BitmapFactory.decodeByteArray(firstpic , 0, firstpic.length);
-                ImageView defaultimage = (ImageView)findViewById(R.id.defaultimagePD);
-                defaultimage.setImageBitmap(bitmap);
             }
-        }.execute("563bd4ad499a593a0ac7b1fb");
-           */
+        }.execute("564511a0a12ea46719313af6");
+        */
+
     }
 
 

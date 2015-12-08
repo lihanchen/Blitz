@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/containerMT"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+    <EditText
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/searchMT"/>
+
+    <Button
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/buttonMT"
+        android:text="Search!"
+        android:onClick="onSearch"
+        android:clickable="true" />
+
+
+    <fragment xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/mapMT"
+        android:name="com.google.android.gms.maps.MapFragment"
+        class="cs490.blitz.WorkaroundMapFragment"
+        android:layout_width="match_parent"
+        android:layout_height="130pt"
+        android:layout_margin="10dp" />
+
+</LinearLayout>
+</ScrollView>

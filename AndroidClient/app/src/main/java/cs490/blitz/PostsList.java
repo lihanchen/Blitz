@@ -2,6 +2,7 @@ package cs490.blitz;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.media.Image;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -123,6 +124,10 @@ public class PostsList extends AppCompatActivity {
                 Intent ProfileIntent = new Intent(PostsList.this, PostDetail.class);
                 ProfileIntent.putExtra("postid", ((JSONObject) data.get(position)).getString("_id"));
                 startActivity(ProfileIntent);
+                /*
+                Intent PictureIntent = new Intent(PostsList.this, Maptest.class);
+                startActivity(PictureIntent);
+                */
             }
         });
 

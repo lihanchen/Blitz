@@ -76,6 +76,13 @@
             android:name=".MatchingList"
             android:label="MatchingList" />
 
+        <activity
+            android:name=".Maptest"
+            android:label="Maptest" />
+        <activity
+            android:name=".ImageUploadTest"
+            android:label="ImageUploadTest" />
+
         <service
             android:name=".NotificationChecker"
             android:exported="true" />
