@@ -44,9 +44,6 @@ import java.util.TimeZone;
  * Created by Dingzhe on 11/3/2015.
  */
 
-//TODO accept multiple
-//TODO profile of other user
-
 public class PostDetail extends AppCompatActivity implements OnMapReadyCallback {
     private final LocationListener mLocationListener = new LocationListener() {
         @Override
@@ -91,6 +88,15 @@ public class PostDetail extends AppCompatActivity implements OnMapReadyCallback 
         postid = getIntent().getStringExtra("postid");
         SharedPreferences sp = getSharedPreferences("cs490.blitz.account", MODE_PRIVATE);
         currentusername = sp.getString("username", null);
+
+        ((ImageView)findViewById(R.id.avatarPD)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent ProfileIntent = new Intent(PostDetail.this, Profile.class);
+                ProfileIntent.putExtra("username", postusername);
+                startActivity(ProfileIntent);
+            }
+        });
 
         //map related
         try {
@@ -141,7 +147,7 @@ public class PostDetail extends AppCompatActivity implements OnMapReadyCallback 
                 }
                 super.onPostExecute(jsonArray);
                 Log.e("return json//", jsonArray.toString());
-                if (jsonArray.getBoolean("success") != true) return;
+                if (!jsonArray.getBoolean("success")) return;
                 JSONObject json = JSON.parseObject(jsonArray.get("object").toString());
 
                 TextView bounty = (TextView) findViewById(R.id.bountyDP);
@@ -151,14 +157,14 @@ public class PostDetail extends AppCompatActivity implements OnMapReadyCallback 
                 TextView username = (TextView) findViewById(R.id.usernamePD);
                 TextView posttime = (TextView) findViewById(R.id.posttimePD);
 
-                bounty.append(": " + json.get("bounty").toString());
-                quantity.append(": " + json.get("quantity").toString());
-                description.setText(json.get("description").toString());
-                topic.setText(json.get("title").toString());
-                String postname = json.get("username").toString();
+                bounty.append(": " + Tools.safeToString(json.get("bounty")));
+                quantity.append(": " + Tools.safeToString(json.get("quantity")));
+                description.setText(Tools.safeToString(json.get("description")));
+                topic.setText(Tools.safeToString(json.get("title")));
+                String postname = Tools.safeToString(json.get("username"));
                 postusername = postname;
-                username.setText(json.get("username").toString());
-                String serverTime = json.get("postTime").toString();
+                username.setText(Tools.safeToString(json.get("username")));
+                String serverTime = Tools.safeToString(json.get("postTime"));
                 posttime.setText("");
 
                 DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
@@ -252,8 +258,13 @@ public class PostDetail extends AppCompatActivity implements OnMapReadyCallback 
                                 });
                                 builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int id) {
-                                        // User cancelled the dialog
-                                        System.out.println("Ok is clicked");
+                                    }
+                                });
+                                builder.setNeutralButton("Show Profile", new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int id) {
+                                        Intent ProfileIntent = new Intent(PostDetail.this, Profile.class);
+                                        ProfileIntent.putExtra("username", offerdata.get(position).get("username").toString());
+                                        startActivity(ProfileIntent);
                                     }
                                 });
                                 AlertDialog dialog = builder.create();
