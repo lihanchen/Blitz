@@ -1,2 +1,3 @@
 run:
-	node http.js
+	-node http.js &
+	-node getThePicture.js &
