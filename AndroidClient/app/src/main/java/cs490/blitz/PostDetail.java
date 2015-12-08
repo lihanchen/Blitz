@@ -5,16 +5,12 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.media.Image;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -94,7 +90,7 @@ public class PostDetail extends AppCompatActivity implements OnMapReadyCallback 
         SharedPreferences sp = getSharedPreferences("cs490.blitz.account", MODE_PRIVATE);
         currentusername = sp.getString("username", null);
 
-        ((ImageView)findViewById(R.id.avatarPD)).setOnClickListener(new View.OnClickListener() {
+        ((ImageView) findViewById(R.id.avatarPD)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent ProfileIntent = new Intent(PostDetail.this, Profile.class);
@@ -185,7 +181,7 @@ public class PostDetail extends AppCompatActivity implements OnMapReadyCallback 
                 }
 
 
-                JSONArray response = JSON.parseArray(json.get("response").toString());
+                JSONArray response = JSON.parseArray(Tools.safeToString(json.get("response")));
                 ArrayList<HashMap<String, Object>> data = new ArrayList<>(response.size());
                 for (Object obj : response) {
                     HashMap<String, Object> map = new HashMap<>(4);
@@ -343,10 +339,10 @@ public class PostDetail extends AppCompatActivity implements OnMapReadyCallback 
                 }
 
                 //set up delete post button:
-                if(postusername.equals(currentusername)){
-                    Button closebutton = (Button)findViewById(R.id.deletePD);
+                if (postusername.equals(currentusername)) {
+                    Button closebutton = (Button) findViewById(R.id.deletePD);
                     closebutton.setVisibility(View.VISIBLE);
-                    closebutton.setOnClickListener(new View.OnClickListener(){
+                    closebutton.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
                             new AsyncTask<String, Integer, JSONObject>() {
@@ -362,26 +358,22 @@ public class PostDetail extends AppCompatActivity implements OnMapReadyCallback 
 
                                 @Override
                                 protected void onPostExecute(JSONObject jsonArray) {
-                                    if (jsonArray.getBoolean("success")){
+                                    if (jsonArray.getBoolean("success")) {
                                         System.out.println("Delete success");
-                                        Tools.showToast(getApplicationContext(),"Delete Successed!");
+                                        Tools.showToast(getApplicationContext(), "Delete Successed!");
                                         finish();
-                                    }
-                                    else{
+                                    } else {
                                         System.out.println("Delete failed");
-                                        Tools.showToast(getApplicationContext(),"Delete Failed!");
+                                        Tools.showToast(getApplicationContext(), "Delete Failed!");
                                     }
                                 }
                             }.execute();
                         }
                     });
                 } else {
-                    Button closebutton = (Button)findViewById(R.id.deletePD);
+                    Button closebutton = (Button) findViewById(R.id.deletePD);
                     closebutton.setVisibility(View.GONE);
                 }
-
-
-
 
 
             }

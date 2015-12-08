@@ -10,16 +10,21 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.FragmentActivity;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ScrollView;
 import android.widget.Spinner;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.io.ByteArrayOutputStream;
 import java.util.HashMap;
@@ -28,7 +33,7 @@ import static android.util.Base64.DEFAULT;
 import static android.util.Base64.encodeToString;
 
 
-public class MakeAPost extends Activity implements View.OnClickListener {
+public class MakeAPost extends FragmentActivity implements View.OnClickListener {
     private static final int RESULT_IMAGE = 1;
     private static final int RESULT_MATCHING = 2;
 
@@ -91,6 +96,7 @@ public class MakeAPost extends Activity implements View.OnClickListener {
                     }
                 }
         );
+        setUpMap();
     }
 
     @Override
@@ -217,5 +223,30 @@ public class MakeAPost extends Activity implements View.OnClickListener {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         bitmapImage.compress(Bitmap.CompressFormat.JPEG, 100, baos);
         return encodeToString(baos.toByteArray(), DEFAULT);
+    }
+
+    private GoogleMap mMap;
+    private ScrollView sv;
+
+    private void setUpMap(){
+        if(mMap == null){
+            mMap = ((WorkaroundMapFragment) getSupportFragmentManager().
+                    findFragmentById(R.id.mapMT)).getMap();
+        }
+
+        if(mMap!= null){
+            mMap.addMarker(new MarkerOptions().position(new LatLng(0,0)).title("Marker"));
+            mMap.setMyLocationEnabled(true);
+
+            sv = (ScrollView) findViewById(R.id.containerMT);
+            //disable sv when touching map
+            ((WorkaroundMapFragment) getSupportFragmentManager().findFragmentById(R.id.mapMT)).setListener(new WorkaroundMapFragment.OnTouchListener() {
+                @Override
+                public void onTouch() {
+                    sv.requestDisallowInterceptTouchEvent(true);
+                }
+            });
+
+        }
     }
 }
