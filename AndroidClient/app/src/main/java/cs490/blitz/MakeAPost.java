@@ -157,7 +157,7 @@ public class MakeAPost extends FragmentActivity implements View.OnClickListener 
         final Bitmap bitmapImage = ((BitmapDrawable) imageToUpload.getDrawable()).getBitmap();
         try {
 
-            new AsyncTask<String, String, String>() {
+            final AsyncTask<String, String, String> successUploadImage = new AsyncTask<String, String, String>() {
                 @SafeVarargs
                 protected final String doInBackground(String ... params) {
                     String ret = Tools.uploadPic(bitmapImage);
@@ -168,6 +168,10 @@ public class MakeAPost extends FragmentActivity implements View.OnClickListener 
                     post.put("photo", ret);
                 }
             }.execute("");
+
+            while (successUploadImage.getStatus() != AsyncTask.Status.FINISHED) {
+                
+            }
             //photo = /*encodeImage()*/Tools.uploadPic(((BitmapDrawable) imageToUpload.getDrawable()).getBitmap());
 
         } catch (NullPointerException e) {
