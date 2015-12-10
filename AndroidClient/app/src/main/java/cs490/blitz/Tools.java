@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
+import android.support.annotation.NonNull;
 import android.util.Base64;
 import android.util.Log;
 import android.widget.ImageView;
@@ -17,6 +18,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
+import java.nio.ByteOrder;
+import java.nio.CharBuffer;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -165,9 +168,10 @@ public abstract class Tools {
             InputStreamReader isr = new InputStreamReader(client.getInputStream());
             //BufferedReader responseReader = new BufferedReader(new InputStreamReader(client.getInputStream()));
             int ret = isr.read();
+            String response = "";
+
             while (ret != -1) {
-                System.out.print((char)ret);
-                /*String response = *//*responseReader.readLine()*//*isr.;
+                response += (char)ret;
                 if (response != null) {
                     System.out.println(response);
                     JSONObject json = JSONObject.parseObject(response);
@@ -178,7 +182,8 @@ public abstract class Tools {
                     } else {
                         return null;
                     }
-                }*/
+                }
+                ret = isr.read();
             }
             return null;
         } catch (Exception e) {
