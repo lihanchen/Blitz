@@ -184,4 +184,8 @@ public abstract class Tools {
         }
     }
 
+    public static String safeToString(Object obj){
+        if (obj!=null) return obj.toString();
+        return "N/A";
+    }
 }

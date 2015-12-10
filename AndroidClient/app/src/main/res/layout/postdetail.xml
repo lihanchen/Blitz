@@ -47,6 +47,13 @@
                     android:text="loading..."
                     android:textAppearance="?android:attr/textAppearanceSmall" />
 
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Rate!"
+                    android:id="@+id/bGiveRating"
+                    android:layout_gravity="right" />
+
                 <TextView
                     android:id="@+id/posttimePD"
                     android:layout_width="wrap_content"

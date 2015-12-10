@@ -10,7 +10,8 @@
         android:layout_height="match_parent"
         android:layout_marginBottom="80dp"
         android:layout_marginTop="30dp"
-        android:fillViewport="false">
+        android:fillViewport="false"
+        android:id="@+id/ScrollView">
 
         <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
             android:layout_width="fill_parent"
@@ -137,6 +138,15 @@
                 android:hint="Enter your post body"
                 android:inputType="textMultiLine"
                 android:minLines="2" />
+
+            <fragment xmlns:android="http://schemas.android.com/apk/res/android"
+                android:id="@+id/mapMT"
+                android:name="com.google.android.gms.maps.MapFragment"
+                class="cs490.blitz.WorkaroundMapFragment"
+                android:layout_width="match_parent"
+                android:layout_height="130pt"
+                android:layout_margin="10dp" />
+
         </LinearLayout>
     </ScrollView>
 

@@ -5,16 +5,12 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.media.Image;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -47,9 +43,6 @@ import java.util.TimeZone;
 /**
  * Created by Dingzhe on 11/3/2015.
  */
-
-//TODO accept multiple
-//TODO profile of other user
 
 public class PostDetail extends AppCompatActivity implements OnMapReadyCallback {
     private final LocationListener mLocationListener = new LocationListener() {
@@ -96,6 +89,27 @@ public class PostDetail extends AppCompatActivity implements OnMapReadyCallback 
         postid = getIntent().getStringExtra("postid");
         SharedPreferences sp = getSharedPreferences("cs490.blitz.account", MODE_PRIVATE);
         currentusername = sp.getString("username", null);
+        Button bGiveRate = (Button) findViewById(R.id.bGiveRating);
+        bGiveRate.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent ratingPage = new Intent(PostDetail.this, Rating.class);
+                        ratingPage.putExtra("username", postusername);
+                        startActivity(ratingPage);
+                    }
+                }
+        );
+
+
+        ((ImageView) findViewById(R.id.avatarPD)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent ProfileIntent = new Intent(PostDetail.this, Profile.class);
+                ProfileIntent.putExtra("username", postusername);
+                startActivity(ProfileIntent);
+            }
+        });
 
         //map related
         try {
@@ -147,7 +161,7 @@ public class PostDetail extends AppCompatActivity implements OnMapReadyCallback 
                 }
                 super.onPostExecute(jsonArray);
                 Log.e("return json//", jsonArray.toString());
-                if (jsonArray.getBoolean("success") != true) return;
+                if (!jsonArray.getBoolean("success")) return;
                 JSONObject json = JSON.parseObject(jsonArray.get("object").toString());
 
                 TextView bounty = (TextView) findViewById(R.id.bountyDP);
@@ -157,30 +171,14 @@ public class PostDetail extends AppCompatActivity implements OnMapReadyCallback 
                 TextView username = (TextView) findViewById(R.id.usernamePD);
                 TextView posttime = (TextView) findViewById(R.id.posttimePD);
 
-                if(json.containsKey("bounty"))
-                    bounty.append(": " + json.get("bounty").toString());
-                if(json.containsKey("quantity"))
-                    quantity.append(": " + json.get("quantity").toString());
-                if(json.containsKey("description"))
-                    description.setText(json.get("description").toString());
-                if(json.containsKey("title"))
-                    topic.setText(json.get("title").toString());
-                if(json.containsKey("position")){
-                    JSONObject posiJSON = json.getJSONObject("position");
-                    if(posiJSON.containsKey("longitude") && posiJSON.containsKey("latitude")){
-                        LatLng newposition = new LatLng(posiJSON.getDouble("latitude"),posiJSON.getDouble("longitude"));
-                        marker.remove();
-                        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(newposition, 14));
-                        marker = googleMap.addMarker(new MarkerOptions().
-                                position(newposition).title("Location"));
-
-                        System.out.println("new position: "+ newposition.latitude + newposition.longitude);
-                    }
-                }
+                bounty.append(": " + json.get("bounty").toString());
+                quantity.append(": " + json.get("quantity").toString());
+                description.setText(json.get("description").toString());
+                topic.setText(json.get("title").toString());
                 String postname = json.get("username").toString();
                 postusername = postname;
-                username.setText(json.get("username").toString());
-                String serverTime = json.get("postTime").toString();
+                username.setText(Tools.safeToString(json.get("username")));
+                String serverTime = Tools.safeToString(json.get("postTime"));
                 posttime.setText("");
 
                 DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
@@ -195,7 +193,7 @@ public class PostDetail extends AppCompatActivity implements OnMapReadyCallback 
                 }
 
 
-                JSONArray response = JSON.parseArray(json.get("response").toString());
+                JSONArray response = JSON.parseArray(Tools.safeToString(json.get("response")));
                 ArrayList<HashMap<String, Object>> data = new ArrayList<>(response.size());
                 for (Object obj : response) {
                     HashMap<String, Object> map = new HashMap<>(4);
@@ -274,8 +272,13 @@ public class PostDetail extends AppCompatActivity implements OnMapReadyCallback 
                                 });
                                 builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int id) {
-                                        // User cancelled the dialog
-                                        System.out.println("Ok is clicked");
+                                    }
+                                });
+                                builder.setNeutralButton("Show Profile", new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int id) {
+                                        Intent ProfileIntent = new Intent(PostDetail.this, Profile.class);
+                                        ProfileIntent.putExtra("username", offerdata.get(position).get("username").toString());
+                                        startActivity(ProfileIntent);
                                     }
                                 });
                                 AlertDialog dialog = builder.create();
@@ -348,10 +351,10 @@ public class PostDetail extends AppCompatActivity implements OnMapReadyCallback 
                 }
 
                 //set up delete post button:
-                if(postusername.equals(currentusername)){
-                    Button closebutton = (Button)findViewById(R.id.deletePD);
+                if (postusername.equals(currentusername)) {
+                    Button closebutton = (Button) findViewById(R.id.deletePD);
                     closebutton.setVisibility(View.VISIBLE);
-                    closebutton.setOnClickListener(new View.OnClickListener(){
+                    closebutton.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
                             new AsyncTask<String, Integer, JSONObject>() {
@@ -367,26 +370,22 @@ public class PostDetail extends AppCompatActivity implements OnMapReadyCallback 
 
                                 @Override
                                 protected void onPostExecute(JSONObject jsonArray) {
-                                    if (jsonArray.getBoolean("success") == true){
+                                    if (jsonArray.getBoolean("success")) {
                                         System.out.println("Delete success");
-                                        Tools.showToast(getApplicationContext(),"Delete Successed!");
+                                        Tools.showToast(getApplicationContext(), "Delete Successed!");
                                         finish();
-                                    }
-                                    else{
+                                    } else {
                                         System.out.println("Delete failed");
-                                        Tools.showToast(getApplicationContext(),"Delete Failed!");
+                                        Tools.showToast(getApplicationContext(), "Delete Failed!");
                                     }
                                 }
                             }.execute();
                         }
                     });
                 } else {
-                    Button closebutton = (Button)findViewById(R.id.deletePD);
+                    Button closebutton = (Button) findViewById(R.id.deletePD);
                     closebutton.setVisibility(View.GONE);
                 }
-
-
-
 
 
             }
