@@ -5,12 +5,16 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.media.Image;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -173,6 +177,31 @@ public class PostDetail extends AppCompatActivity implements OnMapReadyCallback 
                 quantity.append(": " + json.get("quantity").toString());
                 description.setText(json.get("description").toString());
                 topic.setText(json.get("title").toString());
+                if(json.containsKey("bounty"))
+                    bounty.append(": " + json.get("bounty").toString());
+                if(json.containsKey("quantity"))
+                    quantity.append(": " + json.get("quantity").toString());
+                if(json.containsKey("description"))
+                    description.setText(json.get("description").toString());
+                if(json.containsKey("title"))
+                    topic.setText(json.get("title").toString());
+                if(json.containsKey("position")){
+                    JSONObject posiJSON = json.getJSONObject("position");
+                    if(posiJSON.containsKey("longitude") && posiJSON.containsKey("latitude")){
+                        try {
+                            LatLng newposition = new LatLng(posiJSON.getDouble("latitude"), posiJSON.getDouble("longitude"));
+                            if (marker != null)
+                                marker.remove();
+                            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(newposition, 14));
+                            marker = googleMap.addMarker(new MarkerOptions().
+                                    position(newposition).title("Location"));
+
+                            System.out.println("new position: " + newposition.latitude + newposition.longitude);
+                        } catch(Exception e){
+                            e.printStackTrace();
+                        }
+                    }
+                }
                 String postname = json.get("username").toString();
                 postusername = postname;
                 username.setText(Tools.safeToString(json.get("username")));
@@ -270,12 +299,11 @@ public class PostDetail extends AppCompatActivity implements OnMapReadyCallback 
                                                     startActivity(getIntent());
                                                 }
                                             }.execute();
-
-                                            System.out.println("Ok is clicked");
                                         }
                                     });
                                     builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                                         public void onClick(DialogInterface dialog, int id) {
+                                            //cancel
                                         }
                                     });
                                     builder.setNeutralButton("Show Profile", new DialogInterface.OnClickListener() {
