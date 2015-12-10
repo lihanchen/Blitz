@@ -1,18 +1,23 @@
 package cs490.blitz;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.util.Log;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 
 import java.io.BufferedReader;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
+import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -74,73 +79,15 @@ public abstract class Tools {
         return format.format(cal.getTime());
     }
 
-    public synchronized static String getPic(String picid) {
-        Log.d("enter getpic", "");
-        String picdata;
-        final String host = "blitzproject.cs.purdue.edu";
+    public synchronized static void getPic(String picid, ImageView i) {
         try {
-            Socket client = new Socket(host, 9071);
-            OutputStreamWriter osw = new OutputStreamWriter(client.getOutputStream());
-
-            HashMap<String, Object> queryRequest = new HashMap<>();
-            queryRequest.put("operation", "getpic");
-            queryRequest.put("id", picid);
-
-            osw.write(JSON.toJSONString(queryRequest));
-            osw.flush();
-            //BufferedReader responseReader = new BufferedReader(new InputStreamReader(client.getInputStream()));
-            String ret = "";
-
-
-/*
-            BufferedInputStream inBuf = new BufferedInputStream(client.getInputStream());
-            byte buf[] = new byte[1024 * 2];
-            int len;
-            int total = 0;
-            while ((len = inBuf.read(buf)) > 0) {
-                System.out.println(len);
-                total += len;
-            }
-            System.out.println(total);
-*/
-            /*
-            while(true){
-                String v = responseReader.readLine();
-
-                if (v == null){
-                    //Log.d("read pic", "finished");
-                    break;
-                }
-                System.out.println(v);
-                System.out.println(v.length());
-                ret += v;
-            }*/
-            /*
-            InputStream is = client.getInputStream();
-            BufferedInputStream bis = new BufferedInputStream(is, 8190);
-            ByteArrayBuffer baf = new ByteArrayBuffer(50);
-            int current = 0;
-            while(bis.read() != -1){
-                baf.append((byte)current);
-            }
-            byte[] imagedata = baf.toByteArray();
-            System.out.println(imagedata.length);
-            ret = new String(imagedata, "UTF-8");
-            */
-            ObjectInputStream ois = new ObjectInputStream(client.getInputStream());
-            String g = (String) ois.readObject();
-            System.out.println(g.length());
-
-            JSONObject json = JSON.parseObject(ret);
-            System.out.print(ret);
-            ret = json.getString("data");
-            Log.d("picdata", ret);
-            Log.d("picdata.length", "" + ret.length());
-            System.out.print(ret);
-            return ret;
-        } catch (Exception e) {
-            Log.e("Error", "In query", e);
-            return null;
+            String imageUrl = "http://blitzproject.cs.purdue.edu:9073";
+            imageUrl = imageUrl+"/"+picid;
+            System.out.println(imageUrl);
+            Bitmap bitmap = BitmapFactory.decodeStream((InputStream) new URL(imageUrl).getContent());
+            i.setImageBitmap(bitmap);
+        } catch (Exception e){
+            e.printStackTrace();
         }
     }
 
@@ -178,4 +125,8 @@ public abstract class Tools {
         }
     }
 
+    public static String safeToString(Object obj){
+        if (obj!=null) return obj.toString();
+        return "N/A";
+    }
 }

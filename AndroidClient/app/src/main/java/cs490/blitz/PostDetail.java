@@ -44,9 +44,6 @@ import java.util.TimeZone;
  * Created by Dingzhe on 11/3/2015.
  */
 
-//TODO accept multiple
-//TODO profile of other user
-
 public class PostDetail extends AppCompatActivity implements OnMapReadyCallback {
     private final LocationListener mLocationListener = new LocationListener() {
         @Override
@@ -77,6 +74,7 @@ public class PostDetail extends AppCompatActivity implements OnMapReadyCallback 
     ArrayList<HashMap<String, Object>> offerdata;
     String postid;
     private GoogleMap googleMap;
+    private Marker marker;
 
     @Override
     public void onMapReady(GoogleMap map) {
@@ -91,6 +89,15 @@ public class PostDetail extends AppCompatActivity implements OnMapReadyCallback 
         postid = getIntent().getStringExtra("postid");
         SharedPreferences sp = getSharedPreferences("cs490.blitz.account", MODE_PRIVATE);
         currentusername = sp.getString("username", null);
+
+        ((ImageView) findViewById(R.id.avatarPD)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent ProfileIntent = new Intent(PostDetail.this, Profile.class);
+                ProfileIntent.putExtra("username", postusername);
+                startActivity(ProfileIntent);
+            }
+        });
 
         //map related
         try {
@@ -119,8 +126,9 @@ public class PostDetail extends AppCompatActivity implements OnMapReadyCallback 
             googleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
             googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
                     new LatLng(latitude, longitude), 14));
-            Marker TP = googleMap.addMarker(new MarkerOptions().
+            marker = googleMap.addMarker(new MarkerOptions().
                     position(new LatLng(latitude, longitude)).title("Current Location"));
+            googleMap.setMyLocationEnabled(true);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -141,7 +149,7 @@ public class PostDetail extends AppCompatActivity implements OnMapReadyCallback 
                 }
                 super.onPostExecute(jsonArray);
                 Log.e("return json//", jsonArray.toString());
-                if (jsonArray.getBoolean("success") != true) return;
+                if (!jsonArray.getBoolean("success")) return;
                 JSONObject json = JSON.parseObject(jsonArray.get("object").toString());
 
                 TextView bounty = (TextView) findViewById(R.id.bountyDP);
@@ -157,8 +165,8 @@ public class PostDetail extends AppCompatActivity implements OnMapReadyCallback 
                 topic.setText(json.get("title").toString());
                 String postname = json.get("username").toString();
                 postusername = postname;
-                username.setText(json.get("username").toString());
-                String serverTime = json.get("postTime").toString();
+                username.setText(Tools.safeToString(json.get("username")));
+                String serverTime = Tools.safeToString(json.get("postTime"));
                 posttime.setText("");
 
                 DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
@@ -173,7 +181,7 @@ public class PostDetail extends AppCompatActivity implements OnMapReadyCallback 
                 }
 
 
-                JSONArray response = JSON.parseArray(json.get("response").toString());
+                JSONArray response = JSON.parseArray(Tools.safeToString(json.get("response")));
                 ArrayList<HashMap<String, Object>> data = new ArrayList<>(response.size());
                 for (Object obj : response) {
                     HashMap<String, Object> map = new HashMap<>(4);
@@ -252,8 +260,13 @@ public class PostDetail extends AppCompatActivity implements OnMapReadyCallback 
                                 });
                                 builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int id) {
-                                        // User cancelled the dialog
-                                        System.out.println("Ok is clicked");
+                                    }
+                                });
+                                builder.setNeutralButton("Show Profile", new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int id) {
+                                        Intent ProfileIntent = new Intent(PostDetail.this, Profile.class);
+                                        ProfileIntent.putExtra("username", offerdata.get(position).get("username").toString());
+                                        startActivity(ProfileIntent);
                                     }
                                 });
                                 AlertDialog dialog = builder.create();
@@ -326,10 +339,10 @@ public class PostDetail extends AppCompatActivity implements OnMapReadyCallback 
                 }
 
                 //set up delete post button:
-                if(postusername.equals(currentusername)){
-                    Button closebutton = (Button)findViewById(R.id.deletePD);
+                if (postusername.equals(currentusername)) {
+                    Button closebutton = (Button) findViewById(R.id.deletePD);
                     closebutton.setVisibility(View.VISIBLE);
-                    closebutton.setOnClickListener(new View.OnClickListener(){
+                    closebutton.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
                             new AsyncTask<String, Integer, JSONObject>() {
@@ -345,49 +358,41 @@ public class PostDetail extends AppCompatActivity implements OnMapReadyCallback 
 
                                 @Override
                                 protected void onPostExecute(JSONObject jsonArray) {
-                                    if (jsonArray.getBoolean("success") == true){
+                                    if (jsonArray.getBoolean("success")) {
                                         System.out.println("Delete success");
-                                        Tools.showToast(getApplicationContext(),"Delete Successed!");
+                                        Tools.showToast(getApplicationContext(), "Delete Successed!");
                                         finish();
-                                    }
-                                    else{
+                                    } else {
                                         System.out.println("Delete failed");
-                                        Tools.showToast(getApplicationContext(),"Delete Failed!");
+                                        Tools.showToast(getApplicationContext(), "Delete Failed!");
                                     }
                                 }
                             }.execute();
                         }
                     });
                 } else {
-                    Button closebutton = (Button)findViewById(R.id.deletePD);
+                    Button closebutton = (Button) findViewById(R.id.deletePD);
                     closebutton.setVisibility(View.GONE);
                 }
-
-
-
 
 
             }
         }.execute(postid);
 
-        /*
+
+/*
         new AsyncTask<String, Integer, String>() {
             protected String doInBackground(String... params) {
-                String picdata = Tools.getPic(params[0]);
-                return picdata;
+                ImageView i = (ImageView)findViewById(R.id.defaultimagePD);
+                Tools.getPic(params[0],i);
+                return "";
             }
 
             protected void onPostExecute(String pic) {
-                Log.d("finished getpic",pic);
-
-                byte[] firstpic = Base64.decode(pic, Base64.DEFAULT);
-                //String text = new String(data, "UTF-8");
-                Bitmap bitmap = BitmapFactory.decodeByteArray(firstpic , 0, firstpic.length);
-                ImageView defaultimage = (ImageView)findViewById(R.id.defaultimagePD);
-                defaultimage.setImageBitmap(bitmap);
             }
-        }.execute("563bd4ad499a593a0ac7b1fb");
-           */
+        }.execute("564511a0a12ea46719313af6");
+        */
+
     }
 
 
