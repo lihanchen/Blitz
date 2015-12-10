@@ -14,12 +14,9 @@ import com.alibaba.fastjson.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.ObjectInputStream;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
-import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -52,6 +49,7 @@ public abstract class Tools {
     }
 
     public synchronized static String query(String queryRequest, int port) {
+        Log.e("Query on " + port, queryRequest);
         final String host = "blitzproject.cs.purdue.edu";
         try {
             Socket client = new Socket(host, port);
@@ -59,7 +57,9 @@ public abstract class Tools {
             osw.write(queryRequest);
             osw.flush();
             BufferedReader responseReader = new BufferedReader(new InputStreamReader(client.getInputStream()));
-            return responseReader.readLine();
+            String ret = responseReader.readLine();
+            Log.e("Result", ret);
+            return ret;
         } catch (Exception e) {
             Log.e("Error", "In query", e);
             return null;

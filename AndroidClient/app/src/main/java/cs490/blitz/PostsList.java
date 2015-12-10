@@ -2,7 +2,6 @@ package cs490.blitz;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.media.Image;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -285,9 +284,10 @@ public class PostsList extends AppCompatActivity {
             SharedPreferences sp = getSharedPreferences("cs490.blitz.account", MODE_PRIVATE);
             username = sp.getString("username", null);
             if (username == null) {
-                sp.edit().putString("username", "lhc1").apply();   //TODO reset debug login
-                //Intent loginIntent = new Intent(PostsList.this, Login.class);
-                //startActivity(loginIntent);
+//                sp.edit().putString("username", "lhc1").apply();   //TODO reset debug login
+//                loadData(mode, null, null, null, null);
+                Intent loginIntent = new Intent(PostsList.this, Login.class);
+                startActivity(loginIntent);
             } else {
                 loadData(mode, null, null, null, null);
             }
