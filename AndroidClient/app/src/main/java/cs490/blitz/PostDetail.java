@@ -5,12 +5,16 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.media.Image;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -89,6 +93,18 @@ public class PostDetail extends AppCompatActivity implements OnMapReadyCallback 
         postid = getIntent().getStringExtra("postid");
         SharedPreferences sp = getSharedPreferences("cs490.blitz.account", MODE_PRIVATE);
         currentusername = sp.getString("username", null);
+        Button bGiveRate = (Button) findViewById(R.id.bGiveRating);
+        bGiveRate.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent ratingPage = new Intent(PostDetail.this, Rating.class);
+                        ratingPage.putExtra("username", postusername);
+                        startActivity(ratingPage);
+                    }
+                }
+        );
+
 
         ((ImageView) findViewById(R.id.avatarPD)).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -159,10 +175,31 @@ public class PostDetail extends AppCompatActivity implements OnMapReadyCallback 
                 TextView username = (TextView) findViewById(R.id.usernamePD);
                 TextView posttime = (TextView) findViewById(R.id.posttimePD);
 
-                bounty.append(": " + json.get("bounty").toString());
-                quantity.append(": " + json.get("quantity").toString());
-                description.setText(json.get("description").toString());
-                topic.setText(json.get("title").toString());
+                if(json.containsKey("bounty"))
+                    bounty.append(": " + json.get("bounty").toString());
+                if(json.containsKey("quantity"))
+                    quantity.append(": " + json.get("quantity").toString());
+                if(json.containsKey("description"))
+                    description.setText(json.get("description").toString());
+                if(json.containsKey("title"))
+                    topic.setText(json.get("title").toString());
+                if(json.containsKey("position")){
+                    JSONObject posiJSON = json.getJSONObject("position");
+                    if(posiJSON.containsKey("longitude") && posiJSON.containsKey("latitude")){
+                        try {
+                            LatLng newposition = new LatLng(posiJSON.getDouble("latitude"), posiJSON.getDouble("longitude"));
+                            if (marker != null)
+                                marker.remove();
+                            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(newposition, 14));
+                            marker = googleMap.addMarker(new MarkerOptions().
+                                    position(newposition).title("Location"));
+
+                            System.out.println("new position: " + newposition.latitude + newposition.longitude);
+                        } catch(Exception e){
+                            e.printStackTrace();
+                        }
+                    }
+                }
                 String postname = json.get("username").toString();
                 postusername = postname;
                 username.setText(Tools.safeToString(json.get("username")));

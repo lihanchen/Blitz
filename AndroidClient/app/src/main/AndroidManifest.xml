@@ -75,10 +75,12 @@
         <activity
             android:name=".MatchingList"
             android:label="MatchingList" />
-
         <activity
             android:name=".Maptest"
             android:label="Maptest" />
+        <activity
+            android:name=".Rating"
+            android:label="Rating" />
         <activity
             android:name=".ImageUploadTest"
             android:label="ImageUploadTest" />
