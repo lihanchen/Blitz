@@ -89,6 +89,18 @@ public class PostDetail extends AppCompatActivity implements OnMapReadyCallback 
         postid = getIntent().getStringExtra("postid");
         SharedPreferences sp = getSharedPreferences("cs490.blitz.account", MODE_PRIVATE);
         currentusername = sp.getString("username", null);
+        Button bGiveRate = (Button) findViewById(R.id.bGiveRating);
+        bGiveRate.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent ratingPage = new Intent(PostDetail.this, Rating.class);
+                        ratingPage.putExtra("username", postusername);
+                        startActivity(ratingPage);
+                    }
+                }
+        );
+
 
         ((ImageView) findViewById(R.id.avatarPD)).setOnClickListener(new View.OnClickListener() {
             @Override
