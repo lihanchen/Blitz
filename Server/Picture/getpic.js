@@ -2,6 +2,31 @@ exports.getpic=function (receivedObj,socket){
 	var ret={};
 	try{
 		ObjectID = require('mongodb').ObjectID;
+		var objectid = new ObjectID(receivedObj.id);
+		global.collection.findOne({"_id":objectid},function(err,item){
+			if (item==null){
+				ret.success=false;
+				ret.msg="Picture doesn't exist";
+			}else{
+				ret.success=true;
+				ret.data=item.data;
+			}
+			socket.write(JSON.stringify(ret));
+			socket.destroy();
+		});
+	}catch(e){
+		console.error(e);
+		ret.error=e.toString();
+		socket.write(JSON.stringify(ret));
+		socket.destroy();
+	}
+}
+
+/*
+exports.getpic=function (receivedObj,socket){
+	var ret={};
+	try{
+		ObjectID = require('mongodb').ObjectID;
 		var id = "";
 		id = receivedObj.id;
 		var objectid = new ObjectID(id);
@@ -18,10 +43,10 @@ exports.getpic=function (receivedObj,socket){
 			var picjsonstring = JSON.stringify(ret);
 			if(picjsonstring.length > 20000){
 				var i = 0;
-				var maxi = Math.floor(picjsonstring.length/200);
-				for(i = 0;i<picjsonstring.length/200;i++){
+				var maxi = Math.floor(picjsonstring.length/2000);
+				for(i = 0;i<picjsonstring.length/2000;i++){
 					if (i == maxi){
-						var succ = socket.write(picjsonstring.substring(i*200,picjsonstring.length));
+						var succ = socket.write(picjsonstring.substring(i*2000,picjsonstring.length));
 						//console.log(succ+i)
 						if(succ){
 							continue;
@@ -34,7 +59,7 @@ exports.getpic=function (receivedObj,socket){
 
 					}
 					else{
-						var succ = socket.write(picjsonstring.substring(i*200,i*200+200));
+						var succ = socket.write(picjsonstring.substring(i*2000,i*2000+2000));
 						//console.log(succ+i);
 						if(succ){
 							continue;
@@ -55,7 +80,7 @@ exports.getpic=function (receivedObj,socket){
 				//console.log(succ);
 			}
 			console.log(picjsonstring.length);
-
+*/
 /*
 var fs = require('fs');
 var picstr = item.data.substring(9);
@@ -66,7 +91,7 @@ fs.writeFile('testpic.jpg', decodedata, function(err){
 });
 */
 
-
+/*
 			socket.end();
 			socket.destroy();
 		}); 
@@ -76,30 +101,7 @@ fs.writeFile('testpic.jpg', decodedata, function(err){
 		socket.write(JSON.stringify(ret));
 		socket.destroy();
 	}
-}
-
-
-/*
-exports.getpic=function (receivedObj,socket){
-	var ret={};
-	try{
-		ObjectID = require('mongodb').ObjectID;
-		var objectid = new ObjectID(receivedObj.pictureId);
-		global.collection.findOne({"_id":objectid},function(err,item){
-			if (item==null){
-				ret.success=false;
-				ret.msg="Picture doesn't exist";
-			}else{
-				ret.success=true;
-				ret.data=item.data;
-			}
-			socket.write(JSON.stringify(ret));
-			socket.destroy();
-		}); 
-	}catch(e){
-		console.error(e);
-		ret.error=e.toString();
-		socket.write(JSON.stringify(ret));
-		socket.destroy();
-	}
 }*/
+
+
+
