@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -152,19 +153,29 @@ public class MakeAPost extends FragmentActivity implements View.OnClickListener 
             intQuantity = 0;
         }
         ;
-
-        String photo;
+        final HashMap<String, Object> post = new HashMap<>();
+        final Bitmap bitmapImage = ((BitmapDrawable) imageToUpload.getDrawable()).getBitmap();
         try {
-            photo = encodeImage();
-        } catch (NullPointerException e) {
-            photo = "";
-        }
 
+            new AsyncTask<String, String, String>() {
+                @SafeVarargs
+                protected final String doInBackground(String ... params) {
+                    String ret = Tools.uploadPic(bitmapImage);
+                    return ret;
+                }
+
+                protected void onPostExecute(String ret) {
+                    post.put("photo", ret);
+                }
+            }.execute("");
+            //photo = /*encodeImage()*/Tools.uploadPic(((BitmapDrawable) imageToUpload.getDrawable()).getBitmap());
+
+        } catch (NullPointerException e) {
+        }
+        //Log.e("photo is: ", photo);
         SharedPreferences sp = getSharedPreferences("cs490.blitz.account", MODE_PRIVATE);
         String username = sp.getString("username", null);
 
-
-        final HashMap<String, Object> post = new HashMap<>();
         post.put("operation", "CreatePost");
         post.put("username", username);
         post.put("position", "position");
@@ -174,7 +185,6 @@ public class MakeAPost extends FragmentActivity implements View.OnClickListener 
         post.put("bounty", intBounty);
         post.put("contact", strContact);
         post.put("TransactionCompleted", false);
-        post.put("photo", photo);
         post.put("response", new JSONObject[0]);
         post.put("isRequest", PostsList.mode == 1);
         post.put("category", selectedCategory);

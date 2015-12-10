@@ -158,13 +158,16 @@ public abstract class Tools {
 
             HashMap<String, Object> queryRequest = new HashMap<>();
             queryRequest.put("operation", "upload");
-            System.out.println("base64length: "+base64pic.length());
+            System.out.println("base64length: " + base64pic.length());
             queryRequest.put("data", base64pic);
             osw.write(JSON.toJSONString(queryRequest));
             osw.flush();
-            BufferedReader responseReader = new BufferedReader(new InputStreamReader(client.getInputStream()));
-            while (true) {
-                String response = responseReader.readLine();
+            InputStreamReader isr = new InputStreamReader(client.getInputStream());
+            //BufferedReader responseReader = new BufferedReader(new InputStreamReader(client.getInputStream()));
+            int ret = isr.read();
+            while (ret != -1) {
+                System.out.print((char)ret);
+                /*String response = *//*responseReader.readLine()*//*isr.;
                 if (response != null) {
                     System.out.println(response);
                     JSONObject json = JSONObject.parseObject(response);
@@ -175,9 +178,9 @@ public abstract class Tools {
                     } else {
                         return null;
                     }
-                }
+                }*/
             }
-            return picid;
+            return null;
         } catch (Exception e) {
             Log.e("Error", "In query", e);
             return null;
