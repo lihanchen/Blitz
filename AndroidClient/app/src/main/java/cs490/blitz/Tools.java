@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
+import android.util.Base64;
 import android.util.Log;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -12,6 +13,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
@@ -22,6 +24,9 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.TimeZone;
+
+import static android.util.Base64.DEFAULT;
+import static android.util.Base64.encodeToString;
 
 public abstract class Tools {
     public volatile static boolean exit = false;
@@ -79,7 +84,39 @@ public abstract class Tools {
         return format.format(cal.getTime());
     }
 
-    public synchronized static void getPic(String picid, ImageView i) {
+    public synchronized static String getPic(String picid) {
+        final String host = "blitzproject.cs.purdue.edu";
+        String ret="";
+        try {
+            Socket client = new Socket(host, 9071);
+            OutputStreamWriter osw = new OutputStreamWriter(client.getOutputStream());
+
+            HashMap<String, Object> queryRequest = new HashMap<>();
+            queryRequest.put("operation", "getpic");
+            queryRequest.put("id", picid);
+            osw.write(JSON.toJSONString(queryRequest));
+            osw.flush();
+            BufferedReader responseReader = new BufferedReader(new InputStreamReader(client.getInputStream()));
+            while (true) {
+                String response = responseReader.readLine();
+                if (response != null) {
+                    System.out.println(response);
+                    JSONObject json = JSONObject.parseObject(response);
+                    if (json.getBoolean("success")) {
+                        //start sending image data
+                        ret = json.get("data").toString();
+                        break;
+                    } else {
+                        return null;
+                    }
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return ret;
+        /*
+        , ImageView i
         try {
             String imageUrl = "http://blitzproject.cs.purdue.edu:9073";
             imageUrl = imageUrl+"/"+picid;
@@ -89,9 +126,30 @@ public abstract class Tools {
         } catch (Exception e){
             e.printStackTrace();
         }
+        */
     }
 
-    public synchronized static String uploadPic(String base64pic) {
+    public synchronized static void showPic(String base64pic,ImageView i){
+        byte[] decodedString = Base64.decode(base64pic, Base64.DEFAULT);
+        Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+        i.setImageBitmap(decodedByte);
+    }
+
+
+
+    private static String compressImage(Bitmap bitmapImage) {
+        double factor = (double)100/(double)bitmapImage.getWidth();
+        System.out.println("factor: "+factor+" width: "+bitmapImage.getWidth()+" height: "+bitmapImage.getHeight());
+        Bitmap scaled = Bitmap.createScaledBitmap(bitmapImage, (int)(bitmapImage.getWidth()*factor), (int)(bitmapImage.getHeight()*factor), true);
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        System.out.println("after compress: width:"+scaled.getWidth()+" height: "+scaled.getHeight());
+        scaled.compress(Bitmap.CompressFormat.JPEG, 50, baos);
+        return encodeToString(baos.toByteArray(), DEFAULT);
+    }
+
+    public synchronized static String uploadPic(Bitmap bitmap) {
+        String base64pic = "";
+        base64pic = compressImage(bitmap);
         String picid;
         final String host = "blitzproject.cs.purdue.edu";
         try {
@@ -100,12 +158,15 @@ public abstract class Tools {
 
             HashMap<String, Object> queryRequest = new HashMap<>();
             queryRequest.put("operation", "upload");
+            System.out.println("base64length: "+base64pic.length());
+            queryRequest.put("data", base64pic);
             osw.write(JSON.toJSONString(queryRequest));
             osw.flush();
             BufferedReader responseReader = new BufferedReader(new InputStreamReader(client.getInputStream()));
             while (true) {
                 String response = responseReader.readLine();
                 if (response != null) {
+                    System.out.println(response);
                     JSONObject json = JSONObject.parseObject(response);
                     if (json.getBoolean("success")) {
                         //start sending image data
@@ -116,8 +177,6 @@ public abstract class Tools {
                     }
                 }
             }
-            osw.write(base64pic);
-            osw.flush();
             return picid;
         } catch (Exception e) {
             Log.e("Error", "In query", e);
