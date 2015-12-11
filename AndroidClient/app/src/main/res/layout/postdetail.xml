@@ -147,7 +147,8 @@
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:id="@+id/picturecontainerPD">
 
                 <ImageView
                     android:id="@+id/defaultimagePD"

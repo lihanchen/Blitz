@@ -77,6 +77,8 @@ public class PostDetail extends AppCompatActivity implements OnMapReadyCallback 
     String postid;
     private GoogleMap googleMap;
     private Marker marker;
+    private JSONArray pictures;
+
 
     @Override
     public void onMapReady(GoogleMap map) {
@@ -177,6 +179,9 @@ public class PostDetail extends AppCompatActivity implements OnMapReadyCallback 
                 quantity.append(": " + json.get("quantity").toString());
                 description.setText(json.get("description").toString());
                 topic.setText(json.get("title").toString());
+                if(json.containsKey("picture")){
+                    pictures = json.getJSONArray("picture");
+                }
                 if(json.containsKey("bounty"))
                     bounty.append(": " + json.get("bounty").toString());
                 if(json.containsKey("quantity"))
@@ -427,6 +432,46 @@ public class PostDetail extends AppCompatActivity implements OnMapReadyCallback 
 
             }
         }.execute(postid);
+
+
+
+        loadallpic();
+    }
+
+
+
+    public void loadallpic(){
+        //picture related asynctask
+        new AsyncTask<String,JSONArray,JSONArray>() {
+            @Override
+            protected JSONArray doInBackground(String... params) {
+                System.out.println(pictures);
+                JSONArray ret = new JSONArray();
+                for (int i = 0;i < pictures.size();i++){
+                    ret.add(Tools.getPicture(pictures.getJSONArray(i)));
+                }
+                return ret;
+            }
+
+            protected void onPostExecute(JSONArray ret) {
+                LinearLayout imagecontainer = (LinearLayout)findViewById(R.id.picturecontainerPD);
+                ImageView img = (ImageView)findViewById(R.id.defaultimagePD);
+                ImageView img2 = (ImageView)findViewById(R.id.defaultimagePD2);
+                ImageView img3 = (ImageView)findViewById(R.id.defaultimagePD3);
+                ImageView img4 = (ImageView)findViewById(R.id.defaultimagePD4);
+                ImageView img5 = (ImageView)findViewById(R.id.defaultimagePD5);
+                ArrayList<ImageView> a = new ArrayList<ImageView>();
+                a.add(img);
+                a.add(img2);
+                a.add(img3);
+                a.add(img4);
+                a.add(img5);
+                for(int i = 0;i<ret.size();i++) {
+                    Tools.showPic(ret.getString(i), a.get(i));
+                }
+
+            }
+        }.execute("");
     }
 
 
