@@ -5,16 +5,12 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.media.Image;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -175,12 +171,9 @@ public class PostDetail extends AppCompatActivity implements OnMapReadyCallback 
 
                 readOnly = json.getBoolean("TransactionCompleted");
 
-                bounty.append(": " + json.get("bounty").toString());
-                quantity.append(": " + json.get("quantity").toString());
-                description.setText(json.get("description").toString());
-                topic.setText(json.get("title").toString());
                 if(json.containsKey("photo")){
                     pictures = json.getJSONArray("photo");
+                    loadallpic();
                 }
                 if(json.containsKey("bounty"))
                     bounty.append(": " + json.get("bounty").toString());
@@ -429,8 +422,6 @@ public class PostDetail extends AppCompatActivity implements OnMapReadyCallback 
                     closebutton.setVisibility(View.GONE);
                 }
 
-                loadallpic();
-
             }
         }.execute(postid);
 
@@ -439,14 +430,11 @@ public class PostDetail extends AppCompatActivity implements OnMapReadyCallback 
 
     }
 
-
-
     public void loadallpic(){
         //picture related asynctask
         new AsyncTask<String,JSONArray,JSONArray>() {
             @Override
             protected JSONArray doInBackground(String... params) {
-                System.out.println(pictures);
                 JSONArray ret = new JSONArray();
                 for (int i = 0;i < pictures.size();i++){
                     ret.add(Tools.getPicture(pictures.getJSONArray(i)));

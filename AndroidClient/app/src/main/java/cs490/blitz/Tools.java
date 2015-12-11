@@ -123,9 +123,13 @@ public abstract class Tools {
     }
 
     public synchronized static void showPic(String base64pic,ImageView i){
-        byte[] decodedString = Base64.decode(base64pic, Base64.DEFAULT);
-        Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
-        i.setImageBitmap(decodedByte);
+        try {
+            byte[] decodedString = Base64.decode(base64pic, Base64.DEFAULT);
+            Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+            i.setImageBitmap(decodedByte);
+        } catch (Exception e) {
+            return;
+        }
     }
 
 
