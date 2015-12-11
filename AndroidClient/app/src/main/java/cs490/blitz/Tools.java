@@ -58,10 +58,15 @@ public abstract class Tools {
             OutputStreamWriter osw = new OutputStreamWriter(client.getOutputStream());
             osw.write(queryRequest);
             osw.flush();
-            BufferedReader responseReader = new BufferedReader(new InputStreamReader(client.getInputStream()));
-            String ret = responseReader.readLine();
-            Log.e("Result", ret);
-            return ret;
+            InputStreamReader isr = new InputStreamReader(client.getInputStream());
+            int ret = isr.read();
+            StringBuffer response = new StringBuffer();
+            while (ret != -1) {
+                response.append((char) ret);
+                ret = isr.read();
+            }
+            Log.e("Result", response.toString());
+            return response.toString();
         } catch (Exception e) {
             Log.e("Error", "In query", e);
             return null;
@@ -128,26 +133,21 @@ public abstract class Tools {
 
 
     private static String compressImage(Bitmap bitmapImage) {
-        double factor = (double)100/(double)bitmapImage.getWidth();
+        double factor = (double) 256 / (double) bitmapImage.getWidth();
         System.out.println("factor: "+factor+" width: "+bitmapImage.getWidth()+" height: "+bitmapImage.getHeight());
         Bitmap scaled = Bitmap.createScaledBitmap(bitmapImage, (int) (bitmapImage.getWidth() * factor), (int) (bitmapImage.getHeight() * factor), true);
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         System.out.println("after compress: width:"+scaled.getWidth()+" height: "+scaled.getHeight());
-        scaled.compress(Bitmap.CompressFormat.JPEG, 50, baos);
+        scaled.compress(Bitmap.CompressFormat.JPEG, 30, baos);
         return encodeToString(baos.toByteArray(), DEFAULT);
     }
 
     public synchronized static String[] uploadPic(Bitmap bitmap) {
         String base64pic;
         base64pic = compressImage(bitmap);
-        List<String> subStrings = stringSplit(base64pic, 512);
-
-        return uploadPicUtil(subStrings);
-    }
-
-    private static String[] uploadPicUtil(List<String> subStrings) {
+        List<String> subStrings = stringSplit(base64pic, 1000);
         List<String> picIdList = new ArrayList<>();
-        for (String base64pic : subStrings) {
+        for (String s : subStrings) {
             try {
                 final String host = "blitzproject.cs.purdue.edu";
                 Socket client = new Socket(host, 9071);
@@ -155,8 +155,8 @@ public abstract class Tools {
 
                 HashMap<String, Object> queryRequest = new HashMap<>();
                 queryRequest.put("operation", "upload");
-                System.out.println("base64length: " + base64pic.length());
-                queryRequest.put("data", base64pic);
+                System.out.println("base64length: " + s.length());
+                queryRequest.put("data", s);
                 osw.write(JSON.toJSONString(queryRequest));
                 osw.flush();
                 InputStreamReader isr = new InputStreamReader(client.getInputStream());
@@ -179,6 +179,7 @@ public abstract class Tools {
         }
         return picIdList.toArray(new String[picIdList.size()]);
     }
+
 
     private static List<String> stringSplit(String str, int sizeOfEachSubString) {
         List<String> strings = new ArrayList<>();
