@@ -172,20 +172,18 @@ public abstract class Tools {
 
             while (ret != -1) {
                 response += (char)ret;
-                if (response != null) {
-                    System.out.println(response);
-                }
                 ret = isr.read();
             }
             JSONObject json = JSONObject.parseObject(response);
+
             if (json.getBoolean("success")) {
                 //start sending image data
-                //picid = json.get("id").toString();
-                Log.e("Status: ", "success");
-            } else {
+                picid = json.get("id").toString();
+                return picid;
+            }
+            else {
                 return null;
             }
-            return null;
         } catch (Exception e) {
             Log.e("Error", "In query", e);
             return null;
