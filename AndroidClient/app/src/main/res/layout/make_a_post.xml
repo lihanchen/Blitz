@@ -18,21 +18,21 @@
         android:layout_margin="@dimen/fab_margin"
         android:src="@drawable/ok" />
     <ScrollView
+        android:id="@+id/ScrollViewMAP"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginBottom="80dp"
         android:layout_marginTop="30dp"
-        android:fillViewport="false"
-        android:id="@+id/ScrollViewMAP">
+        android:fillViewport="false">
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
         android:gravity="center_horizontal"
         android:orientation="vertical"
-        android:weightSum="1"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true">
+        android:weightSum="1">
 
         <EditText
             android:id="@+id/etPostTitle"
@@ -128,14 +128,16 @@
                     android:layout_margin="10dp"
                     android:text="Upload Image" />
 
-                <ImageView
-                    android:id="@+id/ivToImageUpload"
-                    android:layout_width="fill_parent"
-                    android:layout_height="fill_parent"
+                <TextView
+                    android:id="@+id/textPictureCount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
-                    android:layout_margin="10dp"
-                    android:cropToPadding="false"
-                    android:longClickable="false" />
+                    android:layout_marginTop="20dp"
+                    android:text="0\nImages\nSelected"
+                    android:textAlignment="center"
+                    android:textAppearance="?android:attr/textAppearanceLarge" />
+
             </LinearLayout>
         </LinearLayout>
 
@@ -173,9 +175,9 @@
             android:minLines="2" />
 
         <Button
+            android:id="@+id/search1MAP"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/search1MAP"
             android:text="search"/>
         </LinearLayout>
 
@@ -206,9 +208,9 @@
             android:minLines="2" />
 
         <Button
+            android:id="@+id/search2MAP"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/search2MAP"
             android:text="search"/>
         </LinearLayout>
 

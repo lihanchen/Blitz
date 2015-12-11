@@ -1,10 +1,8 @@
 package cs490.blitz;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
 import android.location.Address;
 import android.location.Geocoder;
 import android.net.Uri;
@@ -13,15 +11,14 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.ScrollView;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
@@ -30,13 +27,10 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
-
-import static android.util.Base64.DEFAULT;
-import static android.util.Base64.encodeToString;
 
 
 public class MakeAPost extends FragmentActivity implements View.OnClickListener {
@@ -46,12 +40,16 @@ public class MakeAPost extends FragmentActivity implements View.OnClickListener 
     Spinner categorySpinner;
     String selectedCategory;
     ArrayAdapter<CharSequence> adapter;
-    ImageView imageToUpload;
     Button bUploadImage;
     FloatingActionButton makeAPost;
     EditText postTitle, contact, bounty, quantity, postBody;
     EditText fromMap, toMap;
     Button searchbutton1,searchbutton2;
+    volatile int uploadingFiles = 0;
+    HashSet<String> pictureIDs = new HashSet<String>();
+    private GoogleMap mMap;
+    private GoogleMap mMap2;
+    private ScrollView sv;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,7 +61,6 @@ public class MakeAPost extends FragmentActivity implements View.OnClickListener 
         toMap = (EditText) findViewById(R.id.toMAP);
         searchbutton1 = (Button)findViewById(R.id.search1MAP);
         searchbutton2 = (Button)findViewById(R.id.search2MAP);
-        imageToUpload = (ImageView) findViewById(R.id.ivToImageUpload);
         bUploadImage = (Button) findViewById(R.id.bUploadImage);
         makeAPost = (FloatingActionButton) findViewById(R.id.fab);
         postTitle = (EditText) findViewById(R.id.etPostTitle);
@@ -186,32 +183,14 @@ public class MakeAPost extends FragmentActivity implements View.OnClickListener 
         }
         ;
         final HashMap<String, Object> post = new HashMap<>();
-        final Bitmap bitmapImage = ((BitmapDrawable) imageToUpload.getDrawable()).getBitmap();
-        try {
 
-            final AsyncTask<String, String, String> successUploadImage = new AsyncTask<String, String, String>() {
-                @SafeVarargs
-                protected final String doInBackground(String ... params) {
-                    String ret = Tools.uploadPic(bitmapImage);
-                    return ret;
-                }
-
-                protected void onPostExecute(String ret) {
-                    post.put("photo", ret);
-                }
-            }.execute("");
-
-            while (successUploadImage.getStatus() != AsyncTask.Status.FINISHED) {
-                
-            }
-            //photo = /*encodeImage()*/Tools.uploadPic(((BitmapDrawable) imageToUpload.getDrawable()).getBitmap());
-
-        } catch (NullPointerException e) {
-        }
-        //Log.e("photo is: ", photo);
         SharedPreferences sp = getSharedPreferences("cs490.blitz.account", MODE_PRIVATE);
         String username = sp.getString("username", null);
 
+        String photos[] = new String[pictureIDs.size()];
+        int i = 0;
+        for (String s : pictureIDs) photos[i++] = s;
+        post.put("photo", photos);
         post.put("operation", "CreatePost");
         post.put("username", username);
         post.put("position", "position");
@@ -249,11 +228,37 @@ public class MakeAPost extends FragmentActivity implements View.OnClickListener 
         switch (requestCode) {
             case RESULT_IMAGE:
                 if (resultCode != RESULT_OK || data == null) {
-                    Tools.showToast(getApplicationContext(), "Error loading image");
+                    Tools.showToast(getApplicationContext(), "Error loading image 0");
                     return;
                 }
                 Uri selectedImage = data.getData();
-                imageToUpload.setImageURI(selectedImage);
+                Bitmap bitmap;
+                try {
+                    bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImage);
+                } catch (Exception e) {
+                    Tools.showToast(getApplicationContext(), "Error loading image 1");
+                    return;
+                }
+
+                new AsyncTask<Bitmap, String, String>() {
+                    @SafeVarargs
+                    protected final String doInBackground(Bitmap... params) {
+                        uploadingFiles++;
+                        String ret = Tools.uploadPic(params[0]);
+                        uploadingFiles--;
+                        return ret;
+                    }
+
+                    protected void onPostExecute(String ret) {
+                        if (ret == null) {
+                            Tools.showToast(getApplicationContext(), "Error loading image 2");
+                            return;
+                        }
+                        pictureIDs.add(ret);
+                        ((TextView) findViewById(R.id.textPictureCount)).setText("" + pictureIDs.size() + "\nImages\nSelected");
+                    }
+                }.execute(bitmap);
+
                 break;
             case RESULT_MATCHING:
                 if (resultCode == RESULT_OK) {
@@ -263,17 +268,6 @@ public class MakeAPost extends FragmentActivity implements View.OnClickListener 
                 break;
         }
     }
-
-    private String encodeImage() {
-        Bitmap bitmapImage = ((BitmapDrawable) imageToUpload.getDrawable()).getBitmap();
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        bitmapImage.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-        return encodeToString(baos.toByteArray(), DEFAULT);
-    }
-
-    private GoogleMap mMap;
-    private GoogleMap mMap2;
-    private ScrollView sv;
 
     private void setUpMap(){
         if(mMap == null){

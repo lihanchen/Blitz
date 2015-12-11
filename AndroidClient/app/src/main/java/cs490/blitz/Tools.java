@@ -4,7 +4,6 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
-import android.support.annotation.NonNull;
 import android.util.Base64;
 import android.util.Log;
 import android.widget.ImageView;
@@ -18,8 +17,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
-import java.nio.ByteOrder;
-import java.nio.CharBuffer;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -168,13 +165,13 @@ public abstract class Tools {
             InputStreamReader isr = new InputStreamReader(client.getInputStream());
             //BufferedReader responseReader = new BufferedReader(new InputStreamReader(client.getInputStream()));
             int ret = isr.read();
-            String response = "";
+            StringBuffer response = new StringBuffer();
 
             while (ret != -1) {
-                response += (char)ret;
+                response.append((char) ret);
                 ret = isr.read();
             }
-            JSONObject json = JSONObject.parseObject(response);
+            JSONObject json = JSONObject.parseObject(response.toString());
 
             if (json.getBoolean("success")) {
                 //start sending image data
