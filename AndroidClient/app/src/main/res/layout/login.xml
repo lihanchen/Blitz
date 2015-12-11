@@ -31,7 +31,7 @@
         android:hint="User Name"
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
-        android:maxLines="1" />
+        android:singleLine="true" />
 
     <EditText
         android:id="@+id/editPassword"
@@ -41,9 +41,10 @@
         android:layout_margin="10dp"
         android:hint="Password"
         android:inputType="textPassword"
+        android:maxLines="1"
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
-        android:maxLines="1" />
+        android:singleLine="true" />
 
     <Button
         android:id="@+id/buttonLogin"

@@ -81,7 +81,8 @@
                 android:layout_marginRight="10dp"
                 android:layout_marginTop="5dp"
                 android:hint="Enter Keyword To Search"
-                android:maxLines="1" />
+                android:maxLines="1"
+                android:singleLine="true" />
 
             <ListView
                 android:id="@+id/listPostList"

@@ -42,7 +42,8 @@
                 android:layout_margin="10dp"
                 android:gravity="center"
                 android:hint="Enter your post Title"
-                android:maxLines="1" />
+                android:maxLines="1"
+                android:singleLine="true" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -87,7 +88,8 @@
                         android:layout_marginLeft="10dp"
                         android:layout_marginRight="10dp"
                         android:layout_marginTop="15dp"
-                        android:hint="Contact (Optional)         " />
+                        android:hint="Contact (Optional)         "
+                        android:singleLine="true" />
 
                     <EditText
                         android:id="@+id/etBounty"
@@ -100,7 +102,8 @@
                         android:layout_marginTop="15dp"
                         android:ems="10"
                         android:hint="Bounty (Optional)"
-                        android:inputType="number" />
+                        android:inputType="number"
+                        android:singleLine="true" />
 
                     <EditText
                         android:id="@+id/etQuantity"
@@ -113,7 +116,8 @@
                         android:layout_marginTop="15dp"
                         android:ems="10"
                         android:hint="Quantity (Optional)"
-                        android:inputType="number" />
+                        android:inputType="number"
+                        android:singleLine="true" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -154,13 +158,14 @@
                 android:layout_marginTop="10dp"
                 android:hint="Enter your post body"
                 android:inputType="textMultiLine"
-                android:minLines="2" />
+                android:minLines="2"
+                android:singleLine="false" />
 
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginTop="20dp">
+                android:layout_marginTop="20dp"
+                android:orientation="horizontal">
 
                 <EditText
                     android:id="@+id/fromMAP"
@@ -169,7 +174,8 @@
                     android:layout_margin="10dp"
                     android:hint="From: "
                     android:inputType="textMultiLine"
-                    android:maxLines="1" />
+                    android:maxLines="1"
+                    android:singleLine="true" />
 
 
                 <Button

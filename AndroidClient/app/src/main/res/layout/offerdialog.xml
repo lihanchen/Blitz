@@ -32,5 +32,6 @@
         android:layout_marginTop="4dp"
         android:fontFamily="sans-serif"
         android:hint="Bounty Offering"
-        android:inputType="number" />
+        android:inputType="number"
+        android:singleLine="true" />
 </LinearLayout>

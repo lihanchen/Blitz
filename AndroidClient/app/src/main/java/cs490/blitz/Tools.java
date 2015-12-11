@@ -13,7 +13,6 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 
-import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
@@ -93,33 +92,17 @@ public abstract class Tools {
     }
 
     public synchronized static String getPicture(JSONArray picids){
-        final String host = "blitzproject.cs.purdue.edu";
         String ret = "";
         try{
-            Socket client = new Socket(host,9071);
-            OutputStreamWriter osw = new OutputStreamWriter(client.getOutputStream());
             System.out.println(picids);
-            System.out.println("picture number: "+picids.size());
+            System.out.println("picture number: " + picids.size());
             for(int i = 0; i<picids.size();i++){
-
                 JSONArray json = picids;
                 String picid = json.getString(i);
                 HashMap<String, Object> queryRequest = new HashMap<>();
                 queryRequest.put("operation", "getpic");
                 queryRequest.put("id", picid);
-                osw.write(JSON.toJSONString(queryRequest));
-                osw.flush();
-
-                InputStreamReader isr = new InputStreamReader(client.getInputStream());
-                //BufferedReader responseReader = new BufferedReader(new InputStreamReader(client.getInputStream()));
-                int ret1 = isr.read();
-                StringBuffer response = new StringBuffer();
-
-                while (ret1 != -1) {
-                    response.append((char) ret1);
-                    ret1 = isr.read();
-                }
-                JSONObject returnobject = JSONObject.parseObject(response.toString());
+                JSONObject returnobject = JSONObject.parseObject(Tools.query(JSON.toJSONString(queryRequest), 9071));
                 System.out.println(returnobject);
                 if (returnobject.getBoolean("success")) {
                     //start sending image data
@@ -134,39 +117,6 @@ public abstract class Tools {
                 
             }
         } catch (Exception e){
-            e.printStackTrace();
-        }
-        return ret;
-    }
-
-    public synchronized static String getPic(String picid) {
-        final String host = "blitzproject.cs.purdue.edu";
-        String ret="";
-        try {
-            Socket client = new Socket(host, 9071);
-            OutputStreamWriter osw = new OutputStreamWriter(client.getOutputStream());
-
-            HashMap<String, Object> queryRequest = new HashMap<>();
-            queryRequest.put("operation", "getpic");
-            queryRequest.put("id", picid);
-            osw.write(JSON.toJSONString(queryRequest));
-            osw.flush();
-            BufferedReader responseReader = new BufferedReader(new InputStreamReader(client.getInputStream()));
-            while (true) {
-                String response = responseReader.readLine();
-                if (response != null) {
-                    System.out.println(response);
-                    JSONObject json = JSONObject.parseObject(response);
-                    if (json.getBoolean("success")) {
-                        //start sending image data
-                        ret = json.get("data").toString();
-                        break;
-                    } else {
-                        return null;
-                    }
-                }
-            }
-        }catch (Exception e){
             e.printStackTrace();
         }
         return ret;

@@ -31,9 +31,10 @@
         android:layout_gravity="center_horizontal"
         android:layout_margin="10dp"
         android:hint="User Name"
+        android:maxLines="1"
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
-        android:maxLines="1" />
+        android:singleLine="true" />
 
     <EditText
         android:id="@+id/editEmail"
@@ -43,9 +44,10 @@
         android:layout_margin="10dp"
         android:hint="Email"
         android:inputType="textEmailAddress"
+        android:maxLines="1"
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
-        android:maxLines="1" />
+        android:singleLine="true" />
 
     <EditText
         android:id="@+id/editPassword"
@@ -55,9 +57,10 @@
         android:layout_margin="10dp"
         android:hint="Password"
         android:inputType="textPassword"
+        android:maxLines="1"
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
-        android:maxLines="1" />
+        android:singleLine="true" />
 
     <EditText
         android:id="@+id/editPassword2"
@@ -66,9 +69,10 @@
         android:layout_margin="10dp"
         android:hint="Retype Password"
         android:inputType="textPassword"
+        android:maxLines="1"
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
-        android:maxLines="1" />
+        android:singleLine="true" />
 
     <LinearLayout
         android:layout_width="wrap_content"
