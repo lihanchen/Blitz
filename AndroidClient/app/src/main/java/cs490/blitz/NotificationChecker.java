@@ -57,7 +57,7 @@ public class NotificationChecker extends Service {
                         }
                     }
                     try {
-                        Thread.sleep(2000);
+                        Thread.sleep(2000000);//TODO change time
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
