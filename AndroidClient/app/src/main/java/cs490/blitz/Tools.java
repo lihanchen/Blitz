@@ -98,9 +98,11 @@ public abstract class Tools {
         try{
             Socket client = new Socket(host,9071);
             OutputStreamWriter osw = new OutputStreamWriter(client.getOutputStream());
-
+            System.out.println(picids);
+            System.out.println("picture number: "+picids.size());
             for(int i = 0; i<picids.size();i++){
-                JSONArray json = (JSONArray)picids.get(i);
+
+                JSONArray json = picids;
                 String picid = json.getString(i);
                 HashMap<String, Object> queryRequest = new HashMap<>();
                 queryRequest.put("operation", "getpic");
@@ -118,6 +120,7 @@ public abstract class Tools {
                     ret1 = isr.read();
                 }
                 JSONObject returnobject = JSONObject.parseObject(response.toString());
+                System.out.println(returnobject);
                 if (returnobject.getBoolean("success")) {
                     //start sending image data
                     ret += returnobject.get("data").toString();
