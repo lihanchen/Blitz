@@ -14,7 +14,6 @@ function listen(){
             					}else if (json.operation=="getpic2"){
             						var deleteModule = require("./getpic");
             						deleteModule.getpic(json,socket);
-            						socket.destroy();
             					}
             					else{
             						socket.write(JSON.stringify({error:"Unknown Operation"}));
