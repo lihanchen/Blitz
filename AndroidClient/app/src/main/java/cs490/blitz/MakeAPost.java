@@ -28,6 +28,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -46,7 +47,7 @@ public class MakeAPost extends FragmentActivity implements View.OnClickListener 
     EditText fromMap, toMap;
     Button searchbutton1,searchbutton2;
     volatile int uploadingFiles = 0;
-    HashSet<String> pictureIDs = new HashSet<String>();
+    ArrayList<String[]> pictureIDs = new ArrayList<String[]>();
     private GoogleMap mMap;
     private GoogleMap mMap2;
     private ScrollView sv;
@@ -203,10 +204,7 @@ public class MakeAPost extends FragmentActivity implements View.OnClickListener 
         SharedPreferences sp = getSharedPreferences("cs490.blitz.account", MODE_PRIVATE);
         String username = sp.getString("username", null);
 
-        String photos[] = new String[pictureIDs.size()];
-        int i = 0;
-        for (String s : pictureIDs) photos[i++] = s;
-        post.put("photo", photos);
+        post.put("photo", pictureIDs.toArray());
         post.put("operation", "CreatePost");
         post.put("username", username);
         post.put("position", "position");
@@ -274,16 +272,16 @@ public class MakeAPost extends FragmentActivity implements View.OnClickListener 
                     return;
                 }
 
-                new AsyncTask<Bitmap, String, String>() {
+                new AsyncTask<Bitmap, String, String[]>() {
                     @SafeVarargs
-                    protected final String doInBackground(Bitmap... params) {
+                    protected final String[] doInBackground(Bitmap... params) {
                         uploadingFiles++;
-                        String ret = Tools.uploadPic(params[0]);
+                        String ret[] = Tools.uploadPic(params[0]);
                         uploadingFiles--;
                         return ret;
                     }
 
-                    protected void onPostExecute(String ret) {
+                    protected void onPostExecute(String ret[]) {
                         if (ret == null) {
                             Tools.showToast(getApplicationContext(), "Error loading image 2");
                             return;

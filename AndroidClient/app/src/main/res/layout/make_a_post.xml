@@ -23,122 +23,123 @@
         android:layout_height="match_parent"
         android:layout_marginBottom="80dp"
         android:layout_marginTop="30dp"
-        android:fillViewport="false"
-        android:id="@+id/ScrollViewMAP">
+        android:fillViewport="false">
 
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center_horizontal"
-        android:orientation="vertical"
-        android:weightSum="1"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true">
-
-        <EditText
-            android:id="@+id/etPostTitle"
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_margin="10dp"
-            android:gravity="center"
-            android:hint="Enter your post Title" />
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
+            android:weightSum="1">
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_margin="0dp"
-            android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/textView2"
-                android:layout_width="wrap_content"
+            <EditText
+                android:id="@+id/etPostTitle"
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
+                android:layout_gravity="center_horizontal"
                 android:layout_margin="10dp"
-                android:text="Choose a category" />
-
-            <Spinner
-                android:id="@+id/spCategory"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="10dp"
-                android:focusableInTouchMode="false"
-                android:spinnerMode="dropdown" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="horizontal">
+                android:gravity="center"
+                android:hint="Enter your post Title" />
 
             <LinearLayout
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:orientation="vertical">
+                android:layout_margin="0dp"
+                android:orientation="horizontal">
 
-                <EditText
-                    android:id="@+id/etContact"
+                <TextView
+                    android:id="@+id/textView2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="left"
-                    android:layout_marginBottom="15dp"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginRight="10dp"
-                    android:layout_marginTop="15dp"
-                    android:hint="Contact (Optional)         " />
+                    android:layout_gravity="center_vertical"
+                    android:layout_margin="10dp"
+                    android:text="Choose a category" />
 
-                <EditText
-                    android:id="@+id/etBounty"
+                <Spinner
+                    android:id="@+id/spCategory"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="left|right"
-                    android:layout_marginBottom="15dp"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginRight="10dp"
-                    android:layout_marginTop="15dp"
-                    android:ems="10"
-                    android:hint="Bounty (Optional)"
-                    android:inputType="number" />
+                    android:layout_margin="10dp"
+                    android:focusableInTouchMode="false"
+                    android:spinnerMode="dropdown" />
 
-                <EditText
-                    android:id="@+id/etQuantity"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="left"
-                    android:layout_marginBottom="15dp"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginRight="10dp"
-                    android:layout_marginTop="15dp"
-                    android:ems="10"
-                    android:hint="Quantity (Optional)"
-                    android:inputType="number" />
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:orientation="vertical">
+                android:orientation="horizontal">
 
-                <Button
-                    android:id="@+id/bUploadImage"
+                <LinearLayout
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_margin="10dp"
-                    android:text="Upload Image" />
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
 
-                <ImageView
-                    android:id="@+id/ivToImageUpload"
-                    android:layout_width="fill_parent"
-                    android:layout_height="fill_parent"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_margin="10dp"
-                    android:cropToPadding="false"
-                    android:longClickable="false" />
+                    <EditText
+                        android:id="@+id/etContact"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="left"
+                        android:layout_marginBottom="15dp"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="10dp"
+                        android:layout_marginTop="15dp"
+                        android:hint="Contact (Optional)         " />
+
+                    <EditText
+                        android:id="@+id/etBounty"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="left|right"
+                        android:layout_marginBottom="15dp"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="10dp"
+                        android:layout_marginTop="15dp"
+                        android:ems="10"
+                        android:hint="Bounty (Optional)"
+                        android:inputType="number" />
+
+                    <EditText
+                        android:id="@+id/etQuantity"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="left"
+                        android:layout_marginBottom="15dp"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="10dp"
+                        android:layout_marginTop="15dp"
+                        android:ems="10"
+                        android:hint="Quantity (Optional)"
+                        android:inputType="number" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+                    <Button
+                        android:id="@+id/bUploadImage"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_margin="10dp"
+                        android:text="Upload Image" />
+
+                    <TextView
+                        android:id="@+id/textPictureCount"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginTop="20dp"
+                        android:text="0\nImages\nSelected"
+                        android:textAlignment="center"
+                        android:textAppearance="?android:attr/textAppearanceLarge" />
+
+                </LinearLayout>
             </LinearLayout>
-        </LinearLayout>
 
             <EditText
                 android:id="@+id/etPostBody"
@@ -169,9 +170,9 @@
 
 
                 <Button
+                    android:id="@+id/search1MAP"
                     android:layout_width="150dp"
                     android:layout_height="wrap_content"
-                    android:id="@+id/search1MAP"
                     android:text="search"/>
             </LinearLayout>
 
@@ -196,11 +197,11 @@
                     android:inputType="textMultiLine" />
 
 
-            <Button
-                android:layout_width="150dp"
-                android:layout_height="wrap_content"
-                android:id="@+id/search2MAP"
-                android:text="search"/>
+                <Button
+                    android:id="@+id/search2MAP"
+                    android:layout_width="150dp"
+                    android:layout_height="wrap_content"
+                    android:text="search" />
             </LinearLayout>
 
             <fragment xmlns:android="http://schemas.android.com/apk/res/android"
