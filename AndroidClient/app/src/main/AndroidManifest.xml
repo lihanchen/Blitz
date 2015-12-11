@@ -80,7 +80,8 @@
             android:label="Maptest" />
         <activity
             android:name=".Rating"
-            android:label="Rating" />
+            android:label="Rating"
+            android:theme="@android:style/Theme.Holo.Light.Dialog" />
         <activity
             android:name=".ImageUploadTest"
             android:label="ImageUploadTest" />
