@@ -166,26 +166,23 @@ public abstract class Tools {
             osw.write(JSON.toJSONString(queryRequest));
             osw.flush();
             InputStreamReader isr = new InputStreamReader(client.getInputStream());
-            //BufferedReader responseReader = new BufferedReader(new InputStreamReader(client.getInputStream()));
             int ret = isr.read();
             String response = "";
 
             while (ret != -1) {
                 response += (char)ret;
-                if (response != null) {
-                    System.out.println(response);
-                    JSONObject json = JSONObject.parseObject(response);
-                    if (json.getBoolean("success")) {
-                        //start sending image data
-                        picid = json.get("id").toString();
-                        break;
-                    } else {
-                        return null;
-                    }
-                }
                 ret = isr.read();
             }
-            return null;
+            JSONObject json = JSONObject.parseObject(response);
+
+            if (json.getBoolean("success")) {
+                //start sending image data
+                picid = json.get("id").toString();
+                return picid;
+            }
+            else {
+                return null;
+            }
         } catch (Exception e) {
             Log.e("Error", "In query", e);
             return null;
