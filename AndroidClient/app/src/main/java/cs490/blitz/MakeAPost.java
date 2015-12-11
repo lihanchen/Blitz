@@ -52,6 +52,7 @@ public class MakeAPost extends FragmentActivity implements View.OnClickListener 
     EditText postTitle, contact, bounty, quantity, postBody;
     EditText fromMap, toMap;
     Button searchbutton1,searchbutton2;
+    LatLng lat1,lat2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,7 +92,7 @@ public class MakeAPost extends FragmentActivity implements View.OnClickListener 
                                 selectedCategory = "FoodDiscover";
                                 toMap.setVisibility(View.GONE);
                                 searchbutton2.setVisibility(View.GONE);
-                                ((WorkaroundMapFragment) getSupportFragmentManager().findFragmentById(R.id.mapMAP)).getView().setVisibility(View.GONE);
+                                ((WorkaroundMapFragment) getSupportFragmentManager().findFragmentById(R.id.map2MAP)).getView().setVisibility(View.GONE);
                                 fromMap.setHint("Location: ");
                                 break;
                             case 2:
@@ -99,21 +100,21 @@ public class MakeAPost extends FragmentActivity implements View.OnClickListener 
                                 fromMap.setHint("From: ");
                                 toMap.setVisibility(View.VISIBLE);
                                 searchbutton2.setVisibility(View.VISIBLE);
-                                ((WorkaroundMapFragment) getSupportFragmentManager().findFragmentById(R.id.mapMAP)).getView().setVisibility(View.VISIBLE);
+                                ((WorkaroundMapFragment) getSupportFragmentManager().findFragmentById(R.id.map2MAP)).getView().setVisibility(View.VISIBLE);
                                 break;
                             case 3:
                                 selectedCategory = "House Rental";
                                 fromMap.setHint("Location: ");
                                 toMap.setVisibility(View.GONE);
                                 searchbutton2.setVisibility(View.GONE);
-                                ((WorkaroundMapFragment) getSupportFragmentManager().findFragmentById(R.id.mapMAP)).getView().setVisibility(View.GONE);
+                                ((WorkaroundMapFragment) getSupportFragmentManager().findFragmentById(R.id.map2MAP)).getView().setVisibility(View.GONE);
                                 break;
                             case 4:
                                 selectedCategory = "Other";
                                 fromMap.setHint("Location: ");
                                 toMap.setVisibility(View.GONE);
                                 searchbutton2.setVisibility(View.GONE);
-                                ((WorkaroundMapFragment) getSupportFragmentManager().findFragmentById(R.id.mapMAP)).getView().setVisibility(View.GONE);
+                                ((WorkaroundMapFragment) getSupportFragmentManager().findFragmentById(R.id.map2MAP)).getView().setVisibility(View.GONE);
                                 break;
                         }
                     }
@@ -124,6 +125,18 @@ public class MakeAPost extends FragmentActivity implements View.OnClickListener 
                 }
         );
         setUpMap();
+        searchbutton1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onSearch(1);
+            }
+        });
+        searchbutton2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onSearch(2);
+            }
+        });
     }
 
     @Override
@@ -134,12 +147,6 @@ public class MakeAPost extends FragmentActivity implements View.OnClickListener 
                 break;
             case R.id.fab:
                 publishPost();
-                break;
-            case R.id.search1MAP:
-                onSearch(1);
-                break;
-            case R.id.search2MAP:
-                onSearch(2);
                 break;
 
         }
@@ -160,6 +167,15 @@ public class MakeAPost extends FragmentActivity implements View.OnClickListener 
         String body = postBody.getText().toString();
         if (title.equals("") || body.equals("")) {
             Tools.showToast(getApplicationContext(), "Please provide complete title and body");
+            return;
+        }
+
+        if ((selectedCategory.equals("Carpool") && lat1 == null) || (selectedCategory.equals("Carpool") && lat2 == null)){
+            Tools.showToast(getApplicationContext(),"Please provide correct location");
+            return;
+        }
+        if(!selectedCategory.equals("Carpool") && lat1 == null){
+            Tools.showToast(getApplicationContext(),"Please provide correct location");
             return;
         }
 
@@ -224,6 +240,24 @@ public class MakeAPost extends FragmentActivity implements View.OnClickListener 
         post.put("response", new JSONObject[0]);
         post.put("isRequest", PostsList.mode == 1);
         post.put("category", selectedCategory);
+        //map related:
+        if(selectedCategory.equals("Carpool")) {
+            HashMap<String, Object> position = new HashMap<>();
+            position.put("address",fromMap.getText());
+            position.put("latitude",lat1.latitude);
+            position.put("longitude",lat1.longitude);
+            HashMap<String, Object> position2 = new HashMap<>();
+            position2.put("address",toMap.getText());
+            position2.put("latitude",lat2.latitude);
+            position2.put("longitude",lat2.longitude);
+            post.put("from", position);
+            post.put("to", position2);
+        }
+        HashMap<String, Object> position = new HashMap<>();
+        position.put("address",fromMap.getText());
+        position.put("latitude",lat1.latitude);
+        position.put("longitude",lat1.longitude);
+        post.put("position",position);
 
         final AsyncTask<HashMap<String, Object>, Integer, JSONObject> success = new AsyncTask<HashMap<String, Object>, Integer, JSONObject>() {
             @SafeVarargs
@@ -340,9 +374,11 @@ public class MakeAPost extends FragmentActivity implements View.OnClickListener 
             if(i==1) {
                 mMap.addMarker(new MarkerOptions().position(latLng).title("Marker"));
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 14));
+                lat1 = latLng;
             } else {
                 mMap2.addMarker(new MarkerOptions().position(latLng).title("Marker"));
                 mMap2.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 14));
+                lat2 = latLng;
             }
 
             System.out.println(latLng.latitude);
