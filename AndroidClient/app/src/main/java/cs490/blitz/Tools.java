@@ -174,16 +174,16 @@ public abstract class Tools {
                 response += (char)ret;
                 if (response != null) {
                     System.out.println(response);
-                    JSONObject json = JSONObject.parseObject(response);
-                    if (json.getBoolean("success")) {
-                        //start sending image data
-                        picid = json.get("id").toString();
-                        break;
-                    } else {
-                        return null;
-                    }
                 }
                 ret = isr.read();
+            }
+            JSONObject json = JSONObject.parseObject(response);
+            if (json.getBoolean("success")) {
+                //start sending image data
+                //picid = json.get("id").toString();
+                Log.e("Status: ", "success");
+            } else {
+                return null;
             }
             return null;
         } catch (Exception e) {

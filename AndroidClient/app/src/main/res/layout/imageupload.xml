@@ -28,5 +28,14 @@
         android:text="Upload Image"
         android:id="@+id/uploadimg"/>
 
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="searchpic"
+        android:id="@+id/uploadtestb2"
+        android:layout_gravity="center_horizontal"
+        android:clickable="true"
+        android:onClick="searchpictest" />
+
 
 </LinearLayout>
