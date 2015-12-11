@@ -18,8 +18,10 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.List;
 import java.util.TimeZone;
 
 import static android.util.Base64.DEFAULT;
@@ -115,18 +117,6 @@ public abstract class Tools {
             e.printStackTrace();
         }
         return ret;
-        /*
-        , ImageView i
-        try {
-            String imageUrl = "http://blitzproject.cs.purdue.edu:9073";
-            imageUrl = imageUrl+"/"+picid;
-            System.out.println(imageUrl);
-            Bitmap bitmap = BitmapFactory.decodeStream((InputStream) new URL(imageUrl).getContent());
-            i.setImageBitmap(bitmap);
-        } catch (Exception e){
-            e.printStackTrace();
-        }
-        */
     }
 
     public synchronized static void showPic(String base64pic,ImageView i){
@@ -140,51 +130,64 @@ public abstract class Tools {
     private static String compressImage(Bitmap bitmapImage) {
         double factor = (double)100/(double)bitmapImage.getWidth();
         System.out.println("factor: "+factor+" width: "+bitmapImage.getWidth()+" height: "+bitmapImage.getHeight());
-        Bitmap scaled = Bitmap.createScaledBitmap(bitmapImage, (int)(bitmapImage.getWidth()*factor), (int)(bitmapImage.getHeight()*factor), true);
+        Bitmap scaled = Bitmap.createScaledBitmap(bitmapImage, (int) (bitmapImage.getWidth() * factor), (int) (bitmapImage.getHeight() * factor), true);
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         System.out.println("after compress: width:"+scaled.getWidth()+" height: "+scaled.getHeight());
         scaled.compress(Bitmap.CompressFormat.JPEG, 50, baos);
         return encodeToString(baos.toByteArray(), DEFAULT);
     }
 
-    public synchronized static String uploadPic(Bitmap bitmap) {
-        String base64pic = "";
+    public synchronized static List<String> uploadPic(Bitmap bitmap) {
+        String base64pic;
         base64pic = compressImage(bitmap);
-        String picid;
-        final String host = "blitzproject.cs.purdue.edu";
-        try {
-            Socket client = new Socket(host, 9071);
-            OutputStreamWriter osw = new OutputStreamWriter(client.getOutputStream());
+        List<String> subStrings = stringSplit(base64pic, 512);
 
-            HashMap<String, Object> queryRequest = new HashMap<>();
-            queryRequest.put("operation", "upload");
-            System.out.println("base64length: " + base64pic.length());
-            queryRequest.put("data", base64pic);
-            osw.write(JSON.toJSONString(queryRequest));
-            osw.flush();
-            InputStreamReader isr = new InputStreamReader(client.getInputStream());
-            //BufferedReader responseReader = new BufferedReader(new InputStreamReader(client.getInputStream()));
-            int ret = isr.read();
-            StringBuffer response = new StringBuffer();
+        return uploadPicUtil(subStrings);
+    }
 
-            while (ret != -1) {
-                response.append((char) ret);
-                ret = isr.read();
-            }
-            JSONObject json = JSONObject.parseObject(response.toString());
+    private static List<String> uploadPicUtil(List<String> subStrings) {
+        List<String> picIdList = new ArrayList<>();
+        for (String base64pic : subStrings) {
+            try {
+                final String host = "blitzproject.cs.purdue.edu";
+                Socket client = new Socket(host, 9071);
+                OutputStreamWriter osw = new OutputStreamWriter(client.getOutputStream());
 
-            if (json.getBoolean("success")) {
-                //start sending image data
-                picid = json.get("id").toString();
-                return picid;
+                HashMap<String, Object> queryRequest = new HashMap<>();
+                queryRequest.put("operation", "upload");
+                System.out.println("base64length: " + base64pic.length());
+                queryRequest.put("data", base64pic);
+                osw.write(JSON.toJSONString(queryRequest));
+                osw.flush();
+                InputStreamReader isr = new InputStreamReader(client.getInputStream());
+                int ret = isr.read();
+                StringBuffer response = new StringBuffer();
+
+                while (ret != -1) {
+                    response.append((char) ret);
+                    ret = isr.read();
+                }
+                JSONObject json = JSONObject.parseObject(response.toString());
+
+                if (json.getBoolean("success")) {
+                    picIdList.add(json.get("id").toString());
+                }
+            } catch (Exception e) {
+                Log.e("Error", "In query", e);
             }
-            else {
-                return null;
-            }
-        } catch (Exception e) {
-            Log.e("Error", "In query", e);
-            return null;
+
         }
+        return picIdList;
+    }
+
+    private static List<String> stringSplit(String str, int sizeOfEachSubString) {
+        List<String> strings = new ArrayList<>();
+        int index = 0;
+        while (index < str.length()) {
+            strings.add(str.substring(index, Math.min(index + sizeOfEachSubString, str.length())));
+            index += sizeOfEachSubString;
+        }
+        return strings;
     }
 
     public static String safeToString(Object obj){
