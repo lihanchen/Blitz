@@ -10,7 +10,6 @@ import android.graphics.BitmapFactory;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.media.Image;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -49,25 +48,22 @@ import java.util.TimeZone;
  */
 
 public class PostDetail extends AppCompatActivity implements OnMapReadyCallback {
+    static Button bGiveRate;
     private final LocationListener mLocationListener = new LocationListener() {
         @Override
         public void onLocationChanged(final Location location) {
-            //your code here
         }
 
         @Override
         public void onStatusChanged(String provider, int status, Bundle extras) {
-
         }
 
         @Override
         public void onProviderEnabled(String provider) {
-
         }
 
         @Override
         public void onProviderDisabled(String provider) {
-
         }
     };
     ScrollView sv;
@@ -75,17 +71,17 @@ public class PostDetail extends AppCompatActivity implements OnMapReadyCallback 
     double longitude;
     String currentusername;
     String postusername;
+    boolean readOnly;
     ArrayList<HashMap<String, Object>> offerdata;
     String postid;
     private GoogleMap googleMap;
     private Marker marker;
+    private JSONArray pictures;
+
 
     @Override
     public void onMapReady(GoogleMap map) {
-
-
     }
-
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -93,13 +89,14 @@ public class PostDetail extends AppCompatActivity implements OnMapReadyCallback 
         postid = getIntent().getStringExtra("postid");
         SharedPreferences sp = getSharedPreferences("cs490.blitz.account", MODE_PRIVATE);
         currentusername = sp.getString("username", null);
-        Button bGiveRate = (Button) findViewById(R.id.bGiveRating);
+        bGiveRate = (Button) findViewById(R.id.bGiveRating);
         bGiveRate.setOnClickListener(
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         Intent ratingPage = new Intent(PostDetail.this, Rating.class);
                         ratingPage.putExtra("username", postusername);
+                        ratingPage.putExtra("postID", postid);
                         startActivity(ratingPage);
                     }
                 }
@@ -175,6 +172,12 @@ public class PostDetail extends AppCompatActivity implements OnMapReadyCallback 
                 TextView username = (TextView) findViewById(R.id.usernamePD);
                 TextView posttime = (TextView) findViewById(R.id.posttimePD);
 
+                readOnly = json.getBoolean("TransactionCompleted");
+
+                if(json.containsKey("photo")){
+                    pictures = json.getJSONArray("photo");
+                    loadallpic();
+                }
                 if(json.containsKey("bounty"))
                     bounty.append(": " + json.get("bounty").toString());
                 if(json.containsKey("quantity"))
@@ -225,6 +228,9 @@ public class PostDetail extends AppCompatActivity implements OnMapReadyCallback 
                     JSONObject jsonObject = (JSONObject) obj;
                     map.put("img", R.drawable.defaultavatar);
                     map.put("username", jsonObject.get("username"));
+                    if (readOnly && !json.getBoolean("rated") && jsonObject.getString("username").equals(currentusername)) {
+                        bGiveRate.setVisibility(View.VISIBLE);
+                    }
                     String bounty1 = "Offering: ";
                     bounty1 += jsonObject.get("bounty").toString();
                     map.put("bounty", bounty1);
@@ -259,58 +265,60 @@ public class PostDetail extends AppCompatActivity implements OnMapReadyCallback 
                 for (int i = 0; i < adapterCount; i++) {
                     View item = adapter.getView(i, null, null);
                     item.setId(i);
-                    item.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            final int position = v.getId();
-                            System.out.println(position);
-                            if (postusername.equals(currentusername)) {
-                                System.out.println("this is the same user");
-                                AlertDialog.Builder builder = new AlertDialog.Builder(PostDetail.this);
-                                builder.setMessage("Do you want to accept offer from " + offerdata.get(position).get("username")
-                                        + " with bounty " + offerdata.get(position).get("bounty"))
-                                        .setTitle("Accept Offer");
-                                builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int id) {
-                                        // User clicked OK button
-                                        new AsyncTask<String, Integer, JSONObject>() {
-                                            @Override
-                                            protected JSONObject doInBackground(String... params) {
-                                                Tools.postNotification(postid, (String) offerdata.get(position).get("username"), "Great! Your offer/request has been accepted!");
-                                                HashMap<String, Object> queryRequest = new HashMap<>();
-                                                queryRequest.put("operation", "AcceptOffer");
-                                                queryRequest.put("postID", postid);
-                                                queryRequest.put("username", offerdata.get(position).get("username"));
-                                                String ret = Tools.query(JSON.toJSONString(queryRequest), 9069);
-                                                return JSON.parseObject(ret);
-                                            }
+                    if (!readOnly)
+                        item.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                final int position = v.getId();
+                                System.out.println(position);
+                                if (postusername.equals(currentusername)) {
+                                    System.out.println("this is the same user");
+                                    AlertDialog.Builder builder = new AlertDialog.Builder(PostDetail.this);
+                                    builder.setMessage("Do you want to accept offer from " + offerdata.get(position).get("username")
+                                            + " with bounty " + offerdata.get(position).get("bounty"))
+                                            .setTitle("Accept Offer");
+                                    builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int id) {
+                                            // User clicked OK button
+                                            new AsyncTask<String, Integer, JSONObject>() {
+                                                @Override
+                                                protected JSONObject doInBackground(String... params) {
+                                                    Tools.postNotification(postid, (String) offerdata.get(position).get("username"), "Great! Your offer/request has been accepted!");
+                                                    HashMap<String, Object> queryRequest = new HashMap<>();
+                                                    queryRequest.put("operation", "AcceptOffer");
+                                                    queryRequest.put("postID", postid);
+                                                    queryRequest.put("username", offerdata.get(position).get("username"));
+                                                    String ret = Tools.query(JSON.toJSONString(queryRequest), 9069);
+                                                    return JSON.parseObject(ret);
+                                                }
 
-                                            @Override
-                                            protected void onPostExecute(JSONObject jsonArray) {
-                                                if (jsonArray != null)
-                                                    System.out.println(jsonArray.toString());
-                                            }
-                                        }.execute();
-
-                                        System.out.println("Ok is clicked");
-                                    }
-                                });
-                                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int id) {
-                                    }
-                                });
-                                builder.setNeutralButton("Show Profile", new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int id) {
-                                        Intent ProfileIntent = new Intent(PostDetail.this, Profile.class);
-                                        ProfileIntent.putExtra("username", offerdata.get(position).get("username").toString());
-                                        startActivity(ProfileIntent);
-                                    }
-                                });
-                                AlertDialog dialog = builder.create();
-                                dialog.show();
+                                                @Override
+                                                protected void onPostExecute(JSONObject jsonArray) {
+                                                    if (jsonArray != null)
+                                                        System.out.println(jsonArray.toString());
+                                                    finish();
+                                                    startActivity(getIntent());
+                                                }
+                                            }.execute();
+                                        }
+                                    });
+                                    builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int id) {
+                                            //cancel
+                                        }
+                                    });
+                                    builder.setNeutralButton("Show Profile", new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int id) {
+                                            Intent ProfileIntent = new Intent(PostDetail.this, Profile.class);
+                                            ProfileIntent.putExtra("username", offerdata.get(position).get("username").toString());
+                                            startActivity(ProfileIntent);
+                                        }
+                                    });
+                                    AlertDialog dialog = builder.create();
+                                    dialog.show();
+                                }
                             }
-                        }
-                    });
+                        });
                     placeholder.addView(item);
                 }
 
@@ -320,58 +328,63 @@ public class PostDetail extends AppCompatActivity implements OnMapReadyCallback 
                 if (!postusername.equals(currentusername)) {
                     plussign.setImageResource(R.drawable.plussign);
                     //setup onclick listener to enable user to make an offer:
-                    plussign.setOnClickListener(new View.OnClickListener() {
-                        public void onClick(View v) {
-                            AlertDialog.Builder builder = new AlertDialog.Builder(PostDetail.this);
-                            // Get the layout inflater
-                            LayoutInflater inflater = PostDetail.this.getLayoutInflater();
+                    if (!readOnly)
+                        plussign.setOnClickListener(new View.OnClickListener() {
+                            public void onClick(View v) {
+                                AlertDialog.Builder builder = new AlertDialog.Builder(PostDetail.this);
+                                // Get the layout inflater
+                                LayoutInflater inflater = PostDetail.this.getLayoutInflater();
 
-                            // Inflate and set the layout for the dialog
-                            // Pass null as the parent view because its going in the dialog layout
-                            final View dialogView = inflater.inflate(R.layout.offerdialog, null);
-                            builder.setView(dialogView)
-                                    // Add action buttons
-                                    .setPositiveButton("Make Offer!", new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialog, int id) {
-                                            //ok
-                                            EditText comment = (EditText) dialogView.findViewById(R.id.dialogComments);
-                                            EditText bounty = (EditText) dialogView.findViewById(R.id.dialogBounty);
-                                            final String commentstr = comment.getText().toString();
-                                            final double bountynum = Double.parseDouble(bounty.getText().toString());
+                                // Inflate and set the layout for the dialog
+                                // Pass null as the parent view because its going in the dialog layout
+                                final View dialogView = inflater.inflate(R.layout.offerdialog, null);
+                                builder.setView(dialogView)
+                                        // Add action buttons
+                                        .setPositiveButton("Make Offer!", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int id) {
+                                                //ok
+                                                EditText comment = (EditText) dialogView.findViewById(R.id.dialogComments);
+                                                EditText bounty = (EditText) dialogView.findViewById(R.id.dialogBounty);
+                                                final String commentstr = comment.getText().toString();
+                                                final double bountynum = Double.parseDouble(bounty.getText().toString());
 
-                                            new AsyncTask<String, Integer, JSONObject>() {
-                                                @Override
-                                                protected JSONObject doInBackground(String... params) {
-                                                    Tools.postNotification(postid, postusername, "Great! Someone responded to your post!");
-                                                    HashMap<String, Object> queryRequest = new HashMap<>();
-                                                    queryRequest.put("operation", "OfferPrice");
-                                                    queryRequest.put("postID", postid);
-                                                    queryRequest.put("username", currentusername);
-                                                    queryRequest.put("comment", commentstr);
-                                                    queryRequest.put("offeredPrice", bountynum);
-                                                    System.out.println(JSON.toJSONString(queryRequest));
-                                                    String ret = Tools.query(JSON.toJSONString(queryRequest), 9069);
-                                                    return JSON.parseObject(ret);
-                                                }
+                                                new AsyncTask<String, Integer, JSONObject>() {
+                                                    @Override
+                                                    protected JSONObject doInBackground(String... params) {
+                                                        Tools.postNotification(postid, postusername, "Great! Someone responded to your post!");
+                                                        HashMap<String, Object> queryRequest = new HashMap<>();
+                                                        queryRequest.put("operation", "OfferPrice");
+                                                        queryRequest.put("postID", postid);
+                                                        queryRequest.put("username", currentusername);
+                                                        queryRequest.put("comment", commentstr);
+                                                        queryRequest.put("offeredPrice", bountynum);
+                                                        System.out.println(JSON.toJSONString(queryRequest));
+                                                        String ret = Tools.query(JSON.toJSONString(queryRequest), 9069);
+                                                        return JSON.parseObject(ret);
+                                                    }
 
-                                                @Override
-                                                protected void onPostExecute(JSONObject jsonArray) {
-                                                    if (jsonArray != null)
-                                                        System.out.println(jsonArray.toString());
-                                                }
-                                            }.execute();
-                                        }
-                                    })
-                                    .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                                        public void onClick(DialogInterface dialog, int id) {
-                                            //cancel
-                                        }
-                                    });
-                            AlertDialog dialog = builder.create();
-                            dialog.show();
-                        }
-                    });
+                                                    @Override
+                                                    protected void onPostExecute(JSONObject jsonArray) {
+                                                        if (jsonArray != null)
+                                                            System.out.println(jsonArray.toString());
+                                                        finish();
+                                                        startActivity(getIntent());
+                                                    }
+                                                }.execute();
+                                            }
+                                        })
+                                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                            public void onClick(DialogInterface dialog, int id) {
+                                                //cancel
+                                            }
+                                        });
+                                AlertDialog dialog = builder.create();
+                                dialog.show();
+                            }
+                        });
+                    else
+                        plussign.setVisibility(View.INVISIBLE);
 
                 }
 
@@ -412,24 +425,48 @@ public class PostDetail extends AppCompatActivity implements OnMapReadyCallback 
                     closebutton.setVisibility(View.GONE);
                 }
 
-
             }
         }.execute(postid);
 
 
-/*
-        new AsyncTask<String, Integer, String>() {
-            protected String doInBackground(String... params) {
-                ImageView i = (ImageView)findViewById(R.id.defaultimagePD);
-                Tools.getPic(params[0],i);
-                return "";
-            }
 
-            protected void onPostExecute(String pic) {
-            }
-        }.execute("564511a0a12ea46719313af6");
-        */
 
+    }
+
+    public void loadallpic(){
+        for (int i = 0; i < pictures.size(); i++)
+            new AsyncTask<Integer, JSONArray, Bitmap>() {
+                int i;
+
+                @Override
+                protected Bitmap doInBackground(Integer... params) {
+                    this.i = params[0];
+                    String data = Tools.getPicture(pictures.getJSONArray(params[0]));
+                    byte[] decodedString = Base64.decode(data, Base64.DEFAULT);
+                    return BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+
+                }
+
+                protected void onPostExecute(Bitmap bitmap) {
+                    switch (i) {
+                        case 0:
+                            ((ImageView) findViewById(R.id.defaultimagePD)).setImageBitmap(bitmap);
+                            break;
+                        case 1:
+                            ((ImageView) findViewById(R.id.defaultimagePD2)).setImageBitmap(bitmap);
+                            break;
+                        case 2:
+                            ((ImageView) findViewById(R.id.defaultimagePD3)).setImageBitmap(bitmap);
+                            break;
+                        case 3:
+                            ((ImageView) findViewById(R.id.defaultimagePD4)).setImageBitmap(bitmap);
+                            break;
+                        case 4:
+                            ((ImageView) findViewById(R.id.defaultimagePD5)).setImageBitmap(bitmap);
+                            break;
+                    }
+                }
+            }.execute(i);
     }
 
 

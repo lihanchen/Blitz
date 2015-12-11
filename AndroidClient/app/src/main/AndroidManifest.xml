@@ -80,10 +80,10 @@
             android:label="Maptest" />
         <activity
             android:name=".Rating"
-            android:label="Rating" />
-        <activity
-            android:name=".ImageUploadTest"
-            android:label="ImageUploadTest" />
+            android:label="Rating"
+            android:theme="@android:style/Theme.Holo.Light.Dialog" />
+        <activity android:name=".Imagetest"
+            android:label="Imagetest"/>
 
         <service
             android:name=".NotificationChecker"

@@ -24,7 +24,8 @@
         android:layout_toRightOf="@+id/imageView"
         android:text="Large Text"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textColor="#000000" />
+        android:textColor="#000000"
+        android:maxLines="1" />
 
     <TextView
         android:id="@+id/textTime"

@@ -5,17 +5,31 @@
     android:layout_height="match_parent"
     tools:context=".MakeAPost">
 
+
+
+
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_margin="@dimen/fab_margin"
+        android:src="@drawable/ok" />
     <ScrollView
+        android:id="@+id/ScrollViewMAP"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginBottom="80dp"
         android:layout_marginTop="30dp"
-        android:fillViewport="false"
-        android:id="@+id/ScrollView">
+        android:fillViewport="false">
 
         <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
             android:gravity="center_horizontal"
             android:orientation="vertical"
             android:weightSum="1">
@@ -27,7 +41,9 @@
                 android:layout_gravity="center_horizontal"
                 android:layout_margin="10dp"
                 android:gravity="center"
-                android:hint="Enter your post Title" />
+                android:hint="Enter your post Title"
+                android:maxLines="1"
+                android:singleLine="true" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -72,7 +88,8 @@
                         android:layout_marginLeft="10dp"
                         android:layout_marginRight="10dp"
                         android:layout_marginTop="15dp"
-                        android:hint="Contact (Optional)         " />
+                        android:hint="Contact (Optional)         "
+                        android:singleLine="true" />
 
                     <EditText
                         android:id="@+id/etBounty"
@@ -85,7 +102,8 @@
                         android:layout_marginTop="15dp"
                         android:ems="10"
                         android:hint="Bounty (Optional)"
-                        android:inputType="number" />
+                        android:inputType="number"
+                        android:singleLine="true" />
 
                     <EditText
                         android:id="@+id/etQuantity"
@@ -98,7 +116,8 @@
                         android:layout_marginTop="15dp"
                         android:ems="10"
                         android:hint="Quantity (Optional)"
-                        android:inputType="number" />
+                        android:inputType="number"
+                        android:singleLine="true" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -114,14 +133,16 @@
                         android:layout_margin="10dp"
                         android:text="Upload Image" />
 
-                    <ImageView
-                        android:id="@+id/ivToImageUpload"
-                        android:layout_width="fill_parent"
-                        android:layout_height="fill_parent"
-                        android:layout_gravity="center_horizontal"
-                        android:layout_margin="10dp"
-                        android:cropToPadding="false"
-                        android:longClickable="false" />
+                    <TextView
+                        android:id="@+id/textPictureCount"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginTop="20dp"
+                        android:text="0\nImages\nSelected"
+                        android:textAlignment="center"
+                        android:textAppearance="?android:attr/textAppearanceLarge" />
+
                 </LinearLayout>
             </LinearLayout>
 
@@ -137,10 +158,63 @@
                 android:layout_marginTop="10dp"
                 android:hint="Enter your post body"
                 android:inputType="textMultiLine"
-                android:minLines="2" />
+                android:minLines="2"
+                android:singleLine="false" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:orientation="horizontal">
+
+                <EditText
+                    android:id="@+id/fromMAP"
+                    android:layout_width="100pt"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:hint="From: "
+                    android:inputType="textMultiLine"
+                    android:maxLines="1"
+                    android:singleLine="true" />
+
+
+                <Button
+                    android:id="@+id/search1MAP"
+                    android:layout_width="150dp"
+                    android:layout_height="wrap_content"
+                    android:text="search"/>
+            </LinearLayout>
 
             <fragment xmlns:android="http://schemas.android.com/apk/res/android"
-                android:id="@+id/mapMT"
+                android:id="@+id/mapMAP"
+                android:name="com.google.android.gms.maps.MapFragment"
+                class="cs490.blitz.WorkaroundMapFragment"
+                android:layout_width="match_parent"
+                android:layout_height="130pt"
+                android:layout_margin="10dp" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <EditText
+                    android:id="@+id/toMAP"
+                    android:layout_width="100pt"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:hint="To: "
+                    android:inputType="textMultiLine" />
+
+
+                <Button
+                    android:id="@+id/search2MAP"
+                    android:layout_width="150dp"
+                    android:layout_height="wrap_content"
+                    android:text="search" />
+            </LinearLayout>
+
+            <fragment xmlns:android="http://schemas.android.com/apk/res/android"
+                android:id="@+id/map2MAP"
                 android:name="com.google.android.gms.maps.MapFragment"
                 class="cs490.blitz.WorkaroundMapFragment"
                 android:layout_width="match_parent"
@@ -149,13 +223,4 @@
 
         </LinearLayout>
     </ScrollView>
-
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:layout_margin="@dimen/fab_margin"
-        android:src="@drawable/ok" />
 </RelativeLayout>

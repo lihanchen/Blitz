@@ -1,10 +1,10 @@
 package cs490.blitz;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
+import android.location.Address;
+import android.location.Geocoder;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -16,21 +16,22 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.ScrollView;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
-
-import static android.util.Base64.DEFAULT;
-import static android.util.Base64.encodeToString;
+import java.util.HashSet;
+import java.util.List;
 
 
 public class MakeAPost extends FragmentActivity implements View.OnClickListener {
@@ -40,11 +41,17 @@ public class MakeAPost extends FragmentActivity implements View.OnClickListener 
     Spinner categorySpinner;
     String selectedCategory;
     ArrayAdapter<CharSequence> adapter;
-    ImageView imageToUpload;
     Button bUploadImage;
     FloatingActionButton makeAPost;
     EditText postTitle, contact, bounty, quantity, postBody;
-
+    EditText fromMap, toMap;
+    Button searchbutton1,searchbutton2;
+    volatile int uploadingFiles = 0;
+    ArrayList<String[]> pictureIDs = new ArrayList<String[]>();
+    private GoogleMap mMap;
+    private GoogleMap mMap2;
+    private ScrollView sv;
+    LatLng lat1,lat2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,7 +59,10 @@ public class MakeAPost extends FragmentActivity implements View.OnClickListener 
         setContentView(R.layout.make_a_post);
 
         selectedCategory = null;
-        imageToUpload = (ImageView) findViewById(R.id.ivToImageUpload);
+        fromMap = (EditText) findViewById(R.id.fromMAP);
+        toMap = (EditText) findViewById(R.id.toMAP);
+        searchbutton1 = (Button)findViewById(R.id.search1MAP);
+        searchbutton2 = (Button)findViewById(R.id.search2MAP);
         bUploadImage = (Button) findViewById(R.id.bUploadImage);
         makeAPost = (FloatingActionButton) findViewById(R.id.fab);
         postTitle = (EditText) findViewById(R.id.etPostTitle);
@@ -78,15 +88,31 @@ public class MakeAPost extends FragmentActivity implements View.OnClickListener 
                                 break;
                             case 1:
                                 selectedCategory = "FoodDiscover";
+                                toMap.setVisibility(View.GONE);
+                                searchbutton2.setVisibility(View.GONE);
+                                ((WorkaroundMapFragment) getSupportFragmentManager().findFragmentById(R.id.map2MAP)).getView().setVisibility(View.GONE);
+                                fromMap.setHint("Location: ");
                                 break;
                             case 2:
                                 selectedCategory = "Carpool";
+                                fromMap.setHint("From: ");
+                                toMap.setVisibility(View.VISIBLE);
+                                searchbutton2.setVisibility(View.VISIBLE);
+                                ((WorkaroundMapFragment) getSupportFragmentManager().findFragmentById(R.id.map2MAP)).getView().setVisibility(View.VISIBLE);
                                 break;
                             case 3:
                                 selectedCategory = "House Rental";
+                                fromMap.setHint("Location: ");
+                                toMap.setVisibility(View.GONE);
+                                searchbutton2.setVisibility(View.GONE);
+                                ((WorkaroundMapFragment) getSupportFragmentManager().findFragmentById(R.id.map2MAP)).getView().setVisibility(View.GONE);
                                 break;
                             case 4:
                                 selectedCategory = "Other";
+                                fromMap.setHint("Location: ");
+                                toMap.setVisibility(View.GONE);
+                                searchbutton2.setVisibility(View.GONE);
+                                ((WorkaroundMapFragment) getSupportFragmentManager().findFragmentById(R.id.map2MAP)).getView().setVisibility(View.GONE);
                                 break;
                         }
                     }
@@ -97,6 +123,18 @@ public class MakeAPost extends FragmentActivity implements View.OnClickListener 
                 }
         );
         setUpMap();
+        searchbutton1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onSearch(1);
+            }
+        });
+        searchbutton2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onSearch(2);
+            }
+        });
     }
 
     @Override
@@ -130,6 +168,15 @@ public class MakeAPost extends FragmentActivity implements View.OnClickListener 
             return;
         }
 
+        if ((selectedCategory.equals("Carpool") && lat1 == null) || (selectedCategory.equals("Carpool") && lat2 == null)){
+            Tools.showToast(getApplicationContext(),"Please provide correct location");
+            return;
+        }
+        if(!selectedCategory.equals("Carpool") && lat1 == null){
+            Tools.showToast(getApplicationContext(),"Please provide correct location");
+            return;
+        }
+
         Intent matchingIntent = new Intent(MakeAPost.this, MatchingList.class);
         matchingIntent.putExtra("title", title);
         matchingIntent.putExtra("category", selectedCategory);
@@ -152,19 +199,12 @@ public class MakeAPost extends FragmentActivity implements View.OnClickListener 
             intQuantity = 0;
         }
         ;
-
-        String photo;
-        try {
-            photo = encodeImage();
-        } catch (NullPointerException e) {
-            photo = "";
-        }
+        final HashMap<String, Object> post = new HashMap<>();
 
         SharedPreferences sp = getSharedPreferences("cs490.blitz.account", MODE_PRIVATE);
         String username = sp.getString("username", null);
 
-
-        final HashMap<String, Object> post = new HashMap<>();
+        post.put("photo", pictureIDs.toArray());
         post.put("operation", "CreatePost");
         post.put("username", username);
         post.put("position", "position");
@@ -174,10 +214,27 @@ public class MakeAPost extends FragmentActivity implements View.OnClickListener 
         post.put("bounty", intBounty);
         post.put("contact", strContact);
         post.put("TransactionCompleted", false);
-        post.put("photo", photo);
         post.put("response", new JSONObject[0]);
         post.put("isRequest", PostsList.mode == 1);
         post.put("category", selectedCategory);
+        //map related:
+        if(selectedCategory.equals("Carpool")) {
+            HashMap<String, Object> position = new HashMap<>();
+            position.put("address",fromMap.getText());
+            position.put("latitude",lat1.latitude);
+            position.put("longitude",lat1.longitude);
+            HashMap<String, Object> position2 = new HashMap<>();
+            position2.put("address",toMap.getText());
+            position2.put("latitude",lat2.latitude);
+            position2.put("longitude",lat2.longitude);
+            post.put("from", position);
+            post.put("to", position2);
+        }
+        HashMap<String, Object> position = new HashMap<>();
+        position.put("address",fromMap.getText());
+        position.put("latitude",lat1.latitude);
+        position.put("longitude",lat1.longitude);
+        post.put("position",position);
 
         final AsyncTask<HashMap<String, Object>, Integer, JSONObject> success = new AsyncTask<HashMap<String, Object>, Integer, JSONObject>() {
             @SafeVarargs
@@ -203,11 +260,37 @@ public class MakeAPost extends FragmentActivity implements View.OnClickListener 
         switch (requestCode) {
             case RESULT_IMAGE:
                 if (resultCode != RESULT_OK || data == null) {
-                    Tools.showToast(getApplicationContext(), "Error loading image");
+                    Tools.showToast(getApplicationContext(), "Error loading image 0");
                     return;
                 }
                 Uri selectedImage = data.getData();
-                imageToUpload.setImageURI(selectedImage);
+                Bitmap bitmap;
+                try {
+                    bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImage);
+                } catch (Exception e) {
+                    Tools.showToast(getApplicationContext(), "Error loading image 1");
+                    return;
+                }
+
+                new AsyncTask<Bitmap, String, String[]>() {
+                    @SafeVarargs
+                    protected final String[] doInBackground(Bitmap... params) {
+                        uploadingFiles++;
+                        String ret[] = Tools.uploadPic(params[0]);
+                        uploadingFiles--;
+                        return ret;
+                    }
+
+                    protected void onPostExecute(String ret[]) {
+                        if (ret == null) {
+                            Tools.showToast(getApplicationContext(), "Error loading image 2");
+                            return;
+                        }
+                        pictureIDs.add(ret);
+                        ((TextView) findViewById(R.id.textPictureCount)).setText("" + pictureIDs.size() + "\nImages\nSelected");
+                    }
+                }.execute(bitmap);
+
                 break;
             case RESULT_MATCHING:
                 if (resultCode == RESULT_OK) {
@@ -218,34 +301,80 @@ public class MakeAPost extends FragmentActivity implements View.OnClickListener 
         }
     }
 
-    private String encodeImage() {
-        Bitmap bitmapImage = ((BitmapDrawable) imageToUpload.getDrawable()).getBitmap();
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        bitmapImage.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-        return encodeToString(baos.toByteArray(), DEFAULT);
-    }
-
-    private GoogleMap mMap;
-    private ScrollView sv;
-
     private void setUpMap(){
         if(mMap == null){
             mMap = ((WorkaroundMapFragment) getSupportFragmentManager().
-                    findFragmentById(R.id.mapMT)).getMap();
+                    findFragmentById(R.id.mapMAP)).getMap();
         }
 
         if(mMap!= null){
             mMap.addMarker(new MarkerOptions().position(new LatLng(0,0)).title("Marker"));
             mMap.setMyLocationEnabled(true);
 
-            sv = (ScrollView) findViewById(R.id.containerMT);
+            sv = (ScrollView) findViewById(R.id.ScrollViewMAP);
             //disable sv when touching map
-            ((WorkaroundMapFragment) getSupportFragmentManager().findFragmentById(R.id.mapMT)).setListener(new WorkaroundMapFragment.OnTouchListener() {
+            ((WorkaroundMapFragment) getSupportFragmentManager().findFragmentById(R.id.mapMAP)).setListener(new WorkaroundMapFragment.OnTouchListener() {
                 @Override
                 public void onTouch() {
                     sv.requestDisallowInterceptTouchEvent(true);
                 }
             });
+
+        }
+
+        if(mMap2 == null){
+            mMap2 = ((WorkaroundMapFragment) getSupportFragmentManager().
+                    findFragmentById(R.id.map2MAP)).getMap();
+        }
+
+        if(mMap2!= null){
+            mMap2.addMarker(new MarkerOptions().position(new LatLng(0,0)).title("Marker"));
+            mMap2.setMyLocationEnabled(true);
+
+            sv = (ScrollView) findViewById(R.id.ScrollViewMAP);
+            //disable sv when touching map
+            ((WorkaroundMapFragment) getSupportFragmentManager().findFragmentById(R.id.map2MAP)).setListener(new WorkaroundMapFragment.OnTouchListener() {
+                @Override
+                public void onTouch() {
+                    sv.requestDisallowInterceptTouchEvent(true);
+                }
+            });
+
+        }
+    }
+
+    public void onSearch(int i){
+        EditText location;
+        if(i==1){
+            location = fromMap;
+        }
+        else{
+            location = toMap;
+        }
+        String locaStr = location.getText().toString();
+        List<Address> addressesList = null;
+
+        if(locaStr != null && !locaStr.equals("")){
+            Geocoder geocoder = new Geocoder(this);
+            try {
+                addressesList = geocoder.getFromLocationName(locaStr, 1);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            Address address = addressesList.get(0);
+            LatLng latLng = new LatLng(address.getLatitude(), address.getLongitude());
+            if(i==1) {
+                mMap.addMarker(new MarkerOptions().position(latLng).title("Marker"));
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 14));
+                lat1 = latLng;
+            } else {
+                mMap2.addMarker(new MarkerOptions().position(latLng).title("Marker"));
+                mMap2.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 14));
+                lat2 = latLng;
+            }
+
+            System.out.println(latLng.latitude);
+            System.out.println(latLng.longitude);
 
         }
     }

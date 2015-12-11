@@ -37,5 +37,5 @@ dependencies {
     compile files('../lib/fastjson-1.2.7.jar')
     compile files('../lib/androidasync-2.1.6.jar')
     compile files('../lib/ion-2.1.6.jar')
-    
+    compile files('../lib/android-async-http-1.4.3.jar')
 }
