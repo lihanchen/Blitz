@@ -179,8 +179,8 @@ public class PostDetail extends AppCompatActivity implements OnMapReadyCallback 
                 quantity.append(": " + json.get("quantity").toString());
                 description.setText(json.get("description").toString());
                 topic.setText(json.get("title").toString());
-                if(json.containsKey("picture")){
-                    pictures = json.getJSONArray("picture");
+                if(json.containsKey("photo")){
+                    pictures = json.getJSONArray("photo");
                 }
                 if(json.containsKey("bounty"))
                     bounty.append(": " + json.get("bounty").toString());
@@ -429,13 +429,14 @@ public class PostDetail extends AppCompatActivity implements OnMapReadyCallback 
                     closebutton.setVisibility(View.GONE);
                 }
 
+                loadallpic();
 
             }
         }.execute(postid);
 
 
 
-        loadallpic();
+
     }
 
 
