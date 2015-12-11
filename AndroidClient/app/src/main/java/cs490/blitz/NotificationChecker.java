@@ -1,6 +1,7 @@
 package cs490.blitz;
 
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -15,6 +16,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
+//TODO notification click
 public class NotificationChecker extends Service {
     static int id = 0;
     public Set<String> read;
@@ -48,8 +50,12 @@ public class NotificationChecker extends Service {
                                 NotificationCompat.Builder nBuilder = new NotificationCompat.Builder(NotificationChecker.this);
                                 nBuilder.setContentTitle("Blitz");
                                 nBuilder.setSmallIcon(R.drawable.unread);
-                                nBuilder.setVibrate(new long[]{300, 100});
+                                nBuilder.setVibrate(new long[]{300, 300, 300, 300});
                                 nBuilder.setContentText(jsonObj.getString("msg"));
+                                PendingIntent resultPendingIntent = PendingIntent.getActivity(NotificationChecker.this, 0,
+                                        new Intent(NotificationChecker.this, PostDetail.class).putExtra("postid", jsonObj.getString("postID")),
+                                        PendingIntent.FLAG_UPDATE_CURRENT);
+                                nBuilder.setContentIntent(resultPendingIntent);
                                 nBuilder.setStyle(new NotificationCompat.BigTextStyle().bigText(jsonObj.getString("msg")));
                                 nBuilder.setTicker(jsonObj.getString("msg"));
                                 ((NotificationManager) getSystemService(NOTIFICATION_SERVICE)).notify(id++, nBuilder.build());
@@ -57,7 +63,7 @@ public class NotificationChecker extends Service {
                         }
                     }
                     try {
-                        Thread.sleep(2000000);//TODO change time
+                        Thread.sleep(1000);//TODO change time
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }

@@ -5,12 +5,15 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -431,36 +434,39 @@ public class PostDetail extends AppCompatActivity implements OnMapReadyCallback 
     }
 
     public void loadallpic(){
-        //picture related asynctask
-        new AsyncTask<String,JSONArray,JSONArray>() {
-            @Override
-            protected JSONArray doInBackground(String... params) {
-                JSONArray ret = new JSONArray();
-                for (int i = 0;i < pictures.size();i++){
-                    ret.add(Tools.getPicture(pictures.getJSONArray(i)));
-                }
-                return ret;
-            }
+        for (int i = 0; i < pictures.size(); i++)
+            new AsyncTask<Integer, JSONArray, Bitmap>() {
+                int i;
 
-            protected void onPostExecute(JSONArray ret) {
-                LinearLayout imagecontainer = (LinearLayout)findViewById(R.id.picturecontainerPD);
-                ImageView img = (ImageView)findViewById(R.id.defaultimagePD);
-                ImageView img2 = (ImageView)findViewById(R.id.defaultimagePD2);
-                ImageView img3 = (ImageView)findViewById(R.id.defaultimagePD3);
-                ImageView img4 = (ImageView)findViewById(R.id.defaultimagePD4);
-                ImageView img5 = (ImageView)findViewById(R.id.defaultimagePD5);
-                ArrayList<ImageView> a = new ArrayList<ImageView>();
-                a.add(img);
-                a.add(img2);
-                a.add(img3);
-                a.add(img4);
-                a.add(img5);
-                for(int i = 0;i<ret.size();i++) {
-                    Tools.showPic(ret.getString(i), a.get(i));
+                @Override
+                protected Bitmap doInBackground(Integer... params) {
+                    this.i = params[0];
+                    String data = Tools.getPicture(pictures.getJSONArray(params[0]));
+                    byte[] decodedString = Base64.decode(data, Base64.DEFAULT);
+                    return BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+
                 }
 
-            }
-        }.execute("");
+                protected void onPostExecute(Bitmap bitmap) {
+                    switch (i) {
+                        case 0:
+                            ((ImageView) findViewById(R.id.defaultimagePD)).setImageBitmap(bitmap);
+                            break;
+                        case 1:
+                            ((ImageView) findViewById(R.id.defaultimagePD2)).setImageBitmap(bitmap);
+                            break;
+                        case 2:
+                            ((ImageView) findViewById(R.id.defaultimagePD3)).setImageBitmap(bitmap);
+                            break;
+                        case 3:
+                            ((ImageView) findViewById(R.id.defaultimagePD4)).setImageBitmap(bitmap);
+                            break;
+                        case 4:
+                            ((ImageView) findViewById(R.id.defaultimagePD5)).setImageBitmap(bitmap);
+                            break;
+                    }
+                }
+            }.execute(i);
     }
 
 
