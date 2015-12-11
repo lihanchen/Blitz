@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
+import android.location.Address;
+import android.location.Geocoder;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -23,12 +25,15 @@ import android.widget.Spinner;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 
 import static android.util.Base64.DEFAULT;
 import static android.util.Base64.encodeToString;
@@ -45,7 +50,8 @@ public class MakeAPost extends FragmentActivity implements View.OnClickListener 
     Button bUploadImage;
     FloatingActionButton makeAPost;
     EditText postTitle, contact, bounty, quantity, postBody;
-
+    EditText fromMap, toMap;
+    Button searchbutton1,searchbutton2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +59,10 @@ public class MakeAPost extends FragmentActivity implements View.OnClickListener 
         setContentView(R.layout.make_a_post);
 
         selectedCategory = null;
+        fromMap = (EditText) findViewById(R.id.fromMAP);
+        toMap = (EditText) findViewById(R.id.toMAP);
+        searchbutton1 = (Button)findViewById(R.id.search1MAP);
+        searchbutton2 = (Button)findViewById(R.id.search2MAP);
         imageToUpload = (ImageView) findViewById(R.id.ivToImageUpload);
         bUploadImage = (Button) findViewById(R.id.bUploadImage);
         makeAPost = (FloatingActionButton) findViewById(R.id.fab);
@@ -79,15 +89,31 @@ public class MakeAPost extends FragmentActivity implements View.OnClickListener 
                                 break;
                             case 1:
                                 selectedCategory = "FoodDiscover";
+                                toMap.setVisibility(View.GONE);
+                                searchbutton2.setVisibility(View.GONE);
+                                ((WorkaroundMapFragment) getSupportFragmentManager().findFragmentById(R.id.mapMAP)).getView().setVisibility(View.GONE);
+                                fromMap.setHint("Location: ");
                                 break;
                             case 2:
                                 selectedCategory = "Carpool";
+                                fromMap.setHint("From: ");
+                                toMap.setVisibility(View.VISIBLE);
+                                searchbutton2.setVisibility(View.VISIBLE);
+                                ((WorkaroundMapFragment) getSupportFragmentManager().findFragmentById(R.id.mapMAP)).getView().setVisibility(View.VISIBLE);
                                 break;
                             case 3:
                                 selectedCategory = "House Rental";
+                                fromMap.setHint("Location: ");
+                                toMap.setVisibility(View.GONE);
+                                searchbutton2.setVisibility(View.GONE);
+                                ((WorkaroundMapFragment) getSupportFragmentManager().findFragmentById(R.id.mapMAP)).getView().setVisibility(View.GONE);
                                 break;
                             case 4:
                                 selectedCategory = "Other";
+                                fromMap.setHint("Location: ");
+                                toMap.setVisibility(View.GONE);
+                                searchbutton2.setVisibility(View.GONE);
+                                ((WorkaroundMapFragment) getSupportFragmentManager().findFragmentById(R.id.mapMAP)).getView().setVisibility(View.GONE);
                                 break;
                         }
                     }
@@ -108,6 +134,12 @@ public class MakeAPost extends FragmentActivity implements View.OnClickListener 
                 break;
             case R.id.fab:
                 publishPost();
+                break;
+            case R.id.search1MAP:
+                onSearch(1);
+                break;
+            case R.id.search2MAP:
+                onSearch(2);
                 break;
 
         }
@@ -240,26 +272,81 @@ public class MakeAPost extends FragmentActivity implements View.OnClickListener 
     }
 
     private GoogleMap mMap;
+    private GoogleMap mMap2;
     private ScrollView sv;
 
     private void setUpMap(){
         if(mMap == null){
             mMap = ((WorkaroundMapFragment) getSupportFragmentManager().
-                    findFragmentById(R.id.mapMT)).getMap();
+                    findFragmentById(R.id.mapMAP)).getMap();
         }
 
         if(mMap!= null){
             mMap.addMarker(new MarkerOptions().position(new LatLng(0,0)).title("Marker"));
             mMap.setMyLocationEnabled(true);
 
-            sv = (ScrollView) findViewById(R.id.containerMT);
+            sv = (ScrollView) findViewById(R.id.ScrollViewMAP);
             //disable sv when touching map
-            ((WorkaroundMapFragment) getSupportFragmentManager().findFragmentById(R.id.mapMT)).setListener(new WorkaroundMapFragment.OnTouchListener() {
+            ((WorkaroundMapFragment) getSupportFragmentManager().findFragmentById(R.id.mapMAP)).setListener(new WorkaroundMapFragment.OnTouchListener() {
                 @Override
                 public void onTouch() {
                     sv.requestDisallowInterceptTouchEvent(true);
                 }
             });
+
+        }
+
+        if(mMap2 == null){
+            mMap2 = ((WorkaroundMapFragment) getSupportFragmentManager().
+                    findFragmentById(R.id.map2MAP)).getMap();
+        }
+
+        if(mMap2!= null){
+            mMap2.addMarker(new MarkerOptions().position(new LatLng(0,0)).title("Marker"));
+            mMap2.setMyLocationEnabled(true);
+
+            sv = (ScrollView) findViewById(R.id.ScrollViewMAP);
+            //disable sv when touching map
+            ((WorkaroundMapFragment) getSupportFragmentManager().findFragmentById(R.id.map2MAP)).setListener(new WorkaroundMapFragment.OnTouchListener() {
+                @Override
+                public void onTouch() {
+                    sv.requestDisallowInterceptTouchEvent(true);
+                }
+            });
+
+        }
+    }
+
+    public void onSearch(int i){
+        EditText location;
+        if(i==1){
+            location = fromMap;
+        }
+        else{
+            location = toMap;
+        }
+        String locaStr = location.getText().toString();
+        List<Address> addressesList = null;
+
+        if(locaStr != null && !locaStr.equals("")){
+            Geocoder geocoder = new Geocoder(this);
+            try {
+                addressesList = geocoder.getFromLocationName(locaStr, 1);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            Address address = addressesList.get(0);
+            LatLng latLng = new LatLng(address.getLatitude(), address.getLongitude());
+            if(i==1) {
+                mMap.addMarker(new MarkerOptions().position(latLng).title("Marker"));
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 14));
+            } else {
+                mMap2.addMarker(new MarkerOptions().position(latLng).title("Marker"));
+                mMap2.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 14));
+            }
+
+            System.out.println(latLng.latitude);
+            System.out.println(latLng.longitude);
 
         }
     }
