@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 
 import java.io.BufferedReader;
@@ -82,6 +83,50 @@ public abstract class Tools {
         cal.set(year, month, date, hour, minute, second);
         SimpleDateFormat format = new SimpleDateFormat("kk:mma MMM dd, yyyy");
         return format.format(cal.getTime());
+    }
+
+    public synchronized static String getPicture(JSONArray picids){
+        final String host = "blitzproject.cs.purdue.edu";
+        String ret = "";
+        try{
+            Socket client = new Socket(host,9071);
+            OutputStreamWriter osw = new OutputStreamWriter(client.getOutputStream());
+
+            for(int i = 0; i<picids.size();i++){
+                JSONArray json = (JSONArray)picids.get(i);
+                String picid = json.getString(i);
+                HashMap<String, Object> queryRequest = new HashMap<>();
+                queryRequest.put("operation", "getpic");
+                queryRequest.put("id", picid);
+                osw.write(JSON.toJSONString(queryRequest));
+                osw.flush();
+
+                InputStreamReader isr = new InputStreamReader(client.getInputStream());
+                //BufferedReader responseReader = new BufferedReader(new InputStreamReader(client.getInputStream()));
+                int ret1 = isr.read();
+                StringBuffer response = new StringBuffer();
+
+                while (ret1 != -1) {
+                    response.append((char) ret1);
+                    ret1 = isr.read();
+                }
+                JSONObject returnobject = JSONObject.parseObject(response.toString());
+                if (returnobject.getBoolean("success")) {
+                    //start sending image data
+                    ret += returnobject.get("data").toString();
+                }
+                else {
+                    System.out.println("picture return json failed");
+                    return null;
+                }
+
+
+                
+            }
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+        return ret;
     }
 
     public synchronized static String getPic(String picid) {
