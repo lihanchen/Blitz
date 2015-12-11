@@ -454,8 +454,21 @@ public class PostDetail extends AppCompatActivity implements OnMapReadyCallback 
             }
 
             protected void onPostExecute(JSONArray ret) {
+                LinearLayout imagecontainer = (LinearLayout)findViewById(R.id.picturecontainerPD);
                 ImageView img = (ImageView)findViewById(R.id.defaultimagePD);
-                Tools.showPic(ret.getString(0), img);
+                ImageView img2 = (ImageView)findViewById(R.id.defaultimagePD2);
+                ImageView img3 = (ImageView)findViewById(R.id.defaultimagePD3);
+                ImageView img4 = (ImageView)findViewById(R.id.defaultimagePD4);
+                ImageView img5 = (ImageView)findViewById(R.id.defaultimagePD5);
+                ArrayList<ImageView> a = new ArrayList<ImageView>();
+                a.add(img);
+                a.add(img2);
+                a.add(img3);
+                a.add(img4);
+                a.add(img5);
+                for(int i = 0;i<ret.size();i++) {
+                    Tools.showPic(ret.getString(i), a.get(i));
+                }
 
             }
         }.execute("");
