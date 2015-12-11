@@ -12,7 +12,7 @@ exports.getpic=function (receivedObj,socket){
 				ret.data=item.data;
 			}
 			socket.write(JSON.stringify(ret));
-			socket.destroy();
+			//socket.destroy();
 		});
 	}catch(e){
 		console.error(e);

@@ -6,6 +6,7 @@ exports.createPost=function (receivedObj,socket){
 		receivedObj.postTime = now.toISOString();
 		receivedObj.TransactionCompleted = false;
 		receivedObj.rated = false;
+		receivedObj.response = [];
 		global.collection.insert(receivedObj,function(err,docsInserted){
 			if(err){
 				ret.success=false;

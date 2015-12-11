@@ -8,10 +8,13 @@ function listen(){
             					if (json.operation=="upload"){
             						var postModule=require("./upload");
             						postModule.upload(json, socket);
-            					}
-            					else if (json.operation=="getpic"){
+            					}else if (json.operation=="getpic"){
             						var deleteModule = require("./getpic");
             						deleteModule.getpic(json,socket);
+            					}else if (json.operation=="getpic2"){
+            						var deleteModule = require("./getpic");
+            						deleteModule.getpic(json,socket);
+            						socket.destroy();
             					}
             					else{
             						socket.write(JSON.stringify({error:"Unknown Operation"}));
