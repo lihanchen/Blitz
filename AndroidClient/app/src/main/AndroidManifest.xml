@@ -82,9 +82,6 @@
             android:name=".Rating"
             android:label="Rating"
             android:theme="@android:style/Theme.Holo.Light.Dialog" />
-        <activity
-            android:name=".ImageUploadTest"
-            android:label="ImageUploadTest" />
         <activity android:name=".Imagetest"
             android:label="Imagetest"/>
 

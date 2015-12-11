@@ -137,7 +137,7 @@ public abstract class Tools {
         return encodeToString(baos.toByteArray(), DEFAULT);
     }
 
-    public synchronized static List<String> uploadPic(Bitmap bitmap) {
+    public synchronized static String[] uploadPic(Bitmap bitmap) {
         String base64pic;
         base64pic = compressImage(bitmap);
         List<String> subStrings = stringSplit(base64pic, 512);
@@ -145,7 +145,7 @@ public abstract class Tools {
         return uploadPicUtil(subStrings);
     }
 
-    private static List<String> uploadPicUtil(List<String> subStrings) {
+    private static String[] uploadPicUtil(List<String> subStrings) {
         List<String> picIdList = new ArrayList<>();
         for (String base64pic : subStrings) {
             try {
@@ -177,7 +177,7 @@ public abstract class Tools {
             }
 
         }
-        return picIdList;
+        return picIdList.toArray(new String[picIdList.size()]);
     }
 
     private static List<String> stringSplit(String str, int sizeOfEachSubString) {
