@@ -122,6 +122,9 @@ public class PostDetail extends AppCompatActivity implements OnMapReadyCallback 
             System.out.println(latitude + "+" + longitude);
         } catch (SecurityException e) {
             e.printStackTrace();
+        } catch (Exception e) {
+            latitude = 40.4277115;
+            longitude = -86.9191597;
         }
         try {
             if (googleMap == null) {
