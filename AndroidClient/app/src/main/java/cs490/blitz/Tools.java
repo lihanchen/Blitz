@@ -2,17 +2,14 @@ package cs490.blitz;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
-import android.util.Base64;
 import android.util.Log;
-import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 
-import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
@@ -29,7 +26,9 @@ import static android.util.Base64.encodeToString;
 
 public abstract class Tools {
     public volatile static boolean exit = false;
-
+    static Socket clientPicture = null;
+    static OutputStreamWriter oswPicture = null;
+    static InputStreamReader isrPicture = null;
 
     public synchronized static void postNotification(String postID, String userName, String msg) {
         HashMap<String, Object> notification = new HashMap<>();
@@ -51,17 +50,48 @@ public abstract class Tools {
     }
 
     public synchronized static String query(String queryRequest, int port) {
-        Log.e("Query on " + port, queryRequest);
+        //Log.e("Query on " + port, queryRequest);
         final String host = "blitzproject.cs.purdue.edu";
         try {
             Socket client = new Socket(host, port);
             OutputStreamWriter osw = new OutputStreamWriter(client.getOutputStream());
             osw.write(queryRequest);
             osw.flush();
-            BufferedReader responseReader = new BufferedReader(new InputStreamReader(client.getInputStream()));
-            String ret = responseReader.readLine();
-            Log.e("Result", ret);
-            return ret;
+            InputStreamReader isr = new InputStreamReader(client.getInputStream());
+            int ret = isr.read();
+            StringBuffer response = new StringBuffer();
+            while (ret != -1) {
+                response.append((char) ret);
+                ret = isr.read();
+            }
+            //Log.e("Result", response.toString());
+            return response.toString();
+        } catch (Exception e) {
+            Log.e("Error", "In query", e);
+            return null;
+        }
+    }
+
+    public synchronized static String queryPicture(String queryRequest) {
+        final String host = "blitzproject.cs.purdue.edu";
+        try {
+            if (clientPicture == null || clientPicture.isConnected() == false) {
+                clientPicture = new Socket(host, 9071);
+                oswPicture = new OutputStreamWriter(clientPicture.getOutputStream());
+                isrPicture = new InputStreamReader(clientPicture.getInputStream());
+            }
+
+            oswPicture.write(queryRequest);
+            oswPicture.flush();
+
+            int ret = isrPicture.read();
+            StringBuffer response = new StringBuffer();
+            while (ret != -1 && ret != '}') {
+                response.append((char) ret);
+                ret = isrPicture.read();
+            }
+            response.append((char) ret);
+            return response.toString();
         } catch (Exception e) {
             Log.e("Error", "In query", e);
             return null;
@@ -86,68 +116,53 @@ public abstract class Tools {
         return format.format(cal.getTime());
     }
 
-    public synchronized static String getPic(String picid) {
-        final String host = "blitzproject.cs.purdue.edu";
-        String ret="";
-        try {
-            Socket client = new Socket(host, 9071);
-            OutputStreamWriter osw = new OutputStreamWriter(client.getOutputStream());
-
-            HashMap<String, Object> queryRequest = new HashMap<>();
-            queryRequest.put("operation", "getpic");
-            queryRequest.put("id", picid);
-            osw.write(JSON.toJSONString(queryRequest));
-            osw.flush();
-            BufferedReader responseReader = new BufferedReader(new InputStreamReader(client.getInputStream()));
-            while (true) {
-                String response = responseReader.readLine();
-                if (response != null) {
-                    System.out.println(response);
-                    JSONObject json = JSONObject.parseObject(response);
-                    if (json.getBoolean("success")) {
-                        //start sending image data
-                        ret = json.get("data").toString();
-                        break;
-                    } else {
-                        return null;
-                    }
+    public synchronized static String getPicture(JSONArray picids){
+        StringBuffer ret = new StringBuffer();
+        try{
+            //System.out.println(picids);
+            //System.out.println("picture number: " + picids.size());
+            for(int i = 0; i<picids.size();i++){
+                JSONArray json = picids;
+                String picid = json.getString(i);
+                HashMap<String, Object> queryRequest = new HashMap<>();
+                queryRequest.put("operation", "getpic");
+                queryRequest.put("id", picid);
+                JSONObject returnobject = JSONObject.parseObject(Tools.queryPicture(JSON.toJSONString(queryRequest)));
+                //System.out.println(returnobject);
+                if (returnobject.getBoolean("success")) {
+                    //start sending image data
+                    ret.append(returnobject.getString("data"));
                 }
+                else {
+                    System.out.println("picture return json failed");
+                    return null;
+                }
+
+
+                
             }
-        }catch (Exception e){
+        } catch (Exception e){
             e.printStackTrace();
         }
-        return ret;
+        return ret.toString();
     }
-
-    public synchronized static void showPic(String base64pic,ImageView i){
-        byte[] decodedString = Base64.decode(base64pic, Base64.DEFAULT);
-        Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
-        i.setImageBitmap(decodedByte);
-    }
-
-
 
     private static String compressImage(Bitmap bitmapImage) {
-        double factor = (double)100/(double)bitmapImage.getWidth();
+        double factor = (double) 256 / (double) bitmapImage.getWidth();
         System.out.println("factor: "+factor+" width: "+bitmapImage.getWidth()+" height: "+bitmapImage.getHeight());
         Bitmap scaled = Bitmap.createScaledBitmap(bitmapImage, (int) (bitmapImage.getWidth() * factor), (int) (bitmapImage.getHeight() * factor), true);
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         System.out.println("after compress: width:"+scaled.getWidth()+" height: "+scaled.getHeight());
-        scaled.compress(Bitmap.CompressFormat.JPEG, 50, baos);
+        scaled.compress(Bitmap.CompressFormat.JPEG, 30, baos);
         return encodeToString(baos.toByteArray(), DEFAULT);
     }
 
     public synchronized static String[] uploadPic(Bitmap bitmap) {
         String base64pic;
         base64pic = compressImage(bitmap);
-        List<String> subStrings = stringSplit(base64pic, 512);
-
-        return uploadPicUtil(subStrings);
-    }
-
-    private static String[] uploadPicUtil(List<String> subStrings) {
+        List<String> subStrings = stringSplit(base64pic, 1000);
         List<String> picIdList = new ArrayList<>();
-        for (String base64pic : subStrings) {
+        for (String s : subStrings) {
             try {
                 final String host = "blitzproject.cs.purdue.edu";
                 Socket client = new Socket(host, 9071);
@@ -155,8 +170,8 @@ public abstract class Tools {
 
                 HashMap<String, Object> queryRequest = new HashMap<>();
                 queryRequest.put("operation", "upload");
-                System.out.println("base64length: " + base64pic.length());
-                queryRequest.put("data", base64pic);
+                System.out.println("base64length: " + s.length());
+                queryRequest.put("data", s);
                 osw.write(JSON.toJSONString(queryRequest));
                 osw.flush();
                 InputStreamReader isr = new InputStreamReader(client.getInputStream());
@@ -179,6 +194,7 @@ public abstract class Tools {
         }
         return picIdList.toArray(new String[picIdList.size()]);
     }
+
 
     private static List<String> stringSplit(String str, int sizeOfEachSubString) {
         List<String> strings = new ArrayList<>();

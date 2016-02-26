@@ -147,7 +147,8 @@
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:id="@+id/picturecontainerPD">
 
                 <ImageView
                     android:id="@+id/defaultimagePD"
@@ -157,14 +158,28 @@
                     android:src="@drawable/imagena" />
 
                 <ImageView
-                    android:id="@+id/defaultimag1ePD"
+                    android:id="@+id/defaultimagePD2"
                     android:layout_width="200dp"
                     android:layout_height="200dp"
                     android:layout_gravity="left"
                     android:src="@drawable/imagena" />
 
                 <ImageView
-                    android:id="@+id/defaultima1gePD"
+                    android:id="@+id/defaultimagePD3"
+                    android:layout_width="200dp"
+                    android:layout_height="200dp"
+                    android:layout_gravity="left"
+                    android:src="@drawable/imagena" />
+
+                <ImageView
+                    android:id="@+id/defaultimagePD4"
+                    android:layout_width="200dp"
+                    android:layout_height="200dp"
+                    android:layout_gravity="left"
+                    android:src="@drawable/imagena" />
+
+                <ImageView
+                    android:id="@+id/defaultimagePD5"
                     android:layout_width="200dp"
                     android:layout_height="200dp"
                     android:layout_gravity="left"

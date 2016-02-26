@@ -10,7 +10,6 @@ import android.graphics.BitmapFactory;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.media.Image;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -77,6 +76,8 @@ public class PostDetail extends AppCompatActivity implements OnMapReadyCallback 
     String postid;
     private GoogleMap googleMap;
     private Marker marker;
+    private JSONArray pictures;
+
 
     @Override
     public void onMapReady(GoogleMap map) {
@@ -121,6 +122,9 @@ public class PostDetail extends AppCompatActivity implements OnMapReadyCallback 
             System.out.println(latitude + "+" + longitude);
         } catch (SecurityException e) {
             e.printStackTrace();
+        } catch (Exception e) {
+            latitude = 40.4277115;
+            longitude = -86.9191597;
         }
         try {
             if (googleMap == null) {
@@ -173,10 +177,10 @@ public class PostDetail extends AppCompatActivity implements OnMapReadyCallback 
 
                 readOnly = json.getBoolean("TransactionCompleted");
 
-                bounty.append(": " + json.get("bounty").toString());
-                quantity.append(": " + json.get("quantity").toString());
-                description.setText(json.get("description").toString());
-                topic.setText(json.get("title").toString());
+                if(json.containsKey("photo")){
+                    pictures = json.getJSONArray("photo");
+                    loadallpic();
+                }
                 if(json.containsKey("bounty"))
                     bounty.append(": " + json.get("bounty").toString());
                 if(json.containsKey("quantity"))
@@ -424,9 +428,48 @@ public class PostDetail extends AppCompatActivity implements OnMapReadyCallback 
                     closebutton.setVisibility(View.GONE);
                 }
 
-
             }
         }.execute(postid);
+
+
+
+
+    }
+
+    public void loadallpic(){
+        for (int i = 0; i < pictures.size(); i++)
+            new AsyncTask<Integer, JSONArray, Bitmap>() {
+                int i;
+
+                @Override
+                protected Bitmap doInBackground(Integer... params) {
+                    this.i = params[0];
+                    String data = Tools.getPicture(pictures.getJSONArray(params[0]));
+                    byte[] decodedString = Base64.decode(data, Base64.DEFAULT);
+                    return BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+
+                }
+
+                protected void onPostExecute(Bitmap bitmap) {
+                    switch (i) {
+                        case 0:
+                            ((ImageView) findViewById(R.id.defaultimagePD)).setImageBitmap(bitmap);
+                            break;
+                        case 1:
+                            ((ImageView) findViewById(R.id.defaultimagePD2)).setImageBitmap(bitmap);
+                            break;
+                        case 2:
+                            ((ImageView) findViewById(R.id.defaultimagePD3)).setImageBitmap(bitmap);
+                            break;
+                        case 3:
+                            ((ImageView) findViewById(R.id.defaultimagePD4)).setImageBitmap(bitmap);
+                            break;
+                        case 4:
+                            ((ImageView) findViewById(R.id.defaultimagePD5)).setImageBitmap(bitmap);
+                            break;
+                    }
+                }
+            }.execute(i);
     }
 
 
